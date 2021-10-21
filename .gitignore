@@ -5,3 +5,5 @@
 /.vs/PwTresor/v16
 /Pw.Logik/obj/Debug
 /Pw.Ui/obj/Debug
+/Pw.Logik/bin/Debug
+/Pw.Ui/bin/Debug
