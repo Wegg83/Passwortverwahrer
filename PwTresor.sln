@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pw.Logik", "Pw.Logik\Pw.Log
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pw.Ui", "Pw.Ui\Pw.Ui.csproj", "{B25A91CE-AF5F-4C12-A595-B129F6560449}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".shared", ".shared", "{5B7EB0F0-761D-47A9-8F90-FAC6EE4889B2}"
+	ProjectSection(SolutionItems) = preProject
+		.shared\Pw.Info.cs = .shared\Pw.Info.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
