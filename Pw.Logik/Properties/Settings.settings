@@ -1,0 +1,48 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Logik.Pw.Logik.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="PfadZielOrdner" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Passwortverwahrer\</Value>
+    </Setting>
+    <Setting Name="PfadImportOrdner" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Passwortverwahrer\</Value>
+    </Setting>
+    <Setting Name="PfadSyncOrdner" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Passwortverwahrer\</Value>
+    </Setting>
+    <Setting Name="PWLange" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">8</Value>
+    </Setting>
+    <Setting Name="PWSonderBool" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="PWZahlBool" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="PWGrossBool" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="PWMinGross" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="PWMinSonder" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="PWMinZahl" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="AktuellerSkin" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="HauptFensterBreite" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">525</Value>
+    </Setting>
+    <Setting Name="HauptFensterHohe" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">450</Value>
+    </Setting>
+    <Setting Name="SternSymbol" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
