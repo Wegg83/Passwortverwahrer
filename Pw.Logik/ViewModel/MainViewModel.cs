@@ -21,8 +21,9 @@ namespace Logik.Wo.Logik.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private PersonCenter _BenutzerListe;
-        public ObservableCollection<PwEintrag> MainListe { get; set; }
-        public PwEintrag AktEintrag
+        public ObservableCollection<PwEintrag> MainListe { get; set; } // alt PasswortColl
+        public ObservableCollection<PwEintrag> GefilterteListe { get; set; } // altKoListe
+        public PwEintrag AktEintrag     // alt -> PasswortSelItem
         {
             get
             {
@@ -40,6 +41,10 @@ namespace Logik.Wo.Logik.ViewModel
             }
         }
 
+        private int _tmpIndexNummerMin;
+
+        public string LoginHilfeText { get; set; }
+        public string HinzuNeuString { get; set; }
         //  private ListCollectionView _UiViewListe;
         public ListCollectionView UiViewListe { get; set; }
 
@@ -66,7 +71,9 @@ namespace Logik.Wo.Logik.ViewModel
             Pw.Logik.Properties.Settings.Default.Save();
 
             _BenutzerListe = new PersonCenter();
-
+            LoginHilfeText = "";
+            HinzuNeuString = "Neu";
+            _tmpIndexNummerMin = 100001;
 
 
 
