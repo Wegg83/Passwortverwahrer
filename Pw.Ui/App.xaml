@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              d1p1:Ignorable="d"
              xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
-            xmlns:PwLogic="clr-namespace:Logik.Wo.Logik.ViewModel;assembly=Pw.Logik"
+            xmlns:PwLogic="clr-namespace:Logik.Pw.Logik.ViewModel;assembly=Pw.Logik"
              xmlns:Message="clr-namespace:Ui.Pw.Ui" >
     <Application.Resources>
         <ResourceDictionary>
