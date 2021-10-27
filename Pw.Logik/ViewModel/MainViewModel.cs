@@ -16,6 +16,7 @@ using System.ComponentModel;
 using Logik.Pw.Logik.Klassen;
 using Logik.Pw.Logik.Messengers;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Logik.Pw.Logik.ViewModel
 {
@@ -26,7 +27,8 @@ namespace Logik.Pw.Logik.ViewModel
 
         private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
         private bool ZwischenAblageAktivBool;
-        private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _ZwischenAblageBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
+        private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
+        private RelayCommand _PWHinzuBtn, _PWAndersBtn, _BenutzerZwischenBtn, _PWZwischenBtn;
         private PersonCenter _BenutzerListe; // alt dieGesamteListe
         private string PasswortEndung = @"\bin.dat";
         private Person AktBenutzer;
@@ -60,14 +62,18 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand ExportBtn => _ExportBtn;
         public RelayCommand ImportBtn => _ImportBtn;
         public RelayCommand InfoBtn => _InfoBtn;
-        public RelayCommand ZwischenAblageBtn => _ZwischenAblageBtn;
         public RelayCommand PrgEndeBtn => _PrgEndeBtn;
         public RelayCommand LogOutBtn => _LogOutBtn;
         public RelayCommand RndVerwaltBtn => _RndVerwaltBtn;
         public RelayCommand AnsichtWechselBtn => _AnsichtWechselBtn;
+        public RelayCommand PWHinzuBtn => _PWHinzuBtn;
+        public RelayCommand PWAndersBtn => _PWAndersBtn;
+        public RelayCommand PWZwischenBtn => _PWZwischenBtn;
+        public RelayCommand BenutzerZwischenBtn => _BenutzerZwischenBtn; 
+
+        public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
 
         public ObservableCollection<DockPanelKlasse>  MeinOberMenu;
-
         public Visibility Passwörter { get; set; }
         public Visibility Verwaltung { get; set; }
         public Visibility VisiHinzu { get; set; }
@@ -147,8 +153,34 @@ namespace Logik.Pw.Logik.ViewModel
             PWEingabe.Clear();
             _LoginBtn = new RelayCommand(Logingedruckt);
             _VerwaltungBtn = new RelayCommand(Verwaltunggedruckt);
+            _PrgEndeBtn = new RelayCommand(Programmschließengedruckt);
+            _PWHinzuBtn = new RelayCommand(PWHinzuGedruckt);
+            _PWAndersBtn = new RelayCommand(PWÄndernGedruckt);
+            _LogOutBtn = new RelayCommand(LogoutGedruckt);
 
+            //pWDelBtn = new RelayCommand(PWLöschenGedruckt);
+            _RootOrdnerBtn = new RelayCommand(RootOrdnerGedruckt);
+            //versionsInfos = new RelayCommand(InfoCenterAnzeigenGedruckt);
+            //exportBtn = new RelayCommand(ExportGedruckt);
+            //importBtn = new RelayCommand(ImportGedruckt);      
+            _PWZwischenBtn = new RelayCommand(AktPwZwischenAgedruckt);
+            _BenutzerZwischenBtn = new RelayCommand(AktBenZwischenAgedruckt);
+            //syncBtn = new RelayCommand(SyncenGedruckt);
+            //neuesRAndomPWBtn = new RelayCommand(NeuesRndPWgedruckt);
+            //pWRandVerwaltBtn = new RelayCommand(ZufallsKonfiguratorGedruckt);
+            //pWBenutzAndersBtn = new RelayCommand(BenutzerPwAndersGedruckt);
+
+            if(VerwaltungsListe.Count != 0)
+            {
+                Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
+            }
+            else
+            {
+                Ansichtwechsel(DerzeitgeAnsicht.Verwaltung);
+            }
            
+
+            SkinAnderung();
         }
 
 
@@ -254,14 +286,14 @@ namespace Logik.Pw.Logik.ViewModel
             #region Untermneu Edit
             tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
 
-            tmpItems1Unter = new DockPanelKlasse(ZwischenAblageBtn, 2100);
-            tmpItems1Unter.Header = "In Zwischenablage";
-            tmpItems1Unter.MenItemEnable = false;
-            tmp1Untermenu.Add(tmpItems1Unter);
+            //tmpItems1Unter = new DockPanelKlasse(ZwischenAblageBtn, 2100);
+            //tmpItems1Unter.Header = "In Zwischenablage";
+            //tmpItems1Unter.MenItemEnable = false;       
 
-            tmpItems1Unter = new DockPanelKlasse(null, 2200);
+            tmpItems1Unter = new DockPanelKlasse(null, 2100);
             tmpItems1Unter.Header = "Skin-Aussehen";
             tmpItems1Unter.MenItemEnable = true;
+            tmp1Untermenu.Add(tmpItems1Unter);
             #region Untermenu Skins
 
             tmp2Untermenu = new ObservableCollection<DockPanelKlasse>();
@@ -648,6 +680,22 @@ namespace Logik.Pw.Logik.ViewModel
 
         //}
 
+        private void RootOrdnerGedruckt()
+        {
+            CommonOpenFileDialog HoleNeuenOrdner = new CommonOpenFileDialog();
+
+            HoleNeuenOrdner.InitialDirectory = Properties.Settings.Default.PfadZielOrdner;
+            HoleNeuenOrdner.Multiselect = false;
+            HoleNeuenOrdner.IsFolderPicker = true;
+            if (HoleNeuenOrdner.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                Properties.Settings.Default.PfadZielOrdner = HoleNeuenOrdner.FileName + @"\";
+                Properties.Settings.Default.Save();
+                initzialize();
+            }
+            VerwaltungsAnzeigeNeuLaden();
+        }
+
         private bool MenuAnderung(ObservableCollection<DockPanelKlasse> MeinMenu, int Index, string neuerHead, bool NeuerZustand)
         {
             foreach (DockPanelKlasse AktKnoten in MeinMenu)
@@ -795,6 +843,49 @@ namespace Logik.Pw.Logik.ViewModel
                 ausgabe++;
             }
             return -1;
+        }
+
+        public void InZwischenAblagegedruckt(string Dasobject)
+        {
+            try
+            {
+                System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, (Object)Dasobject);
+                ZeigeTooltipZischenablage("In Zwischenablage kopiert.");
+            }
+            catch
+            {
+                System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, "");
+                ZeigeTooltipZischenablage("Error!");
+            }
+        }
+
+        private void ZeigeTooltipZischenablage(string Inhalt)
+        {
+            ZwischenlageTooltip = new System.Windows.Controls.ToolTip { Content = Inhalt };
+            ZwischenlageTooltip.Opened += async delegate (object objTT, RoutedEventArgs args)
+            {
+                System.Windows.Controls.ToolTip tmpTT = objTT as System.Windows.Controls.ToolTip;
+                await Task.Delay(1000);
+                tmpTT.IsOpen = false;
+            };
+            ZwischenlageTooltip.IsOpen = true;
+        }
+
+
+        private void AktPwZwischenAgedruckt()
+        {
+            InZwischenAblagegedruckt(AktEintrag.Passwort);
+        }
+
+        private void AktBenZwischenAgedruckt()
+        {
+            InZwischenAblagegedruckt(AktEintrag.Benutzer);
+        }
+
+        public void Programmschließengedruckt()
+        {
+            LogoutGedruckt();
+            Environment.Exit(0);
         }
 
         private void SkinAnderung()
