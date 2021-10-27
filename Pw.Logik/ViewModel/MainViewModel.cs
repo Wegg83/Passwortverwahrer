@@ -138,6 +138,9 @@ namespace Logik.Pw.Logik.ViewModel
             }
             Pw.Logik.Properties.Settings.Default.Save();
 
+            MainListe = new ObservableCollection<PwEintrag>();
+            GefilterteListe = new ObservableCollection<PwEintrag>();
+
             initzialize();
 
             LoginHilfeText = "";
@@ -145,8 +148,7 @@ namespace Logik.Pw.Logik.ViewModel
             _tmpIndexNummerMin = 100001;
 
             VerwaltungsListe = _BenutzerListe.VerwaltungListe();
-            MainListe = new ObservableCollection<PwEintrag>();
-            GefilterteListe = new ObservableCollection<PwEintrag>();
+ 
             //   AktEintrag = new PwEintrag(); test
             // CbBenutzerWahl = ""; test
             PWEingabe = new SecureString();
@@ -170,14 +172,6 @@ namespace Logik.Pw.Logik.ViewModel
             //pWRandVerwaltBtn = new RelayCommand(ZufallsKonfiguratorGedruckt);
             //pWBenutzAndersBtn = new RelayCommand(BenutzerPwAndersGedruckt);
 
-            if(VerwaltungsListe.Count != 0)
-            {
-                Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
-            }
-            else
-            {
-                Ansichtwechsel(DerzeitgeAnsicht.Verwaltung);
-            }
            
 
             SkinAnderung();
@@ -187,10 +181,76 @@ namespace Logik.Pw.Logik.ViewModel
         private void initzialize()
         {
             initzializeMenu();
+            initzializeBenutzer();
+           
             initzializeIListColl();
+        }
 
+        private void initzializeBenutzer()
+        {
+            string tmpPfad;
 
+            ZwischenAblageAktivBool = false;
+            try
+            {
+                System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, "");
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("Zwischenablage-Fehler. Unmöglich Daten in ZW zu speichern");
+            }
 
+            _BenutzerListe = new PersonCenter();
+            VerwaltungsListe = new ObservableCollection<string>();
+            Person GelesenerBenutzer = new Person();
+            PwEintrag GeleseneHauptView = new PwEintrag();
+            KaudawelschGenerator ListEntschlüssler = new KaudawelschGenerator(new SecureString());
+
+            nichtGespeichertNeu = false;
+            nichtGespeichertAnders = false;
+
+            try
+            {
+                //string benutzerRootOrdnerString = Properties.Settings.Default.PfadZielOrdner;
+                List<string> AlleOrdner = new List<string>(Directory.EnumerateDirectories(Properties.Settings.Default.PfadZielOrdner));
+                foreach (string Ordna in AlleOrdner)
+                {
+                    tmpPfad = Ordna + PasswortEndung;
+
+                    if (!File.Exists(tmpPfad))
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        GelesenerBenutzer = LeseDoppeltVerschlüsselteDatei(tmpPfad, ListEntschlüssler, Ordna);
+                        if (GelesenerBenutzer == null || (GelesenerBenutzer.Name == null && GelesenerBenutzer.AktOrdnerName == null))
+                        {
+                            continue;
+                        }
+                        VerwaltungsListe.Add(GelesenerBenutzer.Name);
+                        _BenutzerListe.Hinzufügen(GelesenerBenutzer);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+            if (_BenutzerListe.Durchzählen == 0)
+            {
+                Ansichtwechsel(DerzeitgeAnsicht.Verwaltung);
+            }
+            else
+            {
+                CbBenutzerWahl = VerwaltungsListe[0];
+                Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
+            }
         }
 
         private void initzializeIListColl()
@@ -601,6 +661,55 @@ namespace Logik.Pw.Logik.ViewModel
             Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
         }
 
+        private Person LeseDoppeltVerschlüsselteDatei(string DateiPfad, KaudawelschGenerator DerKaudaGenerator, string Ordner)
+        {
+            Person BenutzAusDat = new Person();
+            try
+            {
+                string AktZeile = "";
+                StreamReader Leser1 = new StreamReader(DateiPfad);
+                BenutzAusDat.PersiKauda = new List<string>();
+                bool Name = false;
+                while (Leser1.Peek() >= 0)
+                {
+                    AktZeile = Leser1.ReadLine();
+                    byte[] KaudawelschZeile2 = new byte[48];
+
+                    int AnzahlBytes2 = AktZeile.Split(';').Length - 1;
+                    if (AnzahlBytes2 > 0)
+                    {
+                        KaudawelschZeile2 = new byte[AnzahlBytes2];
+                        for (int i = 0; i < AnzahlBytes2; i++)
+                        {
+                            KaudawelschZeile2[i] = Convert.ToByte(AktZeile.Split(';')[i]);
+                        }
+                    }
+                    else
+                    {
+                        return BenutzAusDat;
+                    }
+                    AktZeile = DerKaudaGenerator.Entschlüsselung(KaudawelschZeile2);
+                    if (!Name)
+                    {
+                        BenutzAusDat.Name = DerKaudaGenerator.StrichpunktEntChecker(AktZeile, 0, 1);
+                        BenutzAusDat.AktOrdnerName = new DirectoryInfo(Ordner).Name;
+                        Name = true;
+                    }
+                    else
+                    {
+                        BenutzAusDat.PersiKauda.Add(AktZeile);
+                    }
+                }
+                return BenutzAusDat;
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("Die verschlüsselte Datei ist beschädigt oder manipuliert und kann nicht eingelesen werden.");
+                return null;
+            }
+        }
+
+
         private void VerwaltungsAnzeigeNeuLaden()
         {
             VerwaltungsListe = _BenutzerListe.VerwaltungListe();
@@ -635,12 +744,6 @@ namespace Logik.Pw.Logik.ViewModel
                     Logingedruckt();
                     break;
                 case DerzeitgeAnsicht.Verwaltung:
-                    if (Verwaltung == Visibility.Visible)
-                    {
-
-                    }
-                    else
-                    {
                         VisiBenutzerCB = Visibility.Hidden;
                         Passwörter = Visibility.Hidden;
                         Verwaltung = Visibility.Visible;
@@ -668,8 +771,6 @@ namespace Logik.Pw.Logik.ViewModel
                         {
                             System.Windows.MessageBox.Show("Zwischenablage-Fehler. Unmöglich Daten in ZW zu speichern");
                         }
-
-                    }
                     VerwaltungsAnzeigeNeuLaden();
                     break;
             }

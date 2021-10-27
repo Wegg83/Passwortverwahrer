@@ -23,10 +23,10 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" >
+        <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" Visibility="{Binding VisiBenutzerCB}" >
             <Grid>
                 <ComboBox HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="100" 
-                   SelectedItem="{Binding CbBenutzerWahl, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AllCbBenutzer}" FontFamily="{Binding MeineSchriftArtFett}" VerticalContentAlignment="Center" Visibility="{Binding VisiBenutzerCB}">
+                   SelectedItem="{Binding CbBenutzerWahl, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AllCbBenutzer}" FontFamily="{Binding MeineSchriftArtFett}" VerticalContentAlignment="Center">
                 </ComboBox>
                 <Label Content="Passwort:" Margin="120,8,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Visibility="{Binding Passwörter}" />
                 <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Width="100" Height="30" Margin="190,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding Passwörter}">
@@ -47,8 +47,8 @@
                 </Button>
             </Grid>
         </GroupBox>
-        
-        <GroupBox Header="Ubersicht" Grid.Column="0" Grid.Row="0" Margin="10" Grid.RowSpan="3"  >
+
+        <GroupBox Header="Ubersicht" Grid.Column="0" Grid.Row="0" Margin="10" Grid.RowSpan="3" Visibility="{Binding VisiDGPW}" >
             <DataGrid ItemsSource="{Binding UiViewListe}"
                       IsSynchronizedWithCurrentItem="True"
                       EnableRowVirtualization="True"
