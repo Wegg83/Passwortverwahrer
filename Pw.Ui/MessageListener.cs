@@ -1,4 +1,7 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Logik.Pw.Logik.Messengers;
+using Logik.Pw.Logik.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +13,23 @@ namespace Ui.Pw.Ui
     {
         public bool ListenerBool => true;
 
+        public MessageListener()
+        {
+            InitMessenger();
+        }
+
+        private void InitMessenger()
+        {
+            Messenger.Default.Register<SendNeuBenutzerMess>(this, msg =>
+            {
+                NeuBenutzerFenster Window = new NeuBenutzerFenster();
+                var vm = Window.DataContext as NeuBenutzerVM;
+                if (vm != null)
+                {
+                  // Code
+                }
+                Window.Show();
+            });
+        }
     }
 }

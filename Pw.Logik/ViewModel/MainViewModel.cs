@@ -14,13 +14,19 @@ using Logik.Pw.Logik.Items;
 using System.Windows.Data;
 using System.ComponentModel;
 using Logik.Pw.Logik.Klassen;
+using Logik.Pw.Logik.Messengers;
+using GalaSoft.MvvmLight.Messaging;
 
-namespace Logik.Wo.Logik.ViewModel
+namespace Logik.Pw.Logik.ViewModel
 {
 
     public class MainViewModel : ViewModelBase
     {
-        private RelayCommand _LoginBtn;
+        enum DerzeitgeAnsicht { Verwaltung, Benutzer}
+
+        private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
+        private bool ZwischenAblageAktivBool;
+        private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _ZwischenAblageBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
         private PersonCenter _BenutzerListe; // alt dieGesamteListe
         private string PasswortEndung = @"\bin.dat";
         private Person AktBenutzer;
@@ -43,10 +49,24 @@ namespace Logik.Wo.Logik.ViewModel
                 RaisePropertyChanged();
             }
         }
-        public ObservableCollection<string> AllCbBenutzer { get; set; } // alt PWVBItem
+        public ObservableCollection<string> VerwaltungsListe { get; set; } // alt PWCBItem
         public string CbBenutzerWahl { get; set; } // alt PWAktBenutzer
+        public string PWSuche { get; set; }  // achtung keine integration mit NUR get;set;
+        public string BeschreibungMenu1 { get; set; }
         public SecureString PWEingabe { get; set; }
         public RelayCommand LoginBtn => _LoginBtn;
+        public RelayCommand VerwaltungBtn => _VerwaltungBtn;
+        public RelayCommand RootOrdnerBtn => _RootOrdnerBtn;
+        public RelayCommand ExportBtn => _ExportBtn;
+        public RelayCommand ImportBtn => _ImportBtn;
+        public RelayCommand InfoBtn => _InfoBtn;
+        public RelayCommand ZwischenAblageBtn => _ZwischenAblageBtn;
+        public RelayCommand PrgEndeBtn => _PrgEndeBtn;
+        public RelayCommand LogOutBtn => _LogOutBtn;
+        public RelayCommand RndVerwaltBtn => _RndVerwaltBtn;
+        public RelayCommand AnsichtWechselBtn => _AnsichtWechselBtn;
+
+        public ObservableCollection<DockPanelKlasse>  MeinOberMenu;
 
         public Visibility Passwörter { get; set; }
         public Visibility Verwaltung { get; set; }
@@ -56,10 +76,29 @@ namespace Logik.Wo.Logik.ViewModel
         public Visibility VisiÄndern { get; set; }
         public Visibility VisiRndBtn1 { get; set; }
         public Visibility VisiRndBtn2 { get; set; }
+        public Visibility VisiLöschen { get; set; }
+        public Visibility VisiBenutzerCB { get; set;}
+        public Visibility VerwaltungAnders { get; set; }
 
+        public string PWNeuProgramm { get; set; }
+        public string PWNeuAdresse { get; set; }
+        public string PWNeuPW { get; set; }
 
-
-        public bool IsLoginTxtBoxFocused { get; set; }
+        public string MeinHintergrund { get; set; }
+        public string MeineSchriftFarbe1 { get; set; }
+        public string MeineSchriftFarbe2 { get; set; }
+        public string MeineKontrastFarbe1 { get; set; }
+        public string MeineKontrastFarbe2 { get; set; }
+        public string MeineSchriftArtNorm { get; set; }
+        public string MeineSchriftArtFett { get; set; }
+        public int MeineSchriftGrosseNorm { get; set; }
+        public int MeineSchriftGrosseKlein { get; set; }
+        public int MeineSchriftGrosseGross { get; set; }
+        public string MeinIconRauf { get; set; }
+        public string MeinIconRunter { get; set; }
+        public string MeinSyncIcon { get; set; }
+        public string MeinRndIcon { get; set; }
+        public string OptionenUberschrift { get; set; }
 
         private int _tmpIndexNummerMin;
 
@@ -68,10 +107,13 @@ namespace Logik.Wo.Logik.ViewModel
         //  private ListCollectionView _UiViewListe;
         public ListCollectionView UiViewListe { get; set; }
 
-
-
         public MainViewModel()
         {
+            Messenger.Default.Register<NeuBenutzerMess>(this, empfang =>
+            {
+                EmpfangeNeuerBenutzer(empfang);
+            });
+
             try
             {
                 if (Pw.Logik.Properties.Settings.Default.HauptFensterBreite <= 0 || Pw.Logik.Properties.Settings.Default.HauptFensterBreite >= 9000)
@@ -90,30 +132,40 @@ namespace Logik.Wo.Logik.ViewModel
             }
             Pw.Logik.Properties.Settings.Default.Save();
 
-            _BenutzerListe = new PersonCenter();
+            initzialize();
+
             LoginHilfeText = "";
             HinzuNeuString = "Neu";
             _tmpIndexNummerMin = 100001;
 
-            AllCbBenutzer = new ObservableCollection<string>();
+            VerwaltungsListe = _BenutzerListe.VerwaltungListe();
             MainListe = new ObservableCollection<PwEintrag>();
             GefilterteListe = new ObservableCollection<PwEintrag>();
-            AktEintrag = new PwEintrag();
-           // CbBenutzerWahl = "";
+            //   AktEintrag = new PwEintrag(); test
+            // CbBenutzerWahl = ""; test
+            PWEingabe = new SecureString();
             PWEingabe.Clear();
             _LoginBtn = new RelayCommand(Logingedruckt);
+            _VerwaltungBtn = new RelayCommand(Verwaltunggedruckt);
 
-
-            initzialize();
+           
         }
 
 
-        public void initzialize()
+        private void initzialize()
         {
+            initzializeMenu();
+            initzializeIListColl();
 
+
+
+        }
+
+        private void initzializeIListColl()
+        {
             #region ListCollectionView Initailisierung
 
-            UiViewListe = CollectionViewSource.GetDefaultView(MainListe) as ListCollectionView;
+            UiViewListe = CollectionViewSource.GetDefaultView(GefilterteListe) as ListCollectionView;
             foreach (var item in MainListe) // die vom System rein geladenen Daten müssen das OnPropertyChangeEvent "registrieren"
             {
                 item.PropertyChanged += PersonInfosPropertyAnders;
@@ -144,6 +196,122 @@ namespace Logik.Wo.Logik.ViewModel
             AktEintrag = UiViewListe?.CurrentItem as PwEintrag;
         }
 
+        private void initzializeMenu()
+        {
+            #region Menu als Klasse 
+            MeinOberMenu = new ObservableCollection<DockPanelKlasse>();
+            DockPanelKlasse tmpOberItems = new DockPanelKlasse(null, 1000);
+            ObservableCollection<DockPanelKlasse> tmp1Untermenu;
+            DockPanelKlasse tmpItems1Unter;
+            ObservableCollection<DockPanelKlasse> tmp2Untermenu;
+            DockPanelKlasse tmpItems2Unter;
+
+            #region Datei Menu
+            tmpOberItems.Header = "Datei";
+            tmpOberItems.MenItemEnable = true;
+            #region Untermenu Datei
+            tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
+
+            tmpItems1Unter = new DockPanelKlasse(AnsichtWechselBtn, 1100);
+            tmpItems1Unter.Header = "Benutzerverwaltung";
+            tmpItems1Unter.MenItemEnable = true;
+            tmp1Untermenu.Add(tmpItems1Unter);
+
+            tmpItems1Unter = new DockPanelKlasse(RndVerwaltBtn, 1200);
+            tmpItems1Unter.Header = "Zufalls Konfigurator";
+            tmpItems1Unter.MenItemEnable = true;
+            tmp1Untermenu.Add(tmpItems1Unter);
+
+            tmpItems1Unter = new DockPanelKlasse(_ExportBtn, 1300);
+            tmpItems1Unter.Header = "Benutzer Exportieren";
+            tmpItems1Unter.MenItemEnable = false;
+            tmp1Untermenu.Add(tmpItems1Unter);
+
+            tmpItems1Unter = new DockPanelKlasse(_ImportBtn, 1400);
+            tmpItems1Unter.Header = "Benutzer Importieren";
+            tmpItems1Unter.MenItemEnable = true;
+            tmp1Untermenu.Add(tmpItems1Unter);
+
+            tmpItems1Unter = new DockPanelKlasse(LogOutBtn, 1500);
+            tmpItems1Unter.Header = "Benutzer abmelden";
+            tmpItems1Unter.MenItemEnable = false;
+            tmp1Untermenu.Add(tmpItems1Unter);
+
+            tmpItems1Unter = new DockPanelKlasse(PrgEndeBtn, 1600);
+            tmpItems1Unter.Header = "Schließen";
+            tmpItems1Unter.MenItemEnable = true;
+            tmp1Untermenu.Add(tmpItems1Unter);
+
+            tmpOberItems.UnterMenus = tmp1Untermenu;
+            #endregion
+            MeinOberMenu.Add(tmpOberItems);
+            #endregion
+
+            #region Edit Menu
+            tmpOberItems = new DockPanelKlasse(null, 2000);
+            tmpOberItems.Header = "Edit";
+            tmpOberItems.MenItemEnable = true;
+            #region Untermneu Edit
+            tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
+
+            tmpItems1Unter = new DockPanelKlasse(ZwischenAblageBtn, 2100);
+            tmpItems1Unter.Header = "In Zwischenablage";
+            tmpItems1Unter.MenItemEnable = false;
+            tmp1Untermenu.Add(tmpItems1Unter);
+
+            tmpItems1Unter = new DockPanelKlasse(null, 2200);
+            tmpItems1Unter.Header = "Skin-Aussehen";
+            tmpItems1Unter.MenItemEnable = true;
+            #region Untermenu Skins
+
+            tmp2Untermenu = new ObservableCollection<DockPanelKlasse>();
+
+            tmpItems2Unter = new DockPanelKlasse(new RelayCommand(ThemeWinStyleGedruckt), 2210);
+            tmpItems2Unter.Header = "Windows-Style";
+            tmpItems2Unter.MenItemEnable = true;
+            tmp2Untermenu.Add(tmpItems2Unter);
+            tmpItems2Unter = new DockPanelKlasse(new RelayCommand(ThemeDarkStyleGedruckt), 2220);
+            tmpItems2Unter.Header = "Dark-Style";
+            tmpItems2Unter.MenItemEnable = true;
+            tmp2Untermenu.Add(tmpItems2Unter);
+
+            tmpItems1Unter.UnterMenus = tmp2Untermenu;
+            #endregion
+
+            tmp1Untermenu.Add(tmpItems1Unter);
+            tmpOberItems.UnterMenus = tmp1Untermenu;
+
+            #endregion
+            MeinOberMenu.Add(tmpOberItems);
+            #endregion
+
+            #region Hilfe Menu
+            tmpOberItems = new DockPanelKlasse(null, 3000);
+            tmpOberItems.Header = "Hilfe";
+            tmpOberItems.MenItemEnable = true;
+
+            #region Unermenu Hilfe
+            tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
+
+            tmpItems1Unter = new DockPanelKlasse(InfoBtn, 3100);
+            tmpItems1Unter.Header = "Info";
+            tmpItems1Unter.MenItemEnable = true;
+            tmp1Untermenu.Add(tmpItems1Unter);
+
+            tmpOberItems.UnterMenus = tmp1Untermenu;
+            #endregion
+            MeinOberMenu.Add(tmpOberItems);
+
+            #endregion
+
+            #endregion
+
+            #region Menu direkt im Xaml
+            _WinstyleXamlBtn = new RelayCommand(ThemeWinStyleGedruckt);
+            _DarkstyleXamlBtn = new RelayCommand(ThemeDarkStyleGedruckt);
+            #endregion
+        }
+
         private void PersonInfosPropertyAnders(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(AktEintrag.HasErrors)) // würde die ganze zeit sonst beim initialisieren anschlagen und den RAM voll laufen
@@ -165,6 +333,7 @@ namespace Logik.Wo.Logik.ViewModel
             }
 
             Person LoginDaten = _BenutzerListe.NameSuchen(CbBenutzerWahl);
+            if (LoginDaten.AktOrdnerName == null) return;
             KaudawelschGenerator LoginChecker = new KaudawelschGenerator(PWEingabe);
 
             if (LoginChecker.PwChecker(LoginDaten.PersiKauda))
@@ -191,13 +360,54 @@ namespace Logik.Wo.Logik.ViewModel
             {
                 if (PWEingabe.Length == 0)
                 {
-                    IsLoginTxtBoxFocused = true;
+                  //  IsLoginTxtBoxFocused = true; geht leider nciht
                 }
                 else
                 {
                     System.Windows.MessageBox.Show("Falsches Passwort");
                 }
             }
+        }
+
+        private void Verwaltunggedruckt()
+        {
+            AbfrageNichtGespeichertesPW();
+           // VerwaltungColl = new ObservableCollection<BenutzerView>(); alt
+
+            if (Verwaltung == Visibility.Visible)
+            {
+                Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
+                BeschreibungMenu1 = "Benutzerverwaltung";
+                VerwaltungAnders = Visibility.Hidden;
+            }
+            else
+            {
+                if (AktBenutzer != null)
+                {
+                    LogoutGedruckt();
+                }
+                Ansichtwechsel(DerzeitgeAnsicht.Verwaltung);
+                BeschreibungMenu1 = "Passwortverwaltung";
+            }
+        }
+
+        public void LogoutGedruckt()
+        {
+            AbfrageNichtGespeichertesPW();
+            GefilterteListe= null;
+            MainListe = null;
+            _tmpIndexNummerMin = 100001;
+            AktBenutzer = null;
+            ZwischenAblageAktivBool = false;
+            try
+            {
+                System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, "");
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("Zwischenablage-Fehler. Unmöglich Daten in ZW zu speichern");
+            }
+            PWEingabe.Clear();
         }
 
         private string PfadFindung(string BenutzerName) => Pw.Logik.Properties.Settings.Default.PfadZielOrdner + _BenutzerListe.OrdnerNameHolen(BenutzerName) + PasswortEndung;
@@ -210,5 +420,456 @@ namespace Logik.Wo.Logik.ViewModel
             VisiRndBtn2 = Visibility.Hidden;
             HinzuNeuString = "Neu";
         }
+
+
+        private void AbfrageNichtGespeichertesPW()
+        {
+            if (nichtGespeichertAnders || nichtGespeichertNeu)
+            {
+                if (System.Windows.MessageBox.Show("Änderungen nicht gespeichert. Übernehmen?", "Fehler", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    if (nichtGespeichertAnders)
+                    {
+                        PWÄndernGedruckt();
+                    }
+                    else
+                    {
+                        PWHinzuGedruckt();
+                    }
+                }
+                else
+                {
+                    nichtGespeichertNeu = false;
+                    nichtGespeichertAnders = false;
+                }
+            }
+        }
+
+        private void PWÄndernGedruckt()
+        {
+            PwEintrag tmpV = new PwEintrag();
+            tmpV.Programm = AktEintrag.Programm;
+            tmpV.Benutzer = AktEintrag.Benutzer;
+            tmpV.Passwort = AktEintrag.Passwort;
+            tmpV.Datum = DateTime.Today;
+            tmpV.tmprndIndex = AktEintrag.tmprndIndex;
+
+
+            nichtGespeichertAnders = false;
+
+            int tmpIndex = IndexSuchen(tmpV.Programm, tmpV.tmprndIndex);
+            _BenutzerListe.EintragCh(AktBenutzer.Name, tmpV, PWEingabe, tmpIndex);
+            MainListe.RemoveAt(tmpIndex);
+            MainListe.Insert(tmpIndex, tmpV);
+
+            if (PWSuche != null && PWSuche != "")
+            {
+               GefilterteListe = PWListeFiltern();
+            }
+            else
+            {
+                GefilterteListe = MainListe;
+            }
+            _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
+           // PWAndersPW = "";
+           // PWAndersAdresse = "";
+            nichtGespeichertAnders = false;
+            VisiÄndern = Visibility.Hidden;
+        }
+
+        private void PWHinzuGedruckt()
+        {
+            if (Verwaltung == Visibility.Hidden)
+            {
+                if (VisiHinzu2 == Visibility.Hidden)
+                {
+                    AbfrageNichtGespeichertesPW();
+                    VisiPWNeuAnlegenSetzen();
+                }
+                else
+                {
+                    if (!TestaufLeerenInhalt(PWNeuProgramm))
+                    {
+                        System.Windows.MessageBox.Show("Bitte einen Programmnamen angeben");
+                    }
+                    else
+                    {
+                        PwEintrag PWeinfügenView = new PwEintrag();
+                        PWeinfügenView.Programm = PWNeuProgramm;
+                        PWeinfügenView.Benutzer = PWNeuAdresse;
+                        PWeinfügenView.Passwort = PWNeuPW;
+                        PWeinfügenView.Datum = System.DateTime.Today;
+                        PWeinfügenView.tmprndIndex = "n" + _tmpIndexNummerMin.ToString();
+                        _tmpIndexNummerMin++;
+                        if (ProgrammVorhanden(PWNeuProgramm))
+                        {
+                            if (ProgrammUndBenutzerVorhanden(PWeinfügenView))
+                            {
+                                System.Windows.MessageBox.Show("Programm schon mit diesem Benutzernamen vorhanden.");
+                            }
+                            else
+                            {
+                                if (System.Windows.MessageBox.Show("Programm schon mit einem anderem Benutzernamen vorhanden. Trotzdem anlegen?", "Snychonisieren", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                {
+                                    nichtGespeichertNeu = false;
+                                    _BenutzerListe.NormEintragVersHinzu(PWeinfügenView, PWEingabe, AktBenutzer.Name, false);
+                                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
+                                    PWNeuAdresse = "";
+                                    PWNeuPW = "";
+                                    nichtGespeichertNeu = false;
+                                    PWNeuProgramm = "";
+                                   // IsPrgTxtBoxFocused = true; geht derzeit nicht
+                                }
+                            }
+                        }
+                        else
+                        {
+                            nichtGespeichertNeu = false;
+                            if (MainListe.Count == 0)
+                            {
+                                _BenutzerListe.NormEintragVersHinzu(PWeinfügenView, PWEingabe, AktBenutzer.Name, true);
+                            }
+                            else
+                            {
+                                _BenutzerListe.NormEintragVersHinzu(PWeinfügenView, PWEingabe, AktBenutzer.Name, false);
+                            }
+
+                            MainListe.Add(PWeinfügenView);
+                            GefilterteListe = PWListeFiltern();
+                            _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
+                            PWNeuAdresse = "";
+                            PWNeuPW = "";
+                            PWNeuProgramm = "";
+                            nichtGespeichertNeu = false;
+                          //  IsPrgTxtBoxFocused = true; geht derzeit nicht
+                        }
+                    }
+                }
+            }
+            else
+            {
+                sendeNeuerBenutzer();
+            }
+        }
+
+        private void sendeNeuerBenutzer()
+        {
+            MessengerInstance.Send(new SendNeuBenutzerMess(SendNeuBenutzerMess.Zustand.Neueingabe, _BenutzerListe.AlleBenutzerAlsListe()));
+        }
+
+        public void EmpfangeNeuerBenutzer(NeuBenutzerMess NeuAnlage)
+        {
+            PWEingabe.Clear();
+            NeuAnlage.NeuePersondaten.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
+            _BenutzerListe.Hinzufügen(NeuAnlage.NeuePersondaten);
+            _BenutzerListe.ErstEintrag(NeuAnlage.NeuePersondaten.Name, NeuAnlage.PwEintrag);
+            _BenutzerListe.KomplettVerschlüsseln(NeuAnlage.NeuePersondaten.Name, PfadFindung(NeuAnlage.NeuePersondaten.Name));
+         //   VerwaltungsListe.Add(NeuAnlage.NeuePersondaten.Name);
+            VerwaltungsAnzeigeNeuLaden();
+            Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
+        }
+
+        private void VerwaltungsAnzeigeNeuLaden()
+        {
+            VerwaltungsListe = _BenutzerListe.VerwaltungListe();
+            PWNeuAdresse = "";
+            PWNeuPW = "";
+            nichtGespeichertAnders = false;
+            nichtGespeichertNeu = false;
+        }
+
+        private void Ansichtwechsel(DerzeitgeAnsicht neuerWert)
+        {
+            switch (neuerWert)
+            {
+                case DerzeitgeAnsicht.Benutzer:
+                    Passwörter = Visibility.Visible;
+                    Verwaltung = Visibility.Hidden;
+                    VisiDGPW = Visibility.Hidden;
+                    VisiHinzu = Visibility.Hidden;
+                    VisiHinzu2 = Visibility.Hidden;
+                    VisiLöschen = Visibility.Hidden;
+                    VisiÄndern = Visibility.Hidden;
+                    VisiBenutzerCB = Visibility.Visible;
+                    PWNeuAdresse = "";
+                    PWNeuPW = "";
+                    nichtGespeichertNeu = false;
+                    PWNeuProgramm = "";
+                    // PWAndersAdresse = ""; alt?
+                    //  PWAndersPW = ""; alt?
+                    nichtGespeichertAnders = false;
+                    //  PWBenutzerPWStern = ""; alt?
+                    MenuAnderung(MeinOberMenu, 1100, "Benutzerverwaltung", true);
+                    Logingedruckt();
+                    break;
+                case DerzeitgeAnsicht.Verwaltung:
+                    if (Verwaltung == Visibility.Visible)
+                    {
+
+                    }
+                    else
+                    {
+                        VisiBenutzerCB = Visibility.Hidden;
+                        Passwörter = Visibility.Hidden;
+                        Verwaltung = Visibility.Visible;
+                        VisiHinzu = Visibility.Hidden;
+                        VisiHinzu2 = Visibility.Hidden;
+                        VisiLöschen = Visibility.Hidden;
+                        VisiÄndern = Visibility.Hidden;
+                        VisiDGPW = Visibility.Hidden;
+                        VisiRndBtn2 = Visibility.Hidden;
+                        VisiRndBtn1 = Visibility.Hidden;
+                        PWNeuAdresse = "";
+                        PWNeuPW = "";
+                        nichtGespeichertNeu = false;
+                        PWNeuProgramm = "";
+                    //    PWAndersAdresse = ""; alt?
+                    //    PWAndersPW = ""; alt?
+                        nichtGespeichertAnders = false;
+                        MenuAnderung(MeinOberMenu, 1100, "Passwortverwaltung", true);
+                        ZwischenAblageAktivBool = false;
+                        try
+                        {
+                            System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, "");
+                        }
+                        catch
+                        {
+                            System.Windows.MessageBox.Show("Zwischenablage-Fehler. Unmöglich Daten in ZW zu speichern");
+                        }
+
+                    }
+                    VerwaltungsAnzeigeNeuLaden();
+                    break;
+            }
+        }
+
+        //private void NURpwAnsicht()
+        //{
+
+        //}
+
+        private bool MenuAnderung(ObservableCollection<DockPanelKlasse> MeinMenu, int Index, string neuerHead, bool NeuerZustand)
+        {
+            foreach (DockPanelKlasse AktKnoten in MeinMenu)
+            {
+                if (AktKnoten.Index == Index)
+                {
+                    AktKnoten.Header = neuerHead;
+                    AktKnoten.MenItemEnable = NeuerZustand;
+                    return true;
+                }
+                if (AktKnoten.UnterMenus != null)
+                {
+                    if (MenuAnderung(AktKnoten.UnterMenus, Index, neuerHead, NeuerZustand))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private string NeuenBenutzerOrdnerAnlegen()
+        {
+            string NeuerOrdner = "";
+            for (int i = 0; i < 1000; i++)
+            {
+                if (!OrdnerVorhanden(i.ToString()))
+                {
+                    NeuerOrdner = Pw.Logik.Properties.Settings.Default.PfadZielOrdner + i;
+                    System.IO.Directory.CreateDirectory(NeuerOrdner);
+                    FileStream fs = File.Create(NeuerOrdner + PasswortEndung);
+                    fs.Close();
+                    return i.ToString();
+                }
+            }
+            return "Maximale Benutzer erreicht";
+        }
+
+        private bool OrdnerVorhanden(string Ordnername)
+        {
+            string VorhandenerOrdnername;
+            try
+            {
+                List<string> AlleOrdner = new List<string>(Directory.EnumerateDirectories(Pw.Logik.Properties.Settings.Default.PfadZielOrdner));
+                foreach (var Ordna in AlleOrdner)
+                {
+                    VorhandenerOrdnername = Ordna.Substring(Ordna.LastIndexOf("\\") + 1);
+                    if (VorhandenerOrdnername == Ordnername)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return false;
+        }
+
+        private bool TestaufLeerenInhalt(string ProgrammName)
+        {
+            if (ProgrammName == null)
+            {
+                return false;
+            }
+
+            if (ProgrammName.Length == ProgrammName.Count(c => c == ' '))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool ProgrammVorhanden(string ProgrammName)
+        {
+            foreach (PwEintrag VorhanderPrgName in MainListe)
+            {
+                if (VorhanderPrgName.Programm.Equals(ProgrammName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool ProgrammUndBenutzerVorhanden(PwEintrag DieDaten)
+        {
+            foreach (PwEintrag VorhanderPrgName in MainListe)
+            {
+                if (VorhanderPrgName.Programm.Equals(DieDaten.Programm, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if (VorhanderPrgName.Benutzer.Equals(DieDaten.Benutzer, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private ObservableCollection<PwEintrag> PWListeFiltern()
+        {
+            ObservableCollection<PwEintrag> ausgabe = new ObservableCollection<PwEintrag>();
+            bool BitteNichtDoppelt = false;
+            VisiÄndern = Visibility.Hidden;
+
+            foreach (PwEintrag Filter1 in MainListe)
+            {
+                BitteNichtDoppelt = false;
+                if (Filter1.Benutzer.IndexOf(PWSuche, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                {
+                    if (!BitteNichtDoppelt)
+                    {
+                        ausgabe.Add(new PwEintrag() { Benutzer = Filter1.Benutzer, Passwort = Filter1.Passwort, Programm = Filter1.Programm, tmprndIndex = Filter1.tmprndIndex });
+                        BitteNichtDoppelt = true;
+                    }
+
+                }
+                if (Filter1.Programm.IndexOf(PWSuche, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                {
+                    if (!BitteNichtDoppelt)
+                    {
+                        ausgabe.Add(new PwEintrag() { Benutzer = Filter1.Benutzer, Passwort = Filter1.Passwort, Programm = Filter1.Programm, tmprndIndex = Filter1.tmprndIndex });
+                        BitteNichtDoppelt = true;
+                    }
+                }
+              //  PasswortColl = PasswortCollgefiltert; alt
+            }
+            return ausgabe;
+        }
+
+        private int IndexSuchen(string GesuchtesPrg, string GesuchtertmpI)
+        {
+            int ausgabe = 0;
+            foreach (PwEintrag find in MainListe)
+            {
+                if (find.Programm == GesuchtesPrg && find.tmprndIndex == GesuchtertmpI)
+                {
+                    return ausgabe;
+                }
+                ausgabe++;
+            }
+            return -1;
+        }
+
+        private void SkinAnderung()
+        {
+            switch (Properties.Settings.Default.AktuellerSkin)
+            {
+                case 1:
+                    MeinHintergrund = SkinFarben.DMHinterGrund;
+                    MeineSchriftFarbe1 = SkinFarben.DMSchriftFarbe1;
+                    MeineSchriftFarbe2 = SkinFarben.DMSchriftFarbe2;
+                    MeineKontrastFarbe1 = SkinFarben.DMKontrastFarbe1;
+                    MeineKontrastFarbe2 = SkinFarben.DMKontrastFarbe2;
+                    MeineSchriftArtNorm = SkinFarben.DMSchriftArtNorm;
+                    MeineSchriftArtFett = SkinFarben.DMSchriftArtFett;
+                    MeineSchriftGrosseNorm = SkinFarben.DMSchriftGrosseNorm;
+                    MeineSchriftGrosseKlein = SkinFarben.DMSchriftGrosseKlein;
+                    MeineSchriftGrosseGross = SkinFarben.DMschriftGrosseGross;
+                    MeinIconRauf = SkinFarben.DMPfeilUp;
+                    MeinIconRunter = SkinFarben.DMPfeilDown;
+                    MeinSyncIcon = SkinFarben.DMSyncIcon;
+                    MeinRndIcon = SkinFarben.DMRndIcon;
+                    break;
+                case 0:
+                    MeinHintergrund = SkinFarben.NormHinterGrund;
+                    MeineSchriftFarbe1 = SkinFarben.NormSchriftFarbe1;
+                    MeineSchriftFarbe2 = SkinFarben.NormSchriftFarbe2;
+                    MeineKontrastFarbe1 = SkinFarben.NormaleKontrastFarbe1;
+                    MeineKontrastFarbe2 = SkinFarben.NormaleKontrastFarbe2;
+                    MeineSchriftArtNorm = SkinFarben.NormalSchriftArtNorm;
+                    MeineSchriftArtFett = SkinFarben.NormalSchriftArtFett;
+                    MeineSchriftGrosseNorm = SkinFarben.NormalSchriftGrosseNorm;
+                    MeineSchriftGrosseKlein = SkinFarben.NormalSchriftGrosseKlein;
+                    MeineSchriftGrosseGross = SkinFarben.NormalSchriftGrosseGross;
+                    MeinIconRauf = SkinFarben.NormPfeilUp;
+                    MeinIconRunter = SkinFarben.NormPfeilDown;
+                    MeinSyncIcon = SkinFarben.NormSyncIcon;
+                    MeinRndIcon = SkinFarben.NormRndIcon;
+                    break;
+                default:
+                    MeinHintergrund = SkinFarben.DMHinterGrund;
+                    MeineSchriftFarbe1 = SkinFarben.DMSchriftFarbe1;
+                    MeineSchriftFarbe2 = SkinFarben.DMSchriftFarbe2;
+                    MeineKontrastFarbe1 = SkinFarben.DMKontrastFarbe1;
+                    MeineKontrastFarbe2 = SkinFarben.DMKontrastFarbe2;
+                    MeineSchriftArtNorm = SkinFarben.DMSchriftArtNorm;
+                    MeineSchriftArtFett = SkinFarben.DMSchriftArtFett;
+                    MeineSchriftGrosseNorm = SkinFarben.DMSchriftGrosseNorm;
+                    MeineSchriftGrosseKlein = SkinFarben.DMSchriftGrosseKlein;
+                    MeineSchriftGrosseGross = SkinFarben.DMschriftGrosseGross;
+                    MeinIconRauf = SkinFarben.DMPfeilUp;
+                    MeinIconRunter = SkinFarben.DMPfeilDown;
+                    MeinSyncIcon = SkinFarben.DMSyncIcon;
+                    MeinRndIcon = SkinFarben.DMRndIcon;
+                    break;
+            }
+           // OptionenUberschrift = BerechneOptionenAnzeigestring(HauptFensterBreite); will ich das Fenster in der breite und höhe überhaupt verändern warum?
+        }
+
+        private void ThemeWinStyleGedruckt()
+        {
+
+            Properties.Settings.Default.AktuellerSkin = 0;
+            Properties.Settings.Default.Save();
+            SkinAnderung();
+            // achtung bei anderenen Fenster muss auch der richtige skin kommen
+        }
+
+        private void ThemeDarkStyleGedruckt()
+        {
+            Properties.Settings.Default.AktuellerSkin = 1;
+            Properties.Settings.Default.Save();
+            SkinAnderung();
+            // achtung bei anderenen Fenster muss auch der richtige skin kommen
+        }
     }
+
+
 }

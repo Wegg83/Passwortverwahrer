@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Logik.Pw.Logik.Klassen
 {
-    class Person
+    public class Person
     {
         public string Name { get; set; }
         public string AktOrdnerName { get; set; }

@@ -146,7 +146,7 @@ namespace Logik.Pw.Logik.Klassen
             GesuchteDaten.PersiKauda = puhList;
         }
 
-        public ObservableCollection<string> VerwaltungLaden()
+        public ObservableCollection<string> VerwaltungListe()
         {
             ObservableCollection<string> NeueVerwaltung = new ObservableCollection<string>();
             AktuellerKnoten = StartKnoten;

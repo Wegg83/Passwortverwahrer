@@ -25,8 +25,11 @@
 
         <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" >
             <Grid>
-            <Label Content="Passwort:" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" />
-            <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Width="130" Height="30" Margin="80,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <ComboBox HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="100" 
+                   SelectedItem="{Binding CbBenutzerWahl, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AllCbBenutzer}" FontFamily="{Binding MeineSchriftArtFett}" VerticalContentAlignment="Center" Visibility="{Binding VisiBenutzerCB}">
+                </ComboBox>
+                <Label Content="Passwort:" Margin="120,8,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Visibility="{Binding Passwörter}" />
+                <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Width="100" Height="30" Margin="190,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding Passwörter}">
                 <PasswordBox.InputBindings>
                     <KeyBinding
                     Key="Enter"
@@ -34,6 +37,14 @@
                     />
                 </PasswordBox.InputBindings>
             </PasswordBox>
+                <Button HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="50" Margin="300,10,0,0" Content="Login" Command="{Binding LoginBtn}" Visibility="{Binding Passwörter}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" >
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                            <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </Grid>
         </GroupBox>
         

@@ -2,7 +2,7 @@ using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 
-namespace Logik.Wo.Logik.ViewModel
+namespace Logik.Pw.Logik.ViewModel
 {
 
     public class ViewModelLocator
@@ -24,6 +24,7 @@ namespace Logik.Wo.Logik.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<NeuBenutzerVM>();
         }
 
         public MainViewModel Main
@@ -33,7 +34,9 @@ namespace Logik.Wo.Logik.ViewModel
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
             }
         }
-        
+
+        public NeuBenutzerVM NeuBenutzer => ServiceLocator.Current.GetInstance<NeuBenutzerVM>();
+
         public static void Cleanup()
         {
             // TODO Clear the ViewModels
