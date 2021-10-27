@@ -23,6 +23,20 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
+        <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" >
+            <Grid>
+            <Label Content="Passwort:" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" />
+            <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Width="130" Height="30" Margin="80,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <PasswordBox.InputBindings>
+                    <KeyBinding
+                    Key="Enter"
+                    Command="{Binding LogInBtn}"
+                    />
+                </PasswordBox.InputBindings>
+            </PasswordBox>
+            </Grid>
+        </GroupBox>
+        
         <GroupBox Header="Ubersicht" Grid.Column="0" Grid.Row="0" Margin="10" Grid.RowSpan="3"  >
             <DataGrid ItemsSource="{Binding UiViewListe}"
                       IsSynchronizedWithCurrentItem="True"

@@ -146,14 +146,14 @@ namespace Logik.Pw.Logik.Klassen
             GesuchteDaten.PersiKauda = puhList;
         }
 
-        public ObservableCollection<BenutzerView> VerwaltungLaden()
+        public ObservableCollection<string> VerwaltungLaden()
         {
-            ObservableCollection<BenutzerView> NeueVerwaltung = new ObservableCollection<BenutzerView>();
+            ObservableCollection<string> NeueVerwaltung = new ObservableCollection<string>();
             AktuellerKnoten = StartKnoten;
 
             for (int i = 0; i < größe; i++)
             {
-                NeueVerwaltung.Add(new BenutzerView() { Name = AktuellerKnoten.DerBenutzer.Name });
+                NeueVerwaltung.Add(AktuellerKnoten.DerBenutzer.Name);
                 AktuellerKnoten = AktuellerKnoten.folgender;
             }
             return NeueVerwaltung;
