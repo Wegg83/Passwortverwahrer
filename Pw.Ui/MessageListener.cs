@@ -20,15 +20,15 @@ namespace Ui.Pw.Ui
 
         private void InitMessenger()
         {
-            Messenger.Default.Register<SendNeuBenutzerMess>(this, msg =>
+            Messenger.Default.Register<SendImportMess>(this, msg =>
             {
-                NeuBenutzerFenster Window = new NeuBenutzerFenster();
-                var vm = Window.DataContext as NeuBenutzerVM;
+                ImpSyncFenster Window = new ImpSyncFenster();
+                var vm = Window.DataContext as ImportSyncVM;
                 if (vm != null)
                 {
-                  // Code
+                    vm.Initialisiere(msg);
                 }
-                Window.Show();
+                Window.ShowDialog();
             });
         }
     }

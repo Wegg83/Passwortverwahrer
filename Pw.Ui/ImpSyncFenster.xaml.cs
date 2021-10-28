@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Ui.Pw.Ui
 {
     /// <summary>
-    /// Interaktionslogik für NeuBenutzerFenster.xaml
+    /// Interaktionslogik für ImpSyncFenster.xaml
     /// </summary>
-    public partial class NeuBenutzerFenster : Window
+    public partial class ImpSyncFenster : Window
     {
-        public NeuBenutzerFenster()
+        public ImpSyncFenster()
         {
             InitializeComponent();
         }

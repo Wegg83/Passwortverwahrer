@@ -10,7 +10,7 @@ namespace Logik.Pw.Logik.Messengers
 {
     public class SendImportMess
     {
-        public enum ImpMoglichkeit { SyncNeuAnderer, DirektAnderer, Sync  }
+        public enum ImpMoglichkeit { SyncNeuAnderer, DirektAnderer, Sync, NeuAnlage, PwAndern, BenutzerDel }
         public ImpMoglichkeit Anzeige;
         public Person ImportPerson;
         public PersonCenter Center;
@@ -24,6 +24,6 @@ namespace Logik.Pw.Logik.Messengers
             this.Center = Center;
             this.AktEingeloggt = AktEingeloggt;
             this.AktPw = AktPw;
-    }
+        }
     }
 }

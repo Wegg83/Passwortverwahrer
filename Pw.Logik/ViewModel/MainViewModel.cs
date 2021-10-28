@@ -23,7 +23,10 @@ namespace Logik.Pw.Logik.ViewModel
 
     public class MainViewModel : ViewModelBase
     {
-        enum DerzeitgeAnsicht { Verwaltung, Benutzer}
+        enum DerzeitgeAnsicht { Verwaltung, Benutzer }
+        public enum SkinWahl { winsylte, Darkstyle }
+
+        public static SkinWahl AktuellerSkin;
 
         private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
         public bool ZwischenAblageAktivBool { get; set; }
@@ -69,11 +72,11 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand PWHinzuBtn => _PWHinzuBtn;
         public RelayCommand PWAndersBtn => _PWAndersBtn;
         public RelayCommand PWZwischenBtn => _PWZwischenBtn;
-        public RelayCommand BenutzerZwischenBtn => _BenutzerZwischenBtn; 
+        public RelayCommand BenutzerZwischenBtn => _BenutzerZwischenBtn;
 
         public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
 
-        public ObservableCollection<DockPanelKlasse>  MeinOberMenu;
+        public ObservableCollection<DockPanelKlasse> MeinOberMenu;
         public Visibility Passwörter { get; set; }
         public Visibility Verwaltung { get; set; }
         public Visibility VisiHinzu { get; set; }
@@ -83,7 +86,7 @@ namespace Logik.Pw.Logik.ViewModel
         public Visibility VisiRndBtn1 { get; set; }
         public Visibility VisiRndBtn2 { get; set; }
         public Visibility VisiLöschen { get; set; }
-        public Visibility VisiBenutzerCB { get; set;}
+        public Visibility VisiBenutzerCB { get; set; }
         public Visibility VerwaltungAnders { get; set; }
 
         public string PWNeuProgramm { get; set; }
@@ -109,9 +112,9 @@ namespace Logik.Pw.Logik.ViewModel
         public string OptionenUberschrift { get; set; }
         public string BeschreibungRndVerwalt { get; set; }
         public string BeschreibungMenuDateiExport { get; set; }
-        public string BeschreibungMenuDateiImport  { get; set; }
+        public string BeschreibungMenuDateiImport { get; set; }
 
-    private int _tmpIndexNummerMin;
+        private int _tmpIndexNummerMin;
 
         public string LoginHilfeText { get; set; }
         public string HinzuNeuString { get; set; }
@@ -155,7 +158,7 @@ namespace Logik.Pw.Logik.ViewModel
             _tmpIndexNummerMin = 100001;
 
             VerwaltungsListe = _BenutzerListe.VerwaltungListe();
- 
+
             //   AktEintrag = new PwEintrag(); test
             // CbBenutzerWahl = ""; test
             PWEingabe = new SecureString();
@@ -166,13 +169,13 @@ namespace Logik.Pw.Logik.ViewModel
             _PWHinzuBtn = new RelayCommand(PWHinzuGedruckt);
             _PWAndersBtn = new RelayCommand(PWÄndernGedruckt);
             _LogOutBtn = new RelayCommand(LogoutGedruckt);
-            _ImportBtn = new RelayCommand(ImportGedruckt);  
+            _ImportBtn = new RelayCommand(ImportGedruckt);
 
             //pWDelBtn = new RelayCommand(PWLöschenGedruckt);
             _RootOrdnerBtn = new RelayCommand(RootOrdnerGedruckt);
             //versionsInfos = new RelayCommand(InfoCenterAnzeigenGedruckt);
             //exportBtn = new RelayCommand(ExportGedruckt);
-                
+
             _PWZwischenBtn = new RelayCommand(AktPwZwischenAgedruckt);
             _BenutzerZwischenBtn = new RelayCommand(AktBenZwischenAgedruckt);
             //syncBtn = new RelayCommand(SyncenGedruckt);
@@ -180,8 +183,14 @@ namespace Logik.Pw.Logik.ViewModel
             //pWRandVerwaltBtn = new RelayCommand(ZufallsKonfiguratorGedruckt);
             //pWBenutzAndersBtn = new RelayCommand(BenutzerPwAndersGedruckt);
 
-           
-
+            if (Properties.Settings.Default.AktuellerSkin == 0) // grundsätzlich keine schöne Lösung
+            {
+                AktuellerSkin = SkinWahl.winsylte;
+            }
+            else
+            {
+                AktuellerSkin = SkinWahl.Darkstyle;
+            }
             SkinAnderung();
         }
 
@@ -658,7 +667,8 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void sendeNeuerBenutzer()
         {
-            MessengerInstance.Send(new SendNeuBenutzerMess(SendNeuBenutzerMess.Zustand.Neueingabe, _BenutzerListe.AlleBenutzerAlsListe()));
+            // MessengerInstance.Send(new SendNeuBenutzerMess(SendNeuBenutzerMess.Zustand.Neueingabe, _BenutzerListe.AlleBenutzerAlsListe()));
+            MessengerInstance.Send(new SendImportMess(SendImportMess.ImpMoglichkeit.NeuAnlage, null, _BenutzerListe));
         }
 
         public void EmpfangeNeuerBenutzer(NeuBenutzerMess NeuAnlage)
@@ -1119,6 +1129,7 @@ namespace Logik.Pw.Logik.ViewModel
         {
 
             Properties.Settings.Default.AktuellerSkin = 0;
+            AktuellerSkin = SkinWahl.winsylte;
             Properties.Settings.Default.Save();
             SkinAnderung();
             // achtung bei anderenen Fenster muss auch der richtige skin kommen
@@ -1127,6 +1138,7 @@ namespace Logik.Pw.Logik.ViewModel
         private void ThemeDarkStyleGedruckt()
         {
             Properties.Settings.Default.AktuellerSkin = 1;
+            AktuellerSkin = SkinWahl.Darkstyle;
             Properties.Settings.Default.Save();
             SkinAnderung();
             // achtung bei anderenen Fenster muss auch der richtige skin kommen

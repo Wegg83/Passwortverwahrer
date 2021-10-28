@@ -24,7 +24,7 @@ namespace Logik.Pw.Logik.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<NeuBenutzerVM>();
+            SimpleIoc.Default.Register<ImportSyncVM>();
         }
 
         public MainViewModel Main
@@ -35,7 +35,8 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-        public NeuBenutzerVM NeuBenutzer => ServiceLocator.Current.GetInstance<NeuBenutzerVM>();
+        public ImportSyncVM ImpSnyc => ServiceLocator.Current.GetInstance<ImportSyncVM>();
+
 
         public static void Cleanup()
         {
