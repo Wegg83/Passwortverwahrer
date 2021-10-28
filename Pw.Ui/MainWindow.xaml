@@ -3,14 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Pw.Ui"
+        xmlns:local="clr-namespace:Pw.Ui" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="PasswortVerwahrer" Height="{Binding HauptFensterHohe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="{Binding HauptFensterBreite, Mode=TwoWay}" MinWidth="580" MinHeight="450"
+        Icon="Bilder/PWIcon.ico" WindowState="{Binding FensterMaxMinStatus}"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
     <Window.IsEnabled>
         <Binding Path="ListenerBool" Source="{StaticResource MessageListener}" />
     </Window.IsEnabled>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Programmschließen}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -23,6 +29,27 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
+        <Menu Height="20" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <MenuItem Header="Datei" >
+                <MenuItem Command="{Binding PWBenutzerVerwaltungBtn}" Header="{Binding BeschreibungMenu1}"/>
+                <MenuItem Command="{Binding PWRandVerwaltBtn}" Header="{Binding BeschreibungRndVerwalt}"/>
+                <MenuItem Command="{Binding ExportBtn}" Header="{Binding BeschreibungMenuDateiExport}" IsEnabled="{Binding BenutzerAktivBool}"/>
+                <MenuItem Command="{Binding ImportBtn}" Header="{Binding BeschreibungMenuDateiImport}" />
+                <MenuItem Command="{Binding LogOutBtn}" Header="Benutzer abmelden" IsEnabled="{Binding BenutzerAktivBool}"/>
+                <MenuItem Command="{Binding PrgEndeBtn}" Header="Schließen" />
+            </MenuItem>
+            <MenuItem Header="Edit" >
+                <MenuItem Command="{Binding InZwischenAblage}" Header="In Zwischenablage" IsEnabled="{Binding ZwischenAblageAktivBool}" />
+                <MenuItem Header="Themes-Aussehen">
+                    <MenuItem Command="{Binding WinstyleXamlBtn}" Header="Windows-Style" />
+                    <MenuItem Command="{Binding DarkstyleXamlBtn}" Header="Dark-Style" />
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Hilfe" >
+                <MenuItem Command="{Binding VersionsInfos}" Header="Info" />
+            </MenuItem>
+        </Menu>
+
         <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" Visibility="{Binding VisiBenutzerCB}" >
             <Grid>
                 <ComboBox HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="100" 
@@ -30,13 +57,13 @@
                 </ComboBox>
                 <Label Content="Passwort:" Margin="120,8,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Visibility="{Binding Passwörter}" />
                 <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Width="100" Height="30" Margin="190,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding Passwörter}">
-                <PasswordBox.InputBindings>
-                    <KeyBinding
+                    <PasswordBox.InputBindings>
+                        <KeyBinding
                     Key="Enter"
                     Command="{Binding LogInBtn}"
                     />
-                </PasswordBox.InputBindings>
-            </PasswordBox>
+                    </PasswordBox.InputBindings>
+                </PasswordBox>
                 <Button HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="50" Margin="300,10,0,0" Content="Login" Command="{Binding LoginBtn}" Visibility="{Binding Passwörter}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" >
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
@@ -87,6 +114,166 @@
 
             </DataGrid>
         </GroupBox>
+
+        <GroupBox Header="Verwaltung" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="10,20,10,10" Visibility="{Binding Verwaltung}">
+            <Grid>
+                <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding BreiteDataGrid, UpdateSourceTrigger=PropertyChanged}" Height="{Binding HoheDataGrid, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,150,0"
+                  ItemsSource="{Binding VerwaltungColl}" SelectedItem="{Binding VerwaltungSelItem}" MinHeight="100" MinWidth="210"
+                  AutoGenerateColumns="False" IsReadOnly="True" Grid.ColumnSpan="2" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Benutzername" Width="*" MinWidth="210" >
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="{x:Type DataGridColumnHeader}" >
+                                    <Setter Property="FontWeight"  Value="Bold" />
+                                    <Setter Property="Foreground"  Value="#FF4072A4" />
+                                    <Setter Property="Background"  Value="#FFD1E2FB" />
+                                </Style>
+                            </DataGridTextColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,142,60,193" Content="Neu" Command="{Binding PWHinzuBtn}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                            <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,168,60,167" Content="Ändern" Command="{Binding PWBenutzAndersBtn}" Visibility="{Binding VerwaltungAnders}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                            <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Label Content="Benutzer-Stammordner"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="193.87,0,0,10" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" Foreground="{Binding MeineSchriftFarbe1}" Grid.Column="1" />
+                <Label Content="{Binding BenutzerRootOrdnerString}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="350,0,0,10" FontFamily="{Binding MeineSchriftArtNorm}" FontSize="{Binding MeineSchriftGrosseklein}" Foreground="{Binding MeineSchriftFarbe1}" Grid.Column="1" />
+                <Button Content="..." HorizontalAlignment="Left" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Height="15" Width="19" Margin="163.87,0,0,15" Command="{Binding RootOrdnerBtn}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                            <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+
+            </Grid>
+        </GroupBox>
+
+        <Label HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,75,40,0" Content="Suche" Visibility="{Binding VisiDGPW}" Width="80" Height="28" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
+        <TextBox HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,100,40,0" Text="{Binding PWSuche, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding VisiDGPW}" Width="80" Height="20" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="20" Width="50" Margin="350,0,0,125" Content="{Binding HinzuNeuString}" Command="{Binding PWHinzuBtn}" Visibility="{Binding VisiHinzu}" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" Foreground="{Binding MeineSchriftFarbe2}" >
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="20" Width="20" Margin="240,0,0,125" Command="{Binding NeuesRAndomPWBtn}" Visibility="{Binding VisiHinzu2}" FontFamily="{Binding MeineSchriftArtNorm}" Foreground="{Binding MeineSchriftFarbe1}" >
+            <StackPanel>
+                <Image Source="{Binding MeinRndIcon}" Height="13" Width="13" />
+            </StackPanel>
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="20" Width="20" Margin="130,0,0,72" Command="{Binding NeuesRAndomPWBtn}" Visibility="{Binding VisiÄndern}" FontFamily="{Binding MeineSchriftArtNorm}" Foreground="{Binding MeineSchriftFarbe1}" >
+            <StackPanel>
+                <Image Source="{Binding MeinRndIcon}" Height="13" Width="13" />
+            </StackPanel>
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="20" Width="50" Margin="350,0,0,72" Content="Ändern" Command="{Binding PWAndersBtn}" Visibility="{Binding VisiÄndern}" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" Foreground="{Binding MeineSchriftFarbe2}" >
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+        <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,0,60,100" Content="Löschen" Command="{Binding PWDelBtn}" Visibility="{Binding VisiLöschen}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+
+
+        <TextBox  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,320,125" Text="{Binding PWNeuProgramm}" Visibility="{Binding VisiHinzu2}" Width="80" Height="20" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <TextBox  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,100,125" Text="{Binding PWNeuAdresse, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding VisiHinzu2}" Width="80" Height="20" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" >
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding PWHinzuBtn}" Key="Return" />
+            </TextBox.InputBindings>
+        </TextBox>
+        <TextBox  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="128,0,0,125" Text="{Binding PWNeuPW, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding VisiHinzu2}" Width="80" Height="20" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" >
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding PWHinzuBtn}" Key="Return" />
+            </TextBox.InputBindings>
+        </TextBox>
+        <TextBox  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,210,72" Text="{Binding PWAndersAdresse, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding VisiÄndern}" Width="80" Height="20" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" >
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding PWAndersBtn}" Key="Return" />
+            </TextBox.InputBindings>
+        </TextBox>
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="20" Width="50" Margin="0,0,210,45" Content="Kopieren" Command="{Binding AktBenutzerInZABtn}" Visibility="{Binding VisiÄndern}" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" Foreground="{Binding MeineSchriftFarbe2}" >
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="20" Width="50" Margin="10,0,0,45" Content="Kopieren" Command="{Binding AktPwInZABtn}" Visibility="{Binding VisiÄndern}" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" Foreground="{Binding MeineSchriftFarbe2}" >
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+        <TextBox  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,0,72" Text="{Binding PWAndersPW, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding VisiÄndern}" Width="80" Height="20" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" >
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding PWAndersBtn}" Key="Return" />
+            </TextBox.InputBindings>
+        </TextBox>
+
+        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="30" Margin="250,49,0,0" Command="{Binding SyncBtn}" Visibility="{Binding VisiDGPW}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" >
+            <StackPanel>
+                <Image Source="{Binding MeinSyncIcon}" Height="20" Width="22" />
+            </StackPanel>
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+
+        <Label Content="Benutzer" Visibility="{Binding Passwörter}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,25,0,0" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
+        <Label Content="Passwort" Visibility="{Binding Passwörter}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="195,25,0,0" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
+        <Label Content="Programm" Visibility="{Binding VisiHinzu2}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,330,145" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
+        <Label Content="Benutzer" Visibility="{Binding VisiHinzu2}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,100,145" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
+        <Label Content="Passwort" Visibility="{Binding VisiHinzu2}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="120,0,0,145" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
+        <Label Visibility="{Binding VisiÄndern}" Content="Benutzer"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,230,90" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
+        <Label Visibility="{Binding VisiÄndern}" Content="Passwort"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,10,90" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
+
+        <Label Content="{Binding LoginHilfeText}" Visibility="{Binding Passwörter}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="000,0,100,150" FontFamily="{Binding MeineSchriftArtNorm}" FontSize="{Binding MeineSchriftGrosseklein}" Foreground="{Binding MeineSchriftFarbe1}" />
+
+
 
     </Grid>
 </Window>

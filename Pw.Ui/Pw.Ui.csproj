@@ -47,6 +47,12 @@
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -123,6 +129,17 @@
       <Project>{ebbf1047-f91a-4290-9730-61ae7639d9d4}</Project>
       <Name>Pw.Logik</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Bilder\PWIcon.ico" />
+    <Resource Include="Bilder\PwIconDownSw.ico" />
+    <Resource Include="Bilder\PwIconDownWs.ico" />
+    <Resource Include="Bilder\PwIconRndDm.ico" />
+    <Resource Include="Bilder\PwIconRndSw.ico" />
+    <Resource Include="Bilder\PwIconRndWs.ico" />
+    <Resource Include="Bilder\PwIconUpSw.ico" />
+    <Resource Include="Bilder\PwIconUpWs.ico" />
+    <Resource Include="Bilder\syncIconW.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

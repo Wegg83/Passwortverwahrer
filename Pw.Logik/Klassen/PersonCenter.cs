@@ -12,7 +12,7 @@ namespace Logik.Pw.Logik.Klassen
 {
     // Benutzerview ist nur ein string?
 
-    class PersonCenter
+    public class PersonCenter
     {
         private PwEintrag ErstlingDaten;
         private static Random random = new Random();
