@@ -27,13 +27,13 @@ namespace Logik.Pw.Logik.ViewModel
         public enum SkinWahl { winsylte, Darkstyle }
 
         public static SkinWahl AktuellerSkin;
+        public const string PasswortEndung = @"\bin.dat";
 
         private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
         public bool ZwischenAblageAktivBool { get; set; }
         private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
         private RelayCommand _PWHinzuBtn, _PWAndersBtn, _BenutzerZwischenBtn, _PWZwischenBtn;
         private PersonCenter _BenutzerListe; // alt dieGesamteListe
-        private string PasswortEndung = @"\bin.dat";
         private Person AktBenutzer;
         public ObservableCollection<PwEintrag> MainListe { get; set; } // alt PasswortColl
         public ObservableCollection<PwEintrag> GefilterteListe { get; set; } // altKoListe
@@ -123,9 +123,9 @@ namespace Logik.Pw.Logik.ViewModel
 
         public MainViewModel()
         {
-            Messenger.Default.Register<NeuBenutzerMess>(this, empfang =>
+            Messenger.Default.Register<EmpfCenterMess>(this, empfang =>
             {
-                EmpfangeNeuerBenutzer(empfang);
+                EmpfangeNeuesCenterSync(empfang);
             });
 
 
@@ -472,7 +472,7 @@ namespace Logik.Pw.Logik.ViewModel
             }
             else
             {
-                if (PWEingabe.Length == 0)
+                if (PWEingabe == null || PWEingabe.Length == 0)
                 {
                   //  IsLoginTxtBoxFocused = true; geht leider nciht
                 }
@@ -671,30 +671,30 @@ namespace Logik.Pw.Logik.ViewModel
             MessengerInstance.Send(new SendImportMess(SendImportMess.ImpMoglichkeit.NeuAnlage, null, _BenutzerListe));
         }
 
-        public void EmpfangeNeuerBenutzer(NeuBenutzerMess NeuAnlage)
-        {
-            // auch für import --> abchecken ob wir den Benutzer hinzufügen müssen.. dann auch liste eintragen wenn vorhanden
-            PWEingabe.Clear();
-            if (_BenutzerListe.NameSuchen(NeuAnlage.NeuePersondaten.Name).PersiKauda == null)
-            {
-                NeuAnlage.NeuePersondaten.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
-                _BenutzerListe.Hinzufügen(NeuAnlage.NeuePersondaten);
-                if(NeuAnlage.NeuePersondaten.PersiKauda == null)
-                {
-                    _BenutzerListe.ErstEintrag(NeuAnlage.NeuePersondaten.Name, NeuAnlage.PwEintrag);
-                }          
-                _BenutzerListe.KomplettVerschlüsseln(NeuAnlage.NeuePersondaten.Name, PfadFindung(NeuAnlage.NeuePersondaten.Name));
-            }
-            else
-            {
-                // syncvorgang wurde durchgeführt. update die Kaudaliste
-                _BenutzerListe.NameSuchen(NeuAnlage.NeuePersondaten.Name).PersiKauda = NeuAnlage.NeuePersondaten.PersiKauda;
-            }
+        //public void EmpfangeNeuerBenutzer(NeuBenutzerMess NeuAnlage)
+        //{
+        //    // auch für import --> abchecken ob wir den Benutzer hinzufügen müssen.. dann auch liste eintragen wenn vorhanden
+        //    PWEingabe.Clear();
+        //    if (_BenutzerListe.NameSuchen(NeuAnlage.NeuePersondaten.Name).PersiKauda == null)
+        //    {
+        //        NeuAnlage.NeuePersondaten.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
+        //        _BenutzerListe.Hinzufügen(NeuAnlage.NeuePersondaten);
+        //        if(NeuAnlage.NeuePersondaten.PersiKauda == null)
+        //        {
+        //            _BenutzerListe.ErstEintrag(NeuAnlage.NeuePersondaten.Name, NeuAnlage.PwEintrag);
+        //        }          
+        //        _BenutzerListe.KomplettVerschlüsseln(NeuAnlage.NeuePersondaten.Name, PfadFindung(NeuAnlage.NeuePersondaten.Name));
+        //    }
+        //    else
+        //    {
+        //        // syncvorgang wurde durchgeführt. update die Kaudaliste
+        //        _BenutzerListe.NameSuchen(NeuAnlage.NeuePersondaten.Name).PersiKauda = NeuAnlage.NeuePersondaten.PersiKauda;
+        //    }
 
-         //   VerwaltungsListe.Add(NeuAnlage.NeuePersondaten.Name);
-            VerwaltungsAnzeigeNeuLaden();
-            Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
-        }
+        // //   VerwaltungsListe.Add(NeuAnlage.NeuePersondaten.Name);
+        //    VerwaltungsAnzeigeNeuLaden();
+        //    Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
+        //}
 
         private Person LeseDoppeltVerschlüsselteDatei(string DateiPfad, KaudawelschGenerator DerKaudaGenerator, string Ordner)
         {
@@ -838,7 +838,24 @@ namespace Logik.Pw.Logik.ViewModel
                     }
                     else
                     {
-                        ubergabe = new SendImportMess(SendImportMess.ImpMoglichkeit.DirektAnderer, impBen, _BenutzerListe);
+                        if(VerwaltungsListe.Count() > 0)
+                        {
+                            ubergabe = new SendImportMess(SendImportMess.ImpMoglichkeit.DirektAnderer, impBen, _BenutzerListe);
+                        }
+                        else
+                        {
+
+                            // ubergabe = new SendImportMess(SendImportMess.ImpMoglichkeit.Import, impBen, _BenutzerListe);
+                            impBen.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
+                            _BenutzerListe.Hinzufügen(impBen);
+                            _BenutzerListe.KomplettVerschlüsseln(impBen.Name, PfadFindung(impBen.Name));
+                            VerwaltungsAnzeigeNeuLaden();
+                            //string tmpZielPfad = PfadFindung(_empfDaten.ImportPerson.Name, 2);
+                            //File.Copy(DateiPfad, tmpZielPfad, true);
+                    
+                            return;
+                        }
+                      
                         // starte imp da name noch nicht vorhanden.. // frage ob man doch mit anderem namen syncen will?                    
                     }
                     MessengerInstance.Send(ubergabe);
@@ -851,11 +868,20 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-        public void EmpfangeNeuenImport()
+        public void EmpfangeNeuesCenterSync(EmpfCenterMess NeuesCenter)
         {
             // eigentlich sollte nun die Observable erweitert werden und auch die _Benutzerliste.. neu initialiserien?
-            initzializeBenutzer();
-            VerwaltungsAnzeigeNeuLaden();
+            _BenutzerListe = NeuesCenter.Center;         
+            if (NeuesCenter.AktivesProfil != null)
+            {
+                // mit Passwort einloggen, im profil bleiben und liste anzeigen
+                // combo muss bleiben?
+            }
+            else
+            {
+              //  initzializeBenutzer(); nicht notwendig?
+                VerwaltungsAnzeigeNeuLaden();
+            }
         }
 
 

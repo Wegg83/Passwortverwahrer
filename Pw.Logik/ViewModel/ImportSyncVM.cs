@@ -1,9 +1,13 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Logik.Pw.Logik.Klassen;
 using Logik.Pw.Logik.Messengers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,13 +17,21 @@ namespace Logik.Pw.Logik.ViewModel
 {
     public class ImportSyncVM : ViewModelBase
     {
-        private ImpMoglichkeit Variante;
+        private SendImportMess _empfDaten;
+
+        private RelayCommand _okBtn;
+        public SecureString Pw1Eingabe { get; set; }
+
+        public ObservableCollection<string> ComboNamen  { get; set; }
+        public string MoglichBenItem { get; set; }
 
         public string InputUberschrift { get; set; }
         public string InputV2Uberschrift { get; set; }
         public string InputV3Uberschrift { get; set; }
         public Visibility Version1Visi { get; set; }
-        public Visibility Version2Visi { get; set; }
+        public Visibility VisiSyncBtn { get; set; }
+        public Visibility VisiNeuBtn { get; set; }
+        public Visibility VisiAndererBtn { get; set; }
         public Visibility Version3Visi { get; set; }
         public Visibility Version4Visi { get; set; }
         public Visibility Version5Visi { get; set; }
@@ -35,34 +47,189 @@ namespace Logik.Pw.Logik.ViewModel
         public int MeineSchriftGrosseKlein { get; set; }
         public int MeineSchriftGrosseGross { get; set; }
 
+        public RelayCommand OkBtn => _okBtn;
+
+        public ImportSyncVM()
+        {
+            _okBtn = new RelayCommand(EingabeErledigt);      
+        }
+
         public void Initialisiere(SendImportMess daten)
         {
-            Variante = daten.Anzeige;
+            _empfDaten = daten;
             SkinWechsel();
 
-            switch (Variante)
+            switch (_empfDaten.Anzeige)
             {
-                case ImpMoglichkeit.NeuAnlage:
+                case ImpMoglichkeit.NeuAnlage: // alt 4
                     InputUberschrift = "BenutzerName:";
                     InputV2Uberschrift = "Passwort:";
                     InputV3Uberschrift = "Passwort Wdh:";
                     Version1Visi = Visibility.Hidden;
-                    Version2Visi = Visibility.Hidden;
+                    VisiSyncBtn = Visibility.Hidden;
+                    VisiNeuBtn = Visibility.Hidden;
+                    VisiAndererBtn = Visibility.Hidden;
                     Version3Visi = Visibility.Visible;
                     Version4Visi = Visibility.Visible;
+                    Version5Visi = Visibility.Hidden;
+                    break;
+                case ImpMoglichkeit.BenutzerDel: // alt 0
+                    InputUberschrift = "Passwort:";
+                    Version1Visi = Visibility.Visible;
+                    VisiSyncBtn = Visibility.Hidden;
+                    VisiNeuBtn = Visibility.Hidden;
+                    VisiAndererBtn = Visibility.Hidden;
+                    Version3Visi = Visibility.Hidden;
+                    Version4Visi = Visibility.Hidden;
+                    Version5Visi = Visibility.Hidden;
+                    break;
+                case ImpMoglichkeit.SyncNeuAnderer: //alt 2
+                    Version1Visi = Visibility.Hidden;
+                    VisiSyncBtn = Visibility.Visible;
+                    VisiNeuBtn = Visibility.Visible;
+                    VisiAndererBtn = Visibility.Visible;
+                    Version3Visi = Visibility.Hidden;
+                    Version4Visi = Visibility.Hidden;
+                    Version5Visi = Visibility.Hidden;
+                    break;
+                case ImpMoglichkeit.DirektAnderer:
+                    Version1Visi = Visibility.Hidden;
+                    VisiSyncBtn = Visibility.Hidden;
+                    VisiNeuBtn = Visibility.Visible;
+                    VisiAndererBtn = Visibility.Visible;
+                    Version3Visi = Visibility.Hidden;
+                    Version4Visi = Visibility.Hidden;
+                    Version5Visi = Visibility.Hidden;
+                    break;
+                case ImpMoglichkeit.Sync: // 3
+                    Version1Visi = Visibility.Hidden;
+                    VisiSyncBtn = Visibility.Hidden;
+                    VisiNeuBtn = Visibility.Hidden;
+                    VisiAndererBtn = Visibility.Hidden;
+                    Version3Visi = Visibility.Visible;
+                    Version4Visi = Visibility.Hidden;
+                    Version5Visi = Visibility.Hidden;
+                    break;
+                case ImpMoglichkeit.AndererBenutzer: // alt 5
+                    Version1Visi = Visibility.Hidden;
+                    VisiSyncBtn = Visibility.Hidden;
+                    VisiNeuBtn = Visibility.Hidden;
+                    VisiAndererBtn = Visibility.Hidden;
+                    Version3Visi = Visibility.Visible;
+                    Version4Visi = Visibility.Hidden;
+                    Version5Visi = Visibility.Visible;
+                    ComboNamen = _empfDaten.Center.VerwaltungListe();
+                    MoglichBenItem = ComboNamen[0];
+                    InputV2Uberschrift = "Benutzer-Passwort:";
+                    InputV3Uberschrift = "Import-Passwort:";
+                    break;
+                case ImpMoglichkeit.PwAndern: // alt 6
+                    Version1Visi = Visibility.Hidden;
+                    VisiSyncBtn = Visibility.Hidden;
+                    VisiNeuBtn = Visibility.Hidden;
+                    VisiAndererBtn = Visibility.Hidden;
+                    Version3Visi = Visibility.Visible;
+                    Version4Visi = Visibility.Visible;
+                    Version5Visi = Visibility.Hidden;
+                    break;
+                case ImpMoglichkeit.Import: // alt 0
+                    InputUberschrift = "Passwort:";
+                    Version1Visi = Visibility.Visible;
+                    VisiSyncBtn = Visibility.Hidden;
+                    VisiNeuBtn = Visibility.Hidden;
+                    VisiAndererBtn = Visibility.Hidden;
+                    Version3Visi = Visibility.Hidden;
+                    Version4Visi = Visibility.Hidden;
                     Version5Visi = Visibility.Hidden;
                     break;
             }
         }
 
+        private void SyncGedruckt()
+        {
+
+        }
+        private void NeuAnlageGedruckt()
+        {
+
+        }
+        private void AndererNutzerSyncGedruckt()
+        {
+
+        }
+
         public void EingabeErledigt()
         {
-            switch (Variante)
+            bool tmpkorrekt = false;
+            EmpfCenterMess tmpUbergabeDaten = null;
+            switch (_empfDaten.Anzeige)
             {
-
+                // code fehlt!
+                case ImpMoglichkeit.Import:
+                    // passwort korrekt?
+                    // import 
+                    // bool true
+                    bool tmpPw = false;
+                    KaudawelschGenerator Checker = new KaudawelschGenerator(Pw1Eingabe);
+                    if (Checker.PwChecker(_empfDaten.ImportPerson.PersiKauda))
+                    {
+                        _empfDaten.ImportPerson.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
+                        _empfDaten.Center.Hinzufügen(_empfDaten.ImportPerson);
+                        //string tmpZielPfad = PfadFindung(_empfDaten.ImportPerson.Name, 2);
+                        //File.Copy(DateiPfad, tmpZielPfad, true);
+                        _empfDaten.Center.KomplettVerschlüsseln(_empfDaten.ImportPerson.Name, PfadFindung(_empfDaten.ImportPerson.Name));
+                        tmpkorrekt = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Passwort nicht korrekt"); // könnte man ohne Messagebox machen
+                    }
+                    break;
+            }
+            if(tmpkorrekt)
+            {
+                MessengerInstance.Send(tmpUbergabeDaten);
             }
         }
 
+        private string NeuenBenutzerOrdnerAnlegen()
+        {
+            string NeuerOrdner = "";
+            for (int i = 0; i < 1000; i++)
+            {
+                if (!OrdnerVorhanden(i.ToString()))
+                {
+                    NeuerOrdner = Properties.Settings.Default.PfadZielOrdner + i;
+                    System.IO.Directory.CreateDirectory(NeuerOrdner);
+                    FileStream fs = File.Create(NeuerOrdner + MainViewModel.PasswortEndung);
+                    fs.Close();
+                    return i.ToString();
+                }
+            }
+            return "Maximale Benutzer erreicht";
+        }
+        private bool OrdnerVorhanden(string Ordnername)
+        {
+            string VorhandenerOrdnername;
+            try
+            {
+                List<string> AlleOrdner = new List<string>(Directory.EnumerateDirectories(Properties.Settings.Default.PfadZielOrdner));
+                foreach (var Ordna in AlleOrdner)
+                {
+                    VorhandenerOrdnername = Ordna.Substring(Ordna.LastIndexOf("\\") + 1);
+                    if (VorhandenerOrdnername == Ordnername)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return false;
+        }
+        private string PfadFindung(string BenutzerName) => Pw.Logik.Properties.Settings.Default.PfadZielOrdner + _empfDaten.Center.OrdnerNameHolen(BenutzerName) + MainViewModel.PasswortEndung;
         public void SkinWechsel()
         {
           

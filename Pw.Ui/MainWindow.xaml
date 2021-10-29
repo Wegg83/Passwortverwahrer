@@ -53,7 +53,7 @@
         <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" Visibility="{Binding VisiBenutzerCB}" >
             <Grid>
                 <ComboBox HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="100" 
-                   SelectedItem="{Binding CbBenutzerWahl, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AllCbBenutzer}" FontFamily="{Binding MeineSchriftArtFett}" VerticalContentAlignment="Center">
+                   SelectedItem="{Binding CbBenutzerWahl, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding VerwaltungsListe}" FontFamily="{Binding MeineSchriftArtFett}" VerticalContentAlignment="Center">
                 </ComboBox>
                 <Label Content="Passwort:" Margin="120,8,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Visibility="{Binding Passwörter}" />
                 <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Width="100" Height="30" Margin="190,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="{Binding Passwörter}">
@@ -118,10 +118,10 @@
         <GroupBox Header="Verwaltung" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="10,20,10,10" Visibility="{Binding Verwaltung}">
             <Grid>
                 <DataGrid HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding BreiteDataGrid, UpdateSourceTrigger=PropertyChanged}" Height="{Binding HoheDataGrid, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,150,0"
-                  ItemsSource="{Binding VerwaltungColl}" SelectedItem="{Binding VerwaltungSelItem}" MinHeight="100" MinWidth="210"
+                  ItemsSource="{Binding VerwaltungsListe}" SelectedItem="{Binding VerwaltungSelItem}" MinHeight="100" MinWidth="210"
                   AutoGenerateColumns="False" IsReadOnly="True" Grid.ColumnSpan="2" >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Name}" Header="Benutzername" Width="*" MinWidth="210" >
+                        <DataGridTextColumn Binding="{Binding}" Header="Benutzername" Width="*" MinWidth="210" >
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="{x:Type DataGridColumnHeader}" >
                                     <Setter Property="FontWeight"  Value="Bold" />

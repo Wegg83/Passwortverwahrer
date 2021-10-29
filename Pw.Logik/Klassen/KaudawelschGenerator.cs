@@ -14,9 +14,13 @@ namespace Logik.Pw.Logik.Klassen
     {
         private SecureString MeinWunsch = new SecureString();
 
-        public KaudawelschGenerator(SecureString MeinWunsch)
+        public KaudawelschGenerator(SecureString MeinWunsch) // WARUM so einen konstruktor?
         {
             this.MeinWunsch = MeinWunsch;
+            if(MeinWunsch == null)
+            {
+                MeinWunsch = new SecureString();
+            }
             SecureString tmp = new SecureString();
 
 

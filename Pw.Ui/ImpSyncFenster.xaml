@@ -11,12 +11,15 @@
     <Grid Background="{Binding MeinHintergrund}">
         <Label Content="{Binding InputUberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="150" Height="55" Margin="10,10,0,0"
                 FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding Version1Visi}"/>
-        <TextBox VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,15,30,0" Text="{Binding PasswortEingabeStern, UpdateSourceTrigger=PropertyChanged}" FontSize="{Binding MeineSchriftGrosseKlein}" FontFamily="{Binding MeineSchriftArtNorm}" Visibility="{Binding Version1Visi}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TabIndex="2">
-            <TextBox.InputBindings>
-                <KeyBinding Command="{Binding EnterBtn}" Key="Return" />
-            </TextBox.InputBindings>
-        </TextBox>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Version1Visi}" Width="30" Height="15" Margin="120,15,0,0" Content="OK" Command="{Binding PasswortEingabeBtn}" TabIndex="3"
+        <PasswordBox PasswordChanged="PasswordBox1_PasswordChanged" VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,15,30,0" Visibility="{Binding Version1Visi}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TabIndex="2">
+            <PasswordBox.InputBindings>
+                <KeyBinding
+                    Key="Enter"
+                    Command="{Binding OkBtn}"
+                    />
+            </PasswordBox.InputBindings>
+        </PasswordBox>
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Version1Visi}" Width="30" Height="15" Margin="120,15,0,0" Content="OK" Command="{Binding OkBtn}" TabIndex="3"
                 FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
@@ -27,7 +30,7 @@
         </Button>
         <Label Content="{Binding InputV2Uberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="220" Height="60" Margin="0,0,0,60"
                 FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseGross}" Visibility="{Binding Version2Visi}"/>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Version2Visi}" Width="45" Height="25" Margin="0,100,150,0" Content="{Binding TextV2Btn1}" Command="{Binding Version2Btn1}"
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding VisiNeuBtn}" Width="45" Height="25" Margin="0,100,150,0" Content="{Binding TextV2Btn1}" Command="{Binding Version2Btn1}"
                 FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}" TabIndex="8">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
@@ -36,7 +39,7 @@
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Version2Visi}" Width="45" Height="25" Margin="0,100,20,0" Content="{Binding TextV2Btn2}" Command="{Binding Version2Btn2}"
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding VisiAndererBtn}" Width="45" Height="25" Margin="0,100,20,0" Content="{Binding TextV2Btn2}" Command="{Binding Version2Btn2}"
                 FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}" TabIndex="9">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
@@ -45,7 +48,7 @@
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Version2Visi}" Width="60" Height="25" Margin="130,100,0,0" Content="{Binding TextV2Btn3}" Command="{Binding Version2Btn3}"
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding VisiSyncBtn}" Width="60" Height="25" Margin="130,100,0,0" Content="{Binding TextV2Btn3}" Command="{Binding Version2Btn3}"
                 FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}" TabIndex="10">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
