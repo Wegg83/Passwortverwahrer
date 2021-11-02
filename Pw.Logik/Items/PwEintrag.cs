@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,8 +25,19 @@ namespace Logik.Pw.Logik.Items
 
         public string tmprndIndex { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public bool Aktuell { get; set; }
 
+        #region Inotify Property Changed
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if(propertyName != "Aktuell")
+            {
+                Aktuell = false;
+            }
+        }
+        #endregion
 
         #region IDataErrorInfo Management
         public bool HasErrors => Errors.Any();
@@ -35,8 +47,7 @@ namespace Logik.Pw.Logik.Items
         {
             get
             {
-                CollectErrors();
-
+                CollectErrors();              
                 return Errors.ContainsKey(PropertyName) ? Errors[PropertyName] : string.Empty;
             }
         }
@@ -84,5 +95,25 @@ namespace Logik.Pw.Logik.Items
             }
         }
         #endregion
+
+        public PwEintrag()
+        {
+            Programm = string.Empty;
+            Datum = DateTime.Today;
+            Benutzer = string.Empty;
+            Passwort = string.Empty;
+            tmprndIndex = "-1";
+            Aktuell = true;
+        }
+
+        public PwEintrag(PwEintrag Kopie)
+        {
+            Programm = Kopie.Programm;
+            Datum = Kopie.Datum;
+            Benutzer = Kopie.Benutzer;
+            Passwort = Kopie.Passwort;
+            tmprndIndex = Kopie.tmprndIndex;
+            Aktuell = true;
+        }
     }
 }
