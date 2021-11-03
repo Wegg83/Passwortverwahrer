@@ -11,14 +11,14 @@
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
     <Window.IsEnabled>
-        <Binding Path="ListenerBool" Source="{StaticResource MessageListener}" />
+        <Binding Path="ListenerBool" Source="{StaticResource MessageListener}"   />
     </Window.IsEnabled>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{Binding Programmschließen}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid>
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{Binding MeinHintergrund}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
@@ -30,7 +30,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Menu Height="20" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Menu Height="20" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.ColumnSpan="2">
             <MenuItem Header="Datei" >
                 <MenuItem Command="{Binding PWBenutzerVerwaltungBtn}" Header="{Binding BeschreibungMenu1}"/>
                 <MenuItem Command="{Binding PWRandVerwaltBtn}" Header="{Binding BeschreibungRndVerwalt}"/>
@@ -40,7 +40,6 @@
                 <MenuItem Command="{Binding PrgEndeBtn}" Header="Schließen" />
             </MenuItem>
             <MenuItem Header="Edit" >
-                <MenuItem Command="{Binding InZwischenAblage}" Header="In Zwischenablage" IsEnabled="{Binding ZwischenAblageAktivBool}" />
                 <MenuItem Header="Themes-Aussehen">
                     <MenuItem Command="{Binding WinstyleXamlBtn}" Header="Windows-Style" />
                     <MenuItem Command="{Binding DarkstyleXamlBtn}" Header="Dark-Style" />
@@ -51,7 +50,9 @@
             </MenuItem>
         </Menu>
 
-        <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" Visibility="{Binding VisiBenutzerCB}" Height="80" Width="400" >
+
+
+        <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" Visibility="{Binding VisiBenutzerCB}" Height="80" Width="400" Foreground="{Binding MeineSchriftFarbe1}" >
             <Grid>
                 <ComboBox HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="100" 
                    SelectedItem="{Binding CbBenutzerWahl, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding VerwaltungsListe}" FontFamily="{Binding MeineSchriftArtFett}" VerticalContentAlignment="Center">

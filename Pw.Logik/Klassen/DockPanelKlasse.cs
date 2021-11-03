@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Logik.Pw.Logik.Klassen
@@ -12,7 +13,7 @@ namespace Logik.Pw.Logik.Klassen
     {
         public string Header { get; set; }
         public bool menItemEnable;
-        public ObservableCollection<DockPanelKlasse> UnterMenus { get; set; }
+        public ObservableCollection<DockPanelKlasse> SubItems { get; set; }
         private RelayCommand tastendruck;
         private int index;
 

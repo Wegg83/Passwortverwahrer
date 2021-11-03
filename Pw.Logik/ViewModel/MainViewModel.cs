@@ -123,10 +123,13 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand PwRndBtn => _PwRndBtn;
         public RelayCommand AktBenutzerInZABtn => _AktBenutzerInZABtn;
         public RelayCommand AktPwInZABtn => _AktPwInZABtn;
+        public RelayCommand DarkstyleXamlBtn => _DarkstyleXamlBtn;
+        public RelayCommand WinstyleXamlBtn => _WinstyleXamlBtn;
+
 
         public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
 
-        public ObservableCollection<DockPanelKlasse> MeinOberMenu;
+        //public ObservableCollection<DockPanelKlasse> MeinOberMenu;
         public Visibility Passwörter { get; set; }
         public Visibility Verwaltung { get; set; }
         //public Visibility VisiHinzu { get; set; }
@@ -370,119 +373,141 @@ namespace Logik.Pw.Logik.ViewModel
             AktEintrag = UiViewListe?.CurrentItem as PwEintrag;
         }
 
+
+        //private bool MenuAnderung(ObservableCollection<DockPanelKlasse> MeinMenu, int Index, string neuerHead, bool NeuerZustand)
+        //{
+        //    foreach (DockPanelKlasse AktKnoten in MeinMenu)
+        //    {
+        //        if (AktKnoten.Index == Index)
+        //        {
+        //            AktKnoten.Header = neuerHead;
+        //            AktKnoten.MenItemEnable = NeuerZustand;
+        //            return true;
+        //        }
+        //        if (AktKnoten.SubItems != null)
+        //        {
+        //            if (MenuAnderung(AktKnoten.SubItems, Index, neuerHead, NeuerZustand))
+        //            {
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //}
+
         private void initzializeMenu()
         {
             BeschreibungRndVerwalt = "Zufall-Generator";
             BeschreibungMenuDateiExport = "Benutzer exportieren";
             BeschreibungMenuDateiImport = "Benutzer importieren";
 
-        #region Menu als Klasse 
-        MeinOberMenu = new ObservableCollection<DockPanelKlasse>();
-            DockPanelKlasse tmpOberItems = new DockPanelKlasse(null, 1000);
-            ObservableCollection<DockPanelKlasse> tmp1Untermenu;
-            DockPanelKlasse tmpItems1Unter;
-            ObservableCollection<DockPanelKlasse> tmp2Untermenu;
-            DockPanelKlasse tmpItems2Unter;
+        //#region Menu als Klasse 
+        //MeinOberMenu = new ObservableCollection<DockPanelKlasse>();
+        //    DockPanelKlasse tmpOberItems = new DockPanelKlasse(null, 1000);
+        //    ObservableCollection<DockPanelKlasse> tmp1Untermenu;
+        //    DockPanelKlasse tmpItems1Unter;
+        //    ObservableCollection<DockPanelKlasse> tmp2Untermenu;
+        //    DockPanelKlasse tmpItems2Unter;
 
-            #region Datei Menu
-            tmpOberItems.Header = "Datei";
-            tmpOberItems.MenItemEnable = true;
-            #region Untermenu Datei
-            tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
+        //    #region Datei Menu
+        //    tmpOberItems.Header = "Datei";
+        //    tmpOberItems.MenItemEnable = true;
+        //    #region Untermenu Datei
+        //    tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
 
-            tmpItems1Unter = new DockPanelKlasse(AnsichtWechselBtn, 1100);
-            tmpItems1Unter.Header = "Benutzerverwaltung";
-            tmpItems1Unter.MenItemEnable = true;
-            tmp1Untermenu.Add(tmpItems1Unter);
+        //    tmpItems1Unter = new DockPanelKlasse(AnsichtWechselBtn, 1100);
+        //    tmpItems1Unter.Header = "Benutzerverwaltung";
+        //    tmpItems1Unter.MenItemEnable = true;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
 
-            tmpItems1Unter = new DockPanelKlasse(RndVerwaltBtn, 1200);
-            tmpItems1Unter.Header = "Zufalls Konfigurator";
-            tmpItems1Unter.MenItemEnable = true;
-            tmp1Untermenu.Add(tmpItems1Unter);
+        //    tmpItems1Unter = new DockPanelKlasse(RndVerwaltBtn, 1200);
+        //    tmpItems1Unter.Header = "Zufalls Konfigurator";
+        //    tmpItems1Unter.MenItemEnable = true;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
 
-            tmpItems1Unter = new DockPanelKlasse(_ExportBtn, 1300);
-            tmpItems1Unter.Header = "Benutzer Exportieren";
-            tmpItems1Unter.MenItemEnable = false;
-            tmp1Untermenu.Add(tmpItems1Unter);
+        //    tmpItems1Unter = new DockPanelKlasse(_ExportBtn, 1300);
+        //    tmpItems1Unter.Header = "Benutzer Exportieren";
+        //    tmpItems1Unter.MenItemEnable = false;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
 
-            tmpItems1Unter = new DockPanelKlasse(_ImportBtn, 1400);
-            tmpItems1Unter.Header = "Benutzer Importieren";
-            tmpItems1Unter.MenItemEnable = true;
-            tmp1Untermenu.Add(tmpItems1Unter);
+        //    tmpItems1Unter = new DockPanelKlasse(_ImportBtn, 1400);
+        //    tmpItems1Unter.Header = "Benutzer Importieren";
+        //    tmpItems1Unter.MenItemEnable = true;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
 
-            tmpItems1Unter = new DockPanelKlasse(LogOutBtn, 1500);
-            tmpItems1Unter.Header = "Benutzer abmelden";
-            tmpItems1Unter.MenItemEnable = false;
-            tmp1Untermenu.Add(tmpItems1Unter);
+        //    tmpItems1Unter = new DockPanelKlasse(LogOutBtn, 1500);
+        //    tmpItems1Unter.Header = "Benutzer abmelden";
+        //    tmpItems1Unter.MenItemEnable = false;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
 
-            tmpItems1Unter = new DockPanelKlasse(PrgEndeBtn, 1600);
-            tmpItems1Unter.Header = "Schließen";
-            tmpItems1Unter.MenItemEnable = true;
-            tmp1Untermenu.Add(tmpItems1Unter);
+        //    tmpItems1Unter = new DockPanelKlasse(PrgEndeBtn, 1600);
+        //    tmpItems1Unter.Header = "Schließen";
+        //    tmpItems1Unter.MenItemEnable = true;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
 
-            tmpOberItems.UnterMenus = tmp1Untermenu;
-            #endregion
-            MeinOberMenu.Add(tmpOberItems);
-            #endregion
+        //    tmpOberItems.SubItems = tmp1Untermenu;
+        //    #endregion
+        //    MeinOberMenu.Add(tmpOberItems);
+        //    #endregion
 
-            #region Edit Menu
-            tmpOberItems = new DockPanelKlasse(null, 2000);
-            tmpOberItems.Header = "Edit";
-            tmpOberItems.MenItemEnable = true;
-            #region Untermneu Edit
-            tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
+        //    #region Edit Menu
+        //    tmpOberItems = new DockPanelKlasse(null, 2000);
+        //    tmpOberItems.Header = "Edit";
+        //    tmpOberItems.MenItemEnable = true;
+        //    #region Untermneu Edit
+        //    tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
 
-            //tmpItems1Unter = new DockPanelKlasse(ZwischenAblageBtn, 2100);
-            //tmpItems1Unter.Header = "In Zwischenablage";
-            //tmpItems1Unter.MenItemEnable = false;       
+        //    //tmpItems1Unter = new DockPanelKlasse(ZwischenAblageBtn, 2100);
+        //    //tmpItems1Unter.Header = "In Zwischenablage";
+        //    //tmpItems1Unter.MenItemEnable = false;       
 
-            tmpItems1Unter = new DockPanelKlasse(null, 2100);
-            tmpItems1Unter.Header = "Skin-Aussehen";
-            tmpItems1Unter.MenItemEnable = true;
-            tmp1Untermenu.Add(tmpItems1Unter);
-            #region Untermenu Skins
+        //    tmpItems1Unter = new DockPanelKlasse(null, 2100);
+        //    tmpItems1Unter.Header = "Skin-Aussehen";
+        //    tmpItems1Unter.MenItemEnable = true;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
+        //    #region Untermenu Skins
 
-            tmp2Untermenu = new ObservableCollection<DockPanelKlasse>();
+        //    tmp2Untermenu = new ObservableCollection<DockPanelKlasse>();
 
-            tmpItems2Unter = new DockPanelKlasse(new RelayCommand(ThemeWinStyleGedruckt), 2210);
-            tmpItems2Unter.Header = "Windows-Style";
-            tmpItems2Unter.MenItemEnable = true;
-            tmp2Untermenu.Add(tmpItems2Unter);
-            tmpItems2Unter = new DockPanelKlasse(new RelayCommand(ThemeDarkStyleGedruckt), 2220);
-            tmpItems2Unter.Header = "Dark-Style";
-            tmpItems2Unter.MenItemEnable = true;
-            tmp2Untermenu.Add(tmpItems2Unter);
+        //    tmpItems2Unter = new DockPanelKlasse(new RelayCommand(ThemeWinStyleGedruckt), 2210);
+        //    tmpItems2Unter.Header = "Windows-Style";
+        //    tmpItems2Unter.MenItemEnable = true;
+        //    tmp2Untermenu.Add(tmpItems2Unter);
+        //    tmpItems2Unter = new DockPanelKlasse(new RelayCommand(ThemeDarkStyleGedruckt), 2220);
+        //    tmpItems2Unter.Header = "Dark-Style";
+        //    tmpItems2Unter.MenItemEnable = true;
+        //    tmp2Untermenu.Add(tmpItems2Unter);
 
-            tmpItems1Unter.UnterMenus = tmp2Untermenu;
-            #endregion
+        //    tmpItems1Unter.SubItems = tmp2Untermenu;
+        //    #endregion
 
-            tmp1Untermenu.Add(tmpItems1Unter);
-            tmpOberItems.UnterMenus = tmp1Untermenu;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
+        //    tmpOberItems.SubItems = tmp1Untermenu;
 
-            #endregion
-            MeinOberMenu.Add(tmpOberItems);
-            #endregion
+        //    #endregion
+        //    MeinOberMenu.Add(tmpOberItems);
+        //    #endregion
 
-            #region Hilfe Menu
-            tmpOberItems = new DockPanelKlasse(null, 3000);
-            tmpOberItems.Header = "Hilfe";
-            tmpOberItems.MenItemEnable = true;
+        //    #region Hilfe Menu
+        //    tmpOberItems = new DockPanelKlasse(null, 3000);
+        //    tmpOberItems.Header = "Hilfe";
+        //    tmpOberItems.MenItemEnable = true;
 
-            #region Unermenu Hilfe
-            tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
+        //    #region Unermenu Hilfe
+        //    tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
 
-            tmpItems1Unter = new DockPanelKlasse(InfoBtn, 3100);
-            tmpItems1Unter.Header = "Info";
-            tmpItems1Unter.MenItemEnable = true;
-            tmp1Untermenu.Add(tmpItems1Unter);
+        //    tmpItems1Unter = new DockPanelKlasse(InfoBtn, 3100);
+        //    tmpItems1Unter.Header = "Info";
+        //    tmpItems1Unter.MenItemEnable = true;
+        //    tmp1Untermenu.Add(tmpItems1Unter);
 
-            tmpOberItems.UnterMenus = tmp1Untermenu;
-            #endregion
-            MeinOberMenu.Add(tmpOberItems);
+        //    tmpOberItems.SubItems = tmp1Untermenu;
+        //    #endregion
+        //    MeinOberMenu.Add(tmpOberItems);
 
-            #endregion
+        //    #endregion
 
-            #endregion
+            //#endregion
 
             #region Menu direkt im Xaml
             _WinstyleXamlBtn = new RelayCommand(ThemeWinStyleGedruckt);
@@ -867,7 +892,7 @@ namespace Logik.Pw.Logik.ViewModel
                     //nichtGespeichertNeu = false;
                     PWNeuProgramm = "";
                     //nichtGespeichertAnders = false;
-                    MenuAnderung(MeinOberMenu, 1100, "Benutzerverwaltung", true);
+                    //MenuAnderung(MeinOberMenu, 1100, "Benutzerverwaltung", true);
                     BeschreibungMenu1 = "Benutzerverwaltung";
                     Logingedruckt();
                     break;
@@ -884,7 +909,7 @@ namespace Logik.Pw.Logik.ViewModel
                         PWNeuProgramm = "";
                         //nichtGespeichertAnders = false;
                     BeschreibungMenu1 = "Passwortverwaltung";
-                    MenuAnderung(MeinOberMenu, 1100, "Passwortverwaltung", true);
+                    //MenuAnderung(MeinOberMenu, 1100, "Passwortverwaltung", true);
                         ZwischenAblageAktivBool = false;
                         try
                         {
@@ -1049,26 +1074,8 @@ namespace Logik.Pw.Logik.ViewModel
             VerwaltungsAnzeigeNeuLaden();
         }
 
-        private bool MenuAnderung(ObservableCollection<DockPanelKlasse> MeinMenu, int Index, string neuerHead, bool NeuerZustand)
-        {
-            foreach (DockPanelKlasse AktKnoten in MeinMenu)
-            {
-                if (AktKnoten.Index == Index)
-                {
-                    AktKnoten.Header = neuerHead;
-                    AktKnoten.MenItemEnable = NeuerZustand;
-                    return true;
-                }
-                if (AktKnoten.UnterMenus != null)
-                {
-                    if (MenuAnderung(AktKnoten.UnterMenus, Index, neuerHead, NeuerZustand))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+
+ 
 
         private string NeuenBenutzerOrdnerAnlegen()
         {
