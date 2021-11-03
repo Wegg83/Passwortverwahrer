@@ -40,7 +40,7 @@ namespace Ui.Pw.Ui
                     string tst = window.ToString();
                     if (window.ToString() == msg.Fenstername)
                     {
-                        window.Close();
+                        window.Close();                    
                     }
                 }
             });

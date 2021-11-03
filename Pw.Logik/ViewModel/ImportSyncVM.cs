@@ -187,9 +187,15 @@ namespace Logik.Pw.Logik.ViewModel
             }
             if(tmpkorrekt)
             {
+                DelEingaben();
                 MessengerInstance.Send(tmpUbergabeDaten);
-                MessengerInstance.Send(new FensterCloseMess{ Fenstername = "ImpSyncFenster" });
+                MessengerInstance.Send(new FensterCloseMess{ Fenstername = "Ui.Pw.Ui.ImpSyncFenster" });
             }
+        }
+
+        private void DelEingaben()
+        {
+            _BenutzerNameTB = "";
         }
 
         private string NeuenBenutzerOrdnerAnlegen()
