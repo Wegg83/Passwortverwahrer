@@ -23,7 +23,6 @@ namespace Logik.Pw.Logik.Klassen
             }
             SecureString tmp = new SecureString();
 
-
             if (Abfrage.PasswortIstKorrekt(tmp, MeinWunsch))
             {
                 this.MeinWunsch = new SecureString();

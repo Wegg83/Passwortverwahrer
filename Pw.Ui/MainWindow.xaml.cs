@@ -25,10 +25,22 @@ namespace Pw.Ui
             InitializeComponent();
         }
 
+        private bool nichtlöschen = false;
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (this.DataContext != null)
-            { ((dynamic)this.DataContext).PWEingabe = ((PasswordBox)sender).SecurePassword; }
+            if (this.DataContext != null && !nichtlöschen)
+            {                      
+                ((dynamic)this.DataContext).PWEingabe = ((PasswordBox)sender).SecurePassword;
+            }
+            nichtlöschen = false;
         }
+
+        private void PasswordBox_DelPW(object sender, RoutedEventArgs e)
+        {
+            nichtlöschen = true;
+            LoginBox.Clear();
+        }
+
     }
 }

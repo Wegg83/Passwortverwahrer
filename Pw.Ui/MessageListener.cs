@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Ui.Pw.Ui
 {
@@ -30,6 +31,23 @@ namespace Ui.Pw.Ui
                 }
                 Window.ShowDialog();
             });
+
+            Messenger.Default.Register<FensterCloseMess>(this, msg =>
+            {
+                
+                foreach (Window window in Application.Current.Windows)
+                {
+                    string tst = window.ToString();
+                    if (window.ToString() == msg.Fenstername)
+                    {
+                        window.Close();
+                    }
+                }
+            });
+
+
+
+
         }
     }
 }

@@ -5,12 +5,13 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using static Logik.Pw.Logik.ViewModel.ImportSyncVM;
 
 namespace Logik.Pw.Logik.Messengers
 {
     public class SendImportMess
     {
-        public enum ImpMoglichkeit { SyncNeuAnderer, DirektAnderer, Sync, NeuAnlage, PwAndern, BenutzerDel, AndererBenutzer , Import}
+        
         public ImpMoglichkeit Anzeige;
         public Person ImportPerson;
         public PersonCenter Center;

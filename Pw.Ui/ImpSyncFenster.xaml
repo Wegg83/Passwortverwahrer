@@ -7,19 +7,39 @@
         mc:Ignorable="d"
          Title="Abfrage" Height="200" Width="270"
         DataContext="{Binding ImpSnyc, Source={StaticResource Locator}}"
-        >
+        ResizeMode="CanMinimize">
     <Grid Background="{Binding MeinHintergrund}">
-        <Label Content="{Binding InputUberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="150" Height="55" Margin="10,10,0,0"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding Version1Visi}"/>
-        <PasswordBox PasswordChanged="PasswordBox1_PasswordChanged" VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,15,30,0" Visibility="{Binding Version1Visi}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TabIndex="2">
+        <Label Content="{Binding InputUberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="28" Margin="20,0,20,125"
+                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding VisiTextBox}"/>
+        <Label Content="{Binding InputV2Uberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="28" Margin="20,0,20,25"
+                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding VisiPasswort1}"/>
+        <Label Content="{Binding InputV3Uberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="150" Height="22" Margin="0,50,50,0"
+                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding Version3Visi}"/>
+        <Label Content="{Binding ErrorMeldung}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="28" Margin="150,0,0,85"
+                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding VisiTextBox}"/>
+        <TextBox VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,0,100,85" Text="{Binding BenutzerNameTB, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseKlein}" Visibility="{Binding VisiTextBox}" TabIndex="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding OkBtn}" Key="Return" />
+            </TextBox.InputBindings>
+        </TextBox>
+        <PasswordBox PasswordChanged="PasswordBox1_PasswordChanged" Visibility="{Binding VisiPasswort1}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,10,100,0"
+                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TabIndex="4">
             <PasswordBox.InputBindings>
-                <KeyBinding
-                    Key="Enter"
+                <KeyBinding Key="Return"
                     Command="{Binding OkBtn}"
                     />
             </PasswordBox.InputBindings>
         </PasswordBox>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Version1Visi}" Width="30" Height="15" Margin="120,15,0,0" Content="OK" Command="{Binding OkBtn}" TabIndex="3"
+        <PasswordBox PasswordChanged="PasswordBox2_PasswordChanged" Visibility="{Binding VisiPasswort2}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,90,100,0"
+                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TabIndex="4">
+            <PasswordBox.InputBindings>
+                <KeyBinding Key="Return"
+                    Command="{Binding OkBtn}"
+                    />
+            </PasswordBox.InputBindings>
+        </PasswordBox>
+        
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding VisiOKBtn}" Width="35" Height="20" Margin="150,100,0,0" Content="OK" Command="{Binding OkBtn}" TabIndex="6"
                 FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
@@ -28,68 +48,5 @@
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
-        <Label Content="{Binding InputV2Uberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="220" Height="60" Margin="0,0,0,60"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseGross}" Visibility="{Binding Version2Visi}"/>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding VisiNeuBtn}" Width="45" Height="25" Margin="0,100,150,0" Content="{Binding TextV2Btn1}" Command="{Binding Version2Btn1}"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}" TabIndex="8">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
-                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
-        </Button>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding VisiAndererBtn}" Width="45" Height="25" Margin="0,100,20,0" Content="{Binding TextV2Btn2}" Command="{Binding Version2Btn2}"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}" TabIndex="9">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
-                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
-        </Button>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding VisiSyncBtn}" Width="60" Height="25" Margin="130,100,0,0" Content="{Binding TextV2Btn3}" Command="{Binding Version2Btn3}"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}" TabIndex="10">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
-                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
-        </Button>
-        <Label Content="{Binding InputUberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="28" Margin="20,0,20,125"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding Version3Visi}"/>
-        <Label Content="{Binding InputV2Uberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="150" Height="22" Margin="0,0,50,30"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding Version3Visi}"/>
-        <Label Content="{Binding InputV3Uberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="150" Height="22" Margin="0,50,50,0"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" Visibility="{Binding Version3Visi}"/>
-        <TextBox VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,10,100,0" Text="{Binding PasswortEingabe30Stern, UpdateSourceTrigger=PropertyChanged}" FontSize="{Binding MeineSchriftGrosseKlein}" FontFamily="{Binding MeineSchriftArtNorm}" Visibility="{Binding Version3Visi}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TabIndex="4">
-            <TextBox.InputBindings>
-                <KeyBinding Command="{Binding EnterBtn}" Key="Return" />
-            </TextBox.InputBindings>
-        </TextBox>
-        <TextBox VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,90,100,0" Text="{Binding PasswortEingabe31Stern, UpdateSourceTrigger=PropertyChanged}" FontSize="{Binding MeineSchriftGrosseKlein}" FontFamily="{Binding MeineSchriftArtNorm}" Visibility="{Binding Version3Visi}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TabIndex="5">
-            <TextBox.InputBindings>
-                <KeyBinding Command="{Binding EnterBtn}" Key="Return" />
-            </TextBox.InputBindings>
-        </TextBox>
-        <TextBox VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,0,100,85" Text="{Binding PasswortV4Eingabe, UpdateSourceTrigger=PropertyChanged}" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseKlein}" Visibility="{Binding Version4Visi}" TabIndex="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
-            <TextBox.InputBindings>
-                <KeyBinding Command="{Binding EnterBtn}" Key="Return" />
-            </TextBox.InputBindings>
-        </TextBox>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding Version3Visi}" Width="35" Height="20" Margin="150,100,0,0" Content="OK" Command="{Binding PasswortEingabeBtn}" TabIndex="6"
-                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
-                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
-        </Button>
-
-        <ComboBox HorizontalAlignment="Center" Height="25" Margin="0,0,100,90" VerticalAlignment="Center" Width="100" TabIndex="0"
-                   SelectedItem="{Binding MoglichBenItem}" DisplayMemberPath="Name" ItemsSource="{Binding ComboNamen}" Visibility="{Binding Version5Visi}" >
-        </ComboBox>
     </Grid>
 </Window>

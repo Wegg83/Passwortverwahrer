@@ -17,6 +17,7 @@ using Logik.Pw.Logik.Klassen;
 using Logik.Pw.Logik.Messengers;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using static Logik.Pw.Logik.ViewModel.ImportSyncVM;
 
 namespace Logik.Pw.Logik.ViewModel
 {
@@ -34,7 +35,7 @@ namespace Logik.Pw.Logik.ViewModel
        // private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
         public bool ZwischenAblageAktivBool { get; set; }
         private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
-        private RelayCommand _BenutzerZwischenBtn, _PWZwischenBtn, _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn; // , _PWAndersBtn _PWHinzuBtn
+        private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn; // , _PWAndersBtn _PWHinzuBtn
         private RelayCommand _PwUbernahmeBtn, _PwRndBtn;
         private PersonCenter _BenutzerListe; // alt dieGesamteListe
         private Person aktBenutzer;
@@ -98,7 +99,8 @@ namespace Logik.Pw.Logik.ViewModel
 
 
         public ObservableCollection<string> VerwaltungsListe { get; set; } // alt PWCBItem
-        public string CbBenutzerWahl { get; set; } // alt PWAktBenutzer
+        private string _CbBenutzerWahl;
+        public string CbBenutzerWahl { get { return _CbBenutzerWahl; } set { _CbBenutzerWahl = value; RaisePropertyChanged(); if (AktBenutzer != null) LogoutGedruckt(); Logingedruckt(); } } // alt PWAktBenutzer
         private string _PWSuche;
         public string PWSuche { get { return _PWSuche; } set { _PWSuche = value; RaisePropertyChanged(); GefilterteListe = PWListeFiltern(); if (GefilterteListe.Count == 0) Auswahlstatus = BearbeitStatus.Neuanlage; } } 
         public string BeschreibungMenu1 { get; set; }
@@ -117,14 +119,15 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand PwNeuAnzBtn => new RelayCommand(() => { Auswahlstatus = BearbeitStatus.Neuanlage; });
         //public RelayCommand PWHinzuBtn => _PWHinzuBtn;
         //public RelayCommand PWAndersBtn => _PWAndersBtn;
-        public RelayCommand PWZwischenBtn => _PWZwischenBtn;
-        public RelayCommand BenutzerZwischenBtn => _BenutzerZwischenBtn;
+        //public RelayCommand PWZwischenBtn => _PWZwischenBtn;
+        //public RelayCommand BenutzerZwischenBtn => _BenutzerZwischenBtn;
         public RelayCommand PWDelBtn => _PWDelBtn;
         public RelayCommand PwRndBtn => _PwRndBtn;
         public RelayCommand AktBenutzerInZABtn => _AktBenutzerInZABtn;
         public RelayCommand AktPwInZABtn => _AktPwInZABtn;
         public RelayCommand DarkstyleXamlBtn => _DarkstyleXamlBtn;
         public RelayCommand WinstyleXamlBtn => _WinstyleXamlBtn;
+        public RelayCommand BenutzHinzuBtn => _BenutzHinzuBtn;
 
 
         public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
@@ -168,10 +171,10 @@ namespace Logik.Pw.Logik.ViewModel
         public string BeschreibungRndVerwalt { get; set; }
         public string BeschreibungMenuDateiExport { get; set; }
         public string BeschreibungMenuDateiImport { get; set; }
+        public string ErrorMeldungString { get; set; }
 
         private int _tmpIndexNummerMin;
 
-        public string LoginHilfeText { get; set; }
         public string HinzuNeuString { get; set; }
         //  private ListCollectionView _UiViewListe;
         public ListCollectionView UiViewListe { get; set; }
@@ -180,8 +183,8 @@ namespace Logik.Pw.Logik.ViewModel
         {
             if (IsInDesignMode)
             {
-                VisiDGPW = Visibility.Visible;
-                Verwaltung = Visibility.Hidden;
+                VisiDGPW = Visibility.Hidden;
+                Verwaltung = Visibility.Visible;
                 return;
             }
 
@@ -219,7 +222,6 @@ namespace Logik.Pw.Logik.ViewModel
 
             initzialize();
 
-            LoginHilfeText = "";
             HinzuNeuString = "Neu";
             _tmpIndexNummerMin = 100001;
             DetailAnzeigeEintrag = new PwEintrag();
@@ -233,6 +235,7 @@ namespace Logik.Pw.Logik.ViewModel
             _LoginBtn = new RelayCommand(Logingedruckt);
             _VerwaltungBtn = new RelayCommand(Verwaltunggedruckt);
             _PrgEndeBtn = new RelayCommand(Programmschließengedruckt);
+            _BenutzHinzuBtn = new RelayCommand(sendeNeuerBenutzer);
          //   _PWHinzuBtn = new RelayCommand(PWHinzuGedruckt);
             _PwUbernahmeBtn = new RelayCommand(PWÄndernGedruckt);
             _LogOutBtn = new RelayCommand(LogoutGedruckt);
@@ -243,8 +246,7 @@ namespace Logik.Pw.Logik.ViewModel
             _PWDelBtn = new RelayCommand(PWLöschenGedruckt);
             _RootOrdnerBtn = new RelayCommand(RootOrdnerGedruckt);
             //versionsInfos = new RelayCommand(InfoCenterAnzeigenGedruckt);
-            //exportBtn = new RelayCommand(ExportGedruckt);
-
+            _ExportBtn = new RelayCommand(ExportGedruckt);
             //_PWZwischenBtn = new RelayCommand(AktPwZwischenAgedruckt);
             //_BenutzerZwischenBtn = new RelayCommand(AktBenZwischenAgedruckt);
             //syncBtn = new RelayCommand(SyncenGedruckt);
@@ -541,6 +543,7 @@ namespace Logik.Pw.Logik.ViewModel
 
             if (LoginChecker.PwChecker(LoginDaten.PersiKauda))
             {
+                ErrorMeldungString = "";
                 string tmpOrdnerPfad = PfadFindung(LoginDaten.Name);
                 MainListe = GefilterteListe = LoginChecker.LadePassworter(LoginDaten.PersiKauda);
                 AktBenutzer = _BenutzerListe.NameSuchen(CbBenutzerWahl);
@@ -557,15 +560,25 @@ namespace Logik.Pw.Logik.ViewModel
             }
             else
             {
-                if (PWEingabe == null || PWEingabe.Length == 0)
-                {
-                  //  IsLoginTxtBoxFocused = true; geht leider nciht
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show("Falsches Passwort");
-                }
+                if (PWEingabe != null && PWEingabe.Length != 0)
+                    ErrorMeldungString = "Falsches Passwort";
+                if (PWEingabe != null) PWEingabe.Clear();
             }
+        }
+
+
+        public void ExportGedruckt()
+        {
+            Microsoft.Win32.SaveFileDialog WoSpeichern = new Microsoft.Win32.SaveFileDialog();
+            WoSpeichern.InitialDirectory = Properties.Settings.Default.PfadImportOrdner;
+            WoSpeichern.Filter = "Export Datei (*.exp)|*.exp";
+            WoSpeichern.RestoreDirectory = true;
+            Nullable<bool> result = WoSpeichern.ShowDialog();
+            if (result == true)
+            {
+                _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, WoSpeichern.FileName);
+            }
+            System.Windows.MessageBox.Show("Export erfolgreich.");
         }
 
         private void Verwaltunggedruckt()
@@ -576,7 +589,7 @@ namespace Logik.Pw.Logik.ViewModel
             if (Verwaltung == Visibility.Visible)
             {
                 Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
-                VerwaltungAnders = Visibility.Hidden; // achutng wil ich weg und 2 Btns machen!
+                /*VerwaltungAnders = Visibility.Hidden;*/ // achutng wil ich weg und 2 Btns machen!
             }
             else
             {
@@ -790,7 +803,7 @@ namespace Logik.Pw.Logik.ViewModel
         private void sendeNeuerBenutzer()
         {
             // MessengerInstance.Send(new SendNeuBenutzerMess(SendNeuBenutzerMess.Zustand.Neueingabe, _BenutzerListe.AlleBenutzerAlsListe()));
-            MessengerInstance.Send(new SendImportMess(SendImportMess.ImpMoglichkeit.NeuAnlage, null, _BenutzerListe));
+            MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.NeuAnlage, null, _BenutzerListe));
         }
 
         //public void EmpfangeNeuerBenutzer(NeuBenutzerMess NeuAnlage)
@@ -969,7 +982,7 @@ namespace Logik.Pw.Logik.ViewModel
                     SendImportMess ubergabe;
                     if (_BenutzerListe.BenutzerVorhanden(impBen.Name))
                     {
-                        ubergabe = new SendImportMess(SendImportMess.ImpMoglichkeit.SyncNeuAnderer, impBen, _BenutzerListe, AktBenutzer, PWEingabe);
+                        ubergabe = new SendImportMess(ImpMoglichkeit.SyncNeuAnderer, impBen, _BenutzerListe, AktBenutzer, PWEingabe);
                        // Person EvtSyncBenutzer = _BenutzerListe.NameSuchen(impBen.Name);
                         // starte abfrage ob snc / neuer Name import da name schon vorhanden / mit anderen namen syncen
                         // anschließendes syncen.
@@ -978,7 +991,7 @@ namespace Logik.Pw.Logik.ViewModel
                     {
                         if(VerwaltungsListe.Count() > 0)
                         {
-                            ubergabe = new SendImportMess(SendImportMess.ImpMoglichkeit.DirektAnderer, impBen, _BenutzerListe);
+                            ubergabe = new SendImportMess(ImpMoglichkeit.DirektAnderer, impBen, _BenutzerListe);
                         }
                         else
                         {
