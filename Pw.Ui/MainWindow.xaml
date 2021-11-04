@@ -151,7 +151,7 @@
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
-                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,168,60,167" Content="Ändern" Command="{Binding BenutzAndersBtn}" Visibility="{Binding VerwaltungAnders}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,168,60,167" Content="Ändern" Command="{Binding BenutzAndersBtn}" Visibility="{Binding VisiBenutzGew}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                             <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
@@ -159,7 +159,7 @@
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
-                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,0,60,100" Content="Löschen" Command="{Binding BenutzDelBtn}" Visibility="{Binding VisiBenutzGew}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}">
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,160,60,100" Content="Löschen" Command="{Binding BenutzDelBtn}" Visibility="{Binding VisiBenutzGew}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}">
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                             <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>

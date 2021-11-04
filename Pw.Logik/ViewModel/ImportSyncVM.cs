@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Logik.Pw.Logik.Items;
 using Logik.Pw.Logik.Klassen;
 using Logik.Pw.Logik.Messengers;
 using System;
@@ -21,11 +22,11 @@ namespace Logik.Pw.Logik.ViewModel
 {
     public class ImportSyncVM : ViewModelBase, IDataErrorInfo
     {
-        public enum ImpMoglichkeit { SyncNeuAnderer, DirektAnderer, Sync, NeuAnlage, PwAndern, BenutzerDel, AndererBenutzer }
+        public enum ImpMoglichkeit { WahlNeuAnderer, NeuAnlage, PwAndern, BenutzerDel, AndererBenutzer, NeuMitInhalt }
 
         private SendImportMess _empfDaten;
 
-        private RelayCommand _okBtn;
+        private RelayCommand _okBtn, _auswahlNeuBtn, _auswahlAuswahlBtn;
         public SecureString Pw1Eingabe { get; set; }
         public SecureString Pw2Eingabe { get; set; }
         public SecureString Pw3Eingabe { get; set; }
@@ -58,7 +59,6 @@ namespace Logik.Pw.Logik.ViewModel
         }
         
         public Visibility VisiOKBtn { get; set; }
-        public Visibility VisiButton1 { get; set; }
         public Visibility VisiButton2Stk { get; set; }
         public Visibility VisiTextBox { get; set; }
         public Visibility VisiPasswort1 { get; set; }
@@ -79,10 +79,15 @@ namespace Logik.Pw.Logik.ViewModel
         public int MeineSchriftGrosseGross { get; set; }
 
         public RelayCommand OkBtn => _okBtn;
+        public RelayCommand AuswahlNeuBtn => _auswahlNeuBtn;
+        public RelayCommand AuswahlAuswahlBtn => _auswahlAuswahlBtn;
 
         public ImportSyncVM()
         {
-            _okBtn = new RelayCommand(EingabeErledigt);      
+            _okBtn = new RelayCommand(EingabeErledigt);
+            _auswahlNeuBtn = new RelayCommand(() => { _empfDaten.Anzeige = ImpMoglichkeit.NeuMitInhalt; AnzeigeWechsel(ImpMoglichkeit.NeuMitInhalt); });
+            _auswahlAuswahlBtn = new RelayCommand(() => { _empfDaten.Anzeige = ImpMoglichkeit.AndererBenutzer; AnzeigeWechsel(ImpMoglichkeit.AndererBenutzer); });
+
         }
 
         public void Initialisiere(SendImportMess daten)
@@ -93,8 +98,13 @@ namespace Logik.Pw.Logik.ViewModel
 
             _empfDaten = daten;
             SkinWechsel();
+            AnzeigeWechsel(_empfDaten.Anzeige);
+          
+        }
 
-            switch (_empfDaten.Anzeige)
+        private void AnzeigeWechsel(ImpMoglichkeit auswahl)
+        {
+            switch (auswahl)
             {
                 case ImpMoglichkeit.NeuAnlage: // alt 4
                     ErrorMeldung = "";
@@ -108,34 +118,40 @@ namespace Logik.Pw.Logik.ViewModel
                     VisiButton2Stk = Visibility.Hidden;
                     VisiComboBox = Visibility.Hidden;
                     VisiOKBtn = Visibility.Visible;
-                    VisiButton1 = Visibility.Hidden;
-                    //Version1Visi = Visibility.Hidden;
-                    //VisiSyncBtn = Visibility.Hidden;
-                    //VisiNeuBtn = Visibility.Hidden;
-                    //VisiAndererBtn = Visibility.Hidden;
-                    //Version3Visi = Visibility.Visible;
-                    //Version4Visi = Visibility.Visible;
-                    //Version5Visi = Visibility.Hidden;
                     break;
                 case ImpMoglichkeit.BenutzerDel: // alt 0
                     InputUberschrift = "Passwort:";
-
+                    VisiTextBox = Visibility.Hidden;
+                    VisiPasswort1 = Visibility.Visible;
+                    VisiPasswort2 = Visibility.Hidden;
+                    VisiPasswort3 = Visibility.Hidden;
+                    VisiButton2Stk = Visibility.Hidden;
+                    VisiComboBox = Visibility.Hidden;
+                    VisiOKBtn = Visibility.Visible;
                     break;
-                case ImpMoglichkeit.SyncNeuAnderer: //alt 2
-   
-                    break;
-                case ImpMoglichkeit.DirektAnderer:
-
-                    break;
-                case ImpMoglichkeit.Sync: // 3
-
+                case ImpMoglichkeit.WahlNeuAnderer: //alt 2
+                    InputUberschrift = "Benutzer-Name vergeben.";
+                    VisiTextBox = Visibility.Hidden;
+                    VisiPasswort1 = Visibility.Hidden;
+                    VisiPasswort2 = Visibility.Hidden;
+                    VisiPasswort3 = Visibility.Hidden;
+                    VisiButton2Stk = Visibility.Visible;
+                    VisiComboBox = Visibility.Hidden;
+                    VisiOKBtn = Visibility.Hidden;
                     break;
                 case ImpMoglichkeit.AndererBenutzer: // alt 5
-
                     ComboNamen = _empfDaten.Center.VerwaltungListe();
                     MoglichBenItem = ComboNamen[0];
+                    InputUberschrift = "";
                     InputV2Uberschrift = "Benutzer-Passwort:";
                     InputV3Uberschrift = "Import-Passwort:";
+                    VisiTextBox = Visibility.Hidden;
+                    VisiPasswort1 = Visibility.Hidden;
+                    VisiPasswort2 = Visibility.Visible;
+                    VisiPasswort3 = Visibility.Visible;
+                    VisiButton2Stk = Visibility.Hidden;
+                    VisiComboBox = Visibility.Visible;
+                    VisiOKBtn = Visibility.Visible;
                     break;
                 case ImpMoglichkeit.PwAndern: // alt 6
                     InputUberschrift = "Altes Passwort:";
@@ -148,8 +164,22 @@ namespace Logik.Pw.Logik.ViewModel
                     VisiButton2Stk = Visibility.Hidden;
                     VisiComboBox = Visibility.Hidden;
                     VisiOKBtn = Visibility.Visible;
-                    VisiButton1 = Visibility.Hidden;
                     break;
+                case ImpMoglichkeit.NeuMitInhalt:
+                    ErrorMeldung = "";
+                    InputUberschrift = "BenutzerName:";
+                    InputV2Uberschrift = "";
+                    InputV3Uberschrift = "";
+                    VisiTextBox = Visibility.Visible;
+                    VisiPasswort1 = Visibility.Hidden;
+                    VisiPasswort2 = Visibility.Hidden;
+                    VisiPasswort3 = Visibility.Hidden;
+                    VisiButton2Stk = Visibility.Hidden;
+                    VisiComboBox = Visibility.Hidden;
+                    VisiOKBtn = Visibility.Visible;
+                    break;
+                default:
+                    return;
             }
         }
 
@@ -157,6 +187,9 @@ namespace Logik.Pw.Logik.ViewModel
         {
 
         }
+
+
+
         private bool NeuAnlageGedruckt()
         {
             if (!TestaufLeerenInhalt(BenutzerNameTB))
@@ -184,6 +217,29 @@ namespace Logik.Pw.Logik.ViewModel
             return true;
         }
 
+        private bool NeuMitInhaltGedruckt()
+        {
+            if (!TestaufLeerenInhalt(BenutzerNameTB))
+            {
+                System.Windows.MessageBox.Show("Bitte einen Neuen Namen vergeben.");
+                return false;
+            }
+            if (_empfDaten.Center.BenutzerVorhanden(BenutzerNameTB))
+            {
+                //System.Windows.MessageBox.Show("Name schon vergeben");
+                ErrorMeldung = "vergeben";
+                return false;
+            }
+
+            Person tmpimportNeu = new Person();
+            tmpimportNeu.PersiKauda = _empfDaten.ImportPerson.PersiKauda;
+            tmpimportNeu.Name = BenutzerNameTB;
+            tmpimportNeu.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
+            _empfDaten.Center.Hinzufügen(tmpimportNeu);
+            _empfDaten.Center.KomplettVerschlüsseln(BenutzerNameTB, PfadFindung(BenutzerNameTB));
+            return true;
+        }
+
         private bool PWAndersGdruckt()
         {
             KaudawelschGenerator Checker = new KaudawelschGenerator(Pw1Eingabe);
@@ -205,9 +261,81 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-        private void AndererNutzerSyncGedruckt()
+        private bool BenutzerDelGedruckt()
         {
+            KaudawelschGenerator Checker = new KaudawelschGenerator(Pw1Eingabe);
+            if (Checker.PwChecker(_empfDaten.ImportPerson.PersiKauda))
+            {
+                _empfDaten.Center.BenutzerDel(_empfDaten.ImportPerson.Name);
+                Directory.Delete(Properties.Settings.Default.PfadZielOrdner + @"\" + _empfDaten.ImportPerson.AktOrdnerName, true);
+                return true;
+            }
+            MessageBox.Show("Falsche Eingabe");
+            return false;
+        }
 
+        private bool SyncMitNutzer(Person ImportDat, SecureString ImpPw, Person SyncDat, SecureString SyncPw)
+        {
+            // pw check von beiden
+            // syncen
+            KaudawelschGenerator CheckerImp = new KaudawelschGenerator(ImpPw);
+            KaudawelschGenerator CheckerSync = new KaudawelschGenerator(SyncPw);
+            if (CheckerImp.PwChecker(ImportDat.PersiKauda) && CheckerSync.PwChecker(SyncDat.PersiKauda))
+            {
+                Synce(ImportDat, ImpPw, SyncDat, SyncPw).Wait();
+                return true;
+            }
+            return false;
+        }
+
+        private async Task Synce(Person ImportDat, SecureString ImpPw, Person SyncDat, SecureString SyncPw)
+        {
+            KaudawelschGenerator KaudaChecker = new KaudawelschGenerator(ImpPw);
+            ObservableCollection<PwEintrag> ImportiertePws = KaudaChecker.LadePassworter(ImportDat.PersiKauda);
+            KaudaChecker = new KaudawelschGenerator(SyncPw);
+            ObservableCollection<PwEintrag> SyncPws = KaudaChecker.LadePassworter(SyncDat.PersiKauda);
+            foreach (PwEintrag SyncMe in ImportiertePws)
+            {
+                SyncPws = await SynchronisiereDaten(SyncMe, SyncPws);
+            }
+            SyncDat.PersiKauda = new List<string>();
+            foreach (PwEintrag Eintrag in SyncPws)
+            {
+                _empfDaten.Center.NormEintragVersHinzu(Eintrag, SyncPw, SyncDat.Name, false);
+            }
+            _empfDaten.Center.KomplettVerschlüsseln(SyncDat.Name, PfadFindung(SyncDat.Name));
+        }
+
+        private async Task<ObservableCollection<PwEintrag>> SynchronisiereDaten(PwEintrag SyncDaten, ObservableCollection<PwEintrag> BenutzerListe)
+        {
+            bool Datengefunden = false;
+            foreach (PwEintrag AktDaten in BenutzerListe)
+            {
+                if (AktDaten.Programm == SyncDaten.Programm)
+                {
+                    if (AktDaten.Benutzer == SyncDaten.Benutzer)
+                    {
+                        Datengefunden = true;
+                        if (AktDaten.Passwort == SyncDaten.Passwort)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (SyncDaten.Datum > AktDaten.Datum)
+                            {
+                                AktDaten.Passwort = SyncDaten.Passwort;
+                                AktDaten.Datum = SyncDaten.Datum;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!Datengefunden)
+            {
+                BenutzerListe.Add(SyncDaten);
+            }
+            return BenutzerListe;
         }
 
         public void EingabeErledigt()
@@ -221,6 +349,15 @@ namespace Logik.Pw.Logik.ViewModel
                     break;
                 case ImpMoglichkeit.PwAndern:
                     tmpkorrekt = PWAndersGdruckt();
+                    break;
+                case ImpMoglichkeit.BenutzerDel:
+                    tmpkorrekt = BenutzerDelGedruckt();
+                    break;
+                case ImpMoglichkeit.NeuMitInhalt:
+                    tmpkorrekt = NeuMitInhaltGedruckt();
+                    break;
+                case ImpMoglichkeit.AndererBenutzer:
+                    tmpkorrekt = SyncMitNutzer(_empfDaten.ImportPerson, Pw3Eingabe, _empfDaten.Center.NameSuchen(MoglichBenItem), Pw2Eingabe);
                     break;
             }
             if(tmpkorrekt)

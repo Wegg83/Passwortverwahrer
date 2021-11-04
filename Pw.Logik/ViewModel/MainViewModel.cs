@@ -25,17 +25,17 @@ namespace Logik.Pw.Logik.ViewModel
     public class MainViewModel : ViewModelBase
     {
         enum DerzeitgeAnsicht { Verwaltung, Benutzer }
-        enum BearbeitStatus { Neuanlage, Anderung}
+        enum BearbeitStatus { Neuanlage, Anderung }
         public enum SkinWahl { winsylte, Darkstyle }
 
         private BearbeitStatus _auswahlstatus = BearbeitStatus.Neuanlage;
         public static SkinWahl AktuellerSkin;
         public const string PasswortEndung = @"\bin.dat";
 
-       // private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
+        // private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
         public bool ZwischenAblageAktivBool { get; set; }
         private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
-        private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn, _BenutzAndersBtn; // , _PWAndersBtn _PWHinzuBtn
+        private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn, _BenutzAndersBtn, _BenutzDelBtn; // , _PWAndersBtn _PWHinzuBtn
         private RelayCommand _PwUbernahmeBtn, _PwRndBtn;
         private PersonCenter _BenutzerListe; // alt dieGesamteListe
         private Person aktBenutzer;
@@ -44,8 +44,8 @@ namespace Logik.Pw.Logik.ViewModel
             get { return aktBenutzer; }
             set
             {
-                aktBenutzer = value; 
-                if(value == null)
+                aktBenutzer = value;
+                if (value == null)
                 {
                     Passwörter = Visibility.Visible;
                     VisiDGPW = Visibility.Hidden;
@@ -61,7 +61,7 @@ namespace Logik.Pw.Logik.ViewModel
         public ObservableCollection<PwEintrag> MainListe { get; set; } // alt PasswortColl
         public ObservableCollection<PwEintrag> GefilterteListe { get; set; } // altKoListe
         public PwEintrag DetailAnzeigeEintrag { get; set; }
-       private PwEintrag _AktEintrag;
+        private PwEintrag _AktEintrag;
         public PwEintrag AktEintrag     // alt -> PasswortSelItem
         {
             //get
@@ -85,12 +85,12 @@ namespace Logik.Pw.Logik.ViewModel
                 RaisePropertyChanged();
                 AbfrageNichtGespeichertesPW();
 
-                if(value != null)
+                if (value != null)
                 {
                     DetailAnzeigeEintrag = new PwEintrag(value);
                     ZwischenAblageAktivBool = true;
                     HinzuNeuString = "Neu";
-                    Auswahlstatus = BearbeitStatus.Anderung;
+                    Auswahlstatus(BearbeitStatus.Anderung);
                 }
             }
         }
@@ -98,11 +98,11 @@ namespace Logik.Pw.Logik.ViewModel
 
         public ObservableCollection<string> VerwaltungsListe { get; set; } // alt PWCBItem
         private string _VerwaltListItem;
-        public string VerwaltListItem { get { return _VerwaltListItem; } set { VerwaltListItem = value; RaisePropertyChanged(); if (value != null) VisiBenutzGew = Visibility.Visible; else VisiBenutzGew = Visibility.Hidden;  } }
+        public string VerwaltListItem { get { return _VerwaltListItem; } set { _VerwaltListItem = value; RaisePropertyChanged(); if (value != string.Empty) VisiBenutzGew = Visibility.Visible; else VisiBenutzGew = Visibility.Hidden; } }
         private string _CbBenutzerWahl;
         public string CbBenutzerWahl { get { return _CbBenutzerWahl; } set { _CbBenutzerWahl = value; RaisePropertyChanged(); if (AktBenutzer != null) LogoutGedruckt(); Logingedruckt(); } } // alt PWAktBenutzer
         private string _PWSuche;
-        public string PWSuche { get { return _PWSuche; } set { _PWSuche = value; RaisePropertyChanged(); GefilterteListe = PWListeFiltern(); if (GefilterteListe.Count == 0) Auswahlstatus = BearbeitStatus.Neuanlage; } } 
+        public string PWSuche { get { return _PWSuche; } set { _PWSuche = value; RaisePropertyChanged(); GefilterteListe = PWListeFiltern(); if (GefilterteListe.Count == 0) Auswahlstatus(BearbeitStatus.Neuanlage); } }
         public string BeschreibungMenu1 { get; set; }
         public SecureString PWEingabe { get; set; }
         public RelayCommand LoginBtn => _LoginBtn;
@@ -116,7 +116,7 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand RndVerwaltBtn => _RndVerwaltBtn;
         public RelayCommand AnsichtWechselBtn => _AnsichtWechselBtn;
         public RelayCommand PwUbernahmeBtn => _PwUbernahmeBtn;
-        public RelayCommand PwNeuAnzBtn => new RelayCommand(() => { Auswahlstatus = BearbeitStatus.Neuanlage; });
+        public RelayCommand PwNeuAnzBtn => new RelayCommand(() => { Auswahlstatus(BearbeitStatus.Neuanlage); });
         //public RelayCommand PWHinzuBtn => _PWHinzuBtn;
         //public RelayCommand PWAndersBtn => _PWAndersBtn;
         //public RelayCommand PWZwischenBtn => _PWZwischenBtn;
@@ -129,6 +129,7 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand WinstyleXamlBtn => _WinstyleXamlBtn;
         public RelayCommand BenutzHinzuBtn => _BenutzHinzuBtn;
         public RelayCommand BenutzAndersBtn => _BenutzAndersBtn;
+        public RelayCommand BenutzDelBtn => _BenutzDelBtn;
 
         public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
 
@@ -143,7 +144,7 @@ namespace Logik.Pw.Logik.ViewModel
         //public Visibility VisiRndBtn2 { get; set; }
         //public Visibility VisiLöschen { get; set; }
         public Visibility VisiBenutzerCB { get; set; }
-        public Visibility VerwaltungAnders { get; set; }
+        //public Visibility VerwaltungAnders { get; set; }
         public Visibility VisiAndersOnly { get; set; }
         public Visibility VisiBenutzGew { get; set; }
         public bool IsNeOnly { get; set; }
@@ -215,7 +216,7 @@ namespace Logik.Pw.Logik.ViewModel
             }
             Pw.Logik.Properties.Settings.Default.Save();
 
-            
+
 
             MainListe = new ObservableCollection<PwEintrag>();
             GefilterteListe = new ObservableCollection<PwEintrag>();
@@ -226,6 +227,7 @@ namespace Logik.Pw.Logik.ViewModel
             HinzuNeuString = "Neu";
             _tmpIndexNummerMin = 100001;
             DetailAnzeigeEintrag = new PwEintrag();
+            //Auswahlstatus = BearbeitStatus.Anderung;
 
             VerwaltungsListe = _BenutzerListe.VerwaltungListe();
 
@@ -237,7 +239,7 @@ namespace Logik.Pw.Logik.ViewModel
             _VerwaltungBtn = new RelayCommand(Verwaltunggedruckt);
             _PrgEndeBtn = new RelayCommand(Programmschließengedruckt);
             _BenutzHinzuBtn = new RelayCommand(sendeNeuerBenutzer);
-         //   _PWHinzuBtn = new RelayCommand(PWHinzuGedruckt);
+            //   _PWHinzuBtn = new RelayCommand(PWHinzuGedruckt);
             _PwUbernahmeBtn = new RelayCommand(PWÄndernGedruckt);
             _LogOutBtn = new RelayCommand(LogoutGedruckt);
             _ImportBtn = new RelayCommand(ImportGedruckt);
@@ -254,6 +256,7 @@ namespace Logik.Pw.Logik.ViewModel
             //neuesRAndomPWBtn = new RelayCommand(NeuesRndPWgedruckt);
             //pWRandVerwaltBtn = new RelayCommand(ZufallsKonfiguratorGedruckt);
             _BenutzAndersBtn = new RelayCommand(BenutzerAndersGedruckt);
+            _BenutzDelBtn = new RelayCommand(BenutzerDelGedruckt);
 
             if (Properties.Settings.Default.AktuellerSkin == 0) // grundsätzlich keine schöne Lösung
             {
@@ -270,7 +273,7 @@ namespace Logik.Pw.Logik.ViewModel
         private void initzialize()
         {
             initzializeMenu();
-            initzializeBenutzer();         
+            initzializeBenutzer();
             initzializeIListColl();
         }
 
@@ -337,7 +340,7 @@ namespace Logik.Pw.Logik.ViewModel
             else
             {
                 Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
-                CbBenutzerWahl = VerwaltungsListe[0];            
+                CbBenutzerWahl = VerwaltungsListe[0];
             }
         }
 
@@ -376,141 +379,11 @@ namespace Logik.Pw.Logik.ViewModel
             AktEintrag = UiViewListe?.CurrentItem as PwEintrag;
         }
 
-
-        //private bool MenuAnderung(ObservableCollection<DockPanelKlasse> MeinMenu, int Index, string neuerHead, bool NeuerZustand)
-        //{
-        //    foreach (DockPanelKlasse AktKnoten in MeinMenu)
-        //    {
-        //        if (AktKnoten.Index == Index)
-        //        {
-        //            AktKnoten.Header = neuerHead;
-        //            AktKnoten.MenItemEnable = NeuerZustand;
-        //            return true;
-        //        }
-        //        if (AktKnoten.SubItems != null)
-        //        {
-        //            if (MenuAnderung(AktKnoten.SubItems, Index, neuerHead, NeuerZustand))
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //    }
-        //    return false;
-        //}
-
         private void initzializeMenu()
         {
             BeschreibungRndVerwalt = "Zufall-Generator";
             BeschreibungMenuDateiExport = "Benutzer exportieren";
             BeschreibungMenuDateiImport = "Benutzer importieren";
-
-        //#region Menu als Klasse 
-        //MeinOberMenu = new ObservableCollection<DockPanelKlasse>();
-        //    DockPanelKlasse tmpOberItems = new DockPanelKlasse(null, 1000);
-        //    ObservableCollection<DockPanelKlasse> tmp1Untermenu;
-        //    DockPanelKlasse tmpItems1Unter;
-        //    ObservableCollection<DockPanelKlasse> tmp2Untermenu;
-        //    DockPanelKlasse tmpItems2Unter;
-
-        //    #region Datei Menu
-        //    tmpOberItems.Header = "Datei";
-        //    tmpOberItems.MenItemEnable = true;
-        //    #region Untermenu Datei
-        //    tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
-
-        //    tmpItems1Unter = new DockPanelKlasse(AnsichtWechselBtn, 1100);
-        //    tmpItems1Unter.Header = "Benutzerverwaltung";
-        //    tmpItems1Unter.MenItemEnable = true;
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-
-        //    tmpItems1Unter = new DockPanelKlasse(RndVerwaltBtn, 1200);
-        //    tmpItems1Unter.Header = "Zufalls Konfigurator";
-        //    tmpItems1Unter.MenItemEnable = true;
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-
-        //    tmpItems1Unter = new DockPanelKlasse(_ExportBtn, 1300);
-        //    tmpItems1Unter.Header = "Benutzer Exportieren";
-        //    tmpItems1Unter.MenItemEnable = false;
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-
-        //    tmpItems1Unter = new DockPanelKlasse(_ImportBtn, 1400);
-        //    tmpItems1Unter.Header = "Benutzer Importieren";
-        //    tmpItems1Unter.MenItemEnable = true;
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-
-        //    tmpItems1Unter = new DockPanelKlasse(LogOutBtn, 1500);
-        //    tmpItems1Unter.Header = "Benutzer abmelden";
-        //    tmpItems1Unter.MenItemEnable = false;
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-
-        //    tmpItems1Unter = new DockPanelKlasse(PrgEndeBtn, 1600);
-        //    tmpItems1Unter.Header = "Schließen";
-        //    tmpItems1Unter.MenItemEnable = true;
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-
-        //    tmpOberItems.SubItems = tmp1Untermenu;
-        //    #endregion
-        //    MeinOberMenu.Add(tmpOberItems);
-        //    #endregion
-
-        //    #region Edit Menu
-        //    tmpOberItems = new DockPanelKlasse(null, 2000);
-        //    tmpOberItems.Header = "Edit";
-        //    tmpOberItems.MenItemEnable = true;
-        //    #region Untermneu Edit
-        //    tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
-
-        //    //tmpItems1Unter = new DockPanelKlasse(ZwischenAblageBtn, 2100);
-        //    //tmpItems1Unter.Header = "In Zwischenablage";
-        //    //tmpItems1Unter.MenItemEnable = false;       
-
-        //    tmpItems1Unter = new DockPanelKlasse(null, 2100);
-        //    tmpItems1Unter.Header = "Skin-Aussehen";
-        //    tmpItems1Unter.MenItemEnable = true;
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-        //    #region Untermenu Skins
-
-        //    tmp2Untermenu = new ObservableCollection<DockPanelKlasse>();
-
-        //    tmpItems2Unter = new DockPanelKlasse(new RelayCommand(ThemeWinStyleGedruckt), 2210);
-        //    tmpItems2Unter.Header = "Windows-Style";
-        //    tmpItems2Unter.MenItemEnable = true;
-        //    tmp2Untermenu.Add(tmpItems2Unter);
-        //    tmpItems2Unter = new DockPanelKlasse(new RelayCommand(ThemeDarkStyleGedruckt), 2220);
-        //    tmpItems2Unter.Header = "Dark-Style";
-        //    tmpItems2Unter.MenItemEnable = true;
-        //    tmp2Untermenu.Add(tmpItems2Unter);
-
-        //    tmpItems1Unter.SubItems = tmp2Untermenu;
-        //    #endregion
-
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-        //    tmpOberItems.SubItems = tmp1Untermenu;
-
-        //    #endregion
-        //    MeinOberMenu.Add(tmpOberItems);
-        //    #endregion
-
-        //    #region Hilfe Menu
-        //    tmpOberItems = new DockPanelKlasse(null, 3000);
-        //    tmpOberItems.Header = "Hilfe";
-        //    tmpOberItems.MenItemEnable = true;
-
-        //    #region Unermenu Hilfe
-        //    tmp1Untermenu = new ObservableCollection<DockPanelKlasse>();
-
-        //    tmpItems1Unter = new DockPanelKlasse(InfoBtn, 3100);
-        //    tmpItems1Unter.Header = "Info";
-        //    tmpItems1Unter.MenItemEnable = true;
-        //    tmp1Untermenu.Add(tmpItems1Unter);
-
-        //    tmpOberItems.SubItems = tmp1Untermenu;
-        //    #endregion
-        //    MeinOberMenu.Add(tmpOberItems);
-
-        //    #endregion
-
-            //#endregion
 
             #region Menu direkt im Xaml
             _WinstyleXamlBtn = new RelayCommand(ThemeWinStyleGedruckt);
@@ -548,8 +421,8 @@ namespace Logik.Pw.Logik.ViewModel
                 string tmpOrdnerPfad = PfadFindung(LoginDaten.Name);
                 MainListe = GefilterteListe = LoginChecker.LadePassworter(LoginDaten.PersiKauda);
                 AktBenutzer = _BenutzerListe.NameSuchen(CbBenutzerWahl);
-                BenutzerAktivBool = true; 
-                Auswahlstatus = BearbeitStatus.Neuanlage;
+                BenutzerAktivBool = true;
+                Auswahlstatus(BearbeitStatus.Neuanlage);
                 try
                 {
                     System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, "");
@@ -585,7 +458,7 @@ namespace Logik.Pw.Logik.ViewModel
         private void Verwaltunggedruckt()
         {
             AbfrageNichtGespeichertesPW();
-           // VerwaltungColl = new ObservableCollection<BenutzerView>(); alt
+            // VerwaltungColl = new ObservableCollection<BenutzerView>(); alt
 
             if (Verwaltung == Visibility.Visible)
             {
@@ -598,14 +471,14 @@ namespace Logik.Pw.Logik.ViewModel
                 {
                     LogoutGedruckt();
                 }
-                Ansichtwechsel(DerzeitgeAnsicht.Verwaltung);            
+                Ansichtwechsel(DerzeitgeAnsicht.Verwaltung);
             }
         }
 
         public void LogoutGedruckt()
         {
             AbfrageNichtGespeichertesPW();
-            GefilterteListe= null;
+            GefilterteListe = null;
             MainListe = null;
             _tmpIndexNummerMin = 100001;
             AktBenutzer = null;
@@ -624,23 +497,13 @@ namespace Logik.Pw.Logik.ViewModel
 
         private string PfadFindung(string BenutzerName) => Pw.Logik.Properties.Settings.Default.PfadZielOrdner + _BenutzerListe.OrdnerNameHolen(BenutzerName) + PasswortEndung;
 
-        //private void VisiPWNeuAnlegenSetzen()
-        //{
-        //    VisiNeuOnly = Visibility.Visible;
-        //    VisiÄndern = Visibility.Hidden;
-        //    VisiRndBtn1 = Visibility.Visible;
-        //    VisiRndBtn2 = Visibility.Hidden;
-        //    HinzuNeuString = "Neu";
-        //}
-
-
         private void AbfrageNichtGespeichertesPW()
         {
             if (DetailAnzeigeEintrag != null && !DetailAnzeigeEintrag.Aktuell)
             {
                 if (System.Windows.MessageBox.Show("Änderungen nicht gespeichert. Übernehmen?", "Fehler", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                        PWÄndernGedruckt();
+                    PWÄndernGedruckt();
                 }
                 else
                 {
@@ -651,95 +514,8 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-        //private void PWÄndernGedruckt()
-        //{
-        //    if(_auswahlstatus == BearbeitStatus.Anderung)
-        //    {
-        //        PwEintrag tmpV = new PwEintrag();
-        //        tmpV.Programm = AktEintrag.Programm;
-        //        tmpV.Benutzer = AktEintrag.Benutzer;
-        //        tmpV.Passwort = AktEintrag.Passwort;
-        //        tmpV.Datum = DateTime.Today;
-        //        tmpV.tmprndIndex = AktEintrag.tmprndIndex;
-        //        int tmpIndex = IndexSuchen(tmpV.Programm, tmpV.tmprndIndex);
-        //        _BenutzerListe.EintragCh(AktBenutzer.Name, tmpV, PWEingabe, tmpIndex);
-        //        MainListe.RemoveAt(tmpIndex);
-        //        MainListe.Insert(tmpIndex, tmpV);
-        //        _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
-        //        if (PWSuche != null && PWSuche != "")
-        //        {
-        //            GefilterteListe = PWListeFiltern();
-        //        }
-        //        else
-        //        {
-        //            GefilterteListe = MainListe;
-        //        }          
-        //        nichtGespeichertAnders = false;
-        //    }
-        //    else
-        //    {
-        //        if (!TestaufLeerenInhalt(PWNeuProgramm))
-        //        {
-        //            System.Windows.MessageBox.Show("Bitte einen Programmnamen angeben");
-        //        }
-        //        else
-        //        {
-        //            PwEintrag PWeinfügenView = new PwEintrag();
-        //            PWeinfügenView.Programm = PWNeuProgramm;
-        //            PWeinfügenView.Benutzer = PWNeuAdresse;
-        //            PWeinfügenView.Passwort = PWNeuPW;
-        //            PWeinfügenView.Datum = System.DateTime.Today;
-        //            PWeinfügenView.tmprndIndex = "n" + _tmpIndexNummerMin.ToString();
-        //            _tmpIndexNummerMin++;
-        //            if (ProgrammVorhanden(PWNeuProgramm))
-        //            {
-        //                if (ProgrammUndBenutzerVorhanden(PWeinfügenView))
-        //                {
-        //                    System.Windows.MessageBox.Show("Programm schon mit diesem Benutzernamen vorhanden.");
-        //                }
-        //                else
-        //                {
-        //                    if (System.Windows.MessageBox.Show("Programm schon mit einem anderem Benutzernamen vorhanden. Trotzdem anlegen?", "Snychonisieren", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-        //                    {
-        //                        nichtGespeichertNeu = false;
-        //                        _BenutzerListe.NormEintragVersHinzu(PWeinfügenView, PWEingabe, AktBenutzer.Name, false);
-        //                        _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
-        //                        PWNeuAdresse = "";
-        //                        PWNeuPW = "";
-        //                        nichtGespeichertNeu = false;
-        //                        PWNeuProgramm = "";
-        //                        // IsPrgTxtBoxFocused = true; geht derzeit nicht
-        //                    }
-        //                }
-        //            }
-        //            else
-        //            {
-        //                nichtGespeichertNeu = false;
-        //                if (MainListe.Count == 0)
-        //                {
-        //                    _BenutzerListe.NormEintragVersHinzu(PWeinfügenView, PWEingabe, AktBenutzer.Name, true);
-        //                }
-        //                else
-        //                {
-        //                    _BenutzerListe.NormEintragVersHinzu(PWeinfügenView, PWEingabe, AktBenutzer.Name, false);
-        //                }
-        //                MainListe.Add(PWeinfügenView);                       
-        //                _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
-        //                PWNeuAdresse = "";
-        //                PWNeuPW = "";
-        //                PWNeuProgramm = "";
-        //                GefilterteListe = PWListeFiltern();
-        //                nichtGespeichertNeu = false;
-        //                //  IsPrgTxtBoxFocused = true; geht derzeit nicht
-        //            }
-        //        }
-        //    }
-        //}
-
-
         private void PWÄndernGedruckt()
         {
-            if (AktEintrag == null) return;
 
             PwEintrag tmpV = new PwEintrag();
             tmpV.Programm = DetailAnzeigeEintrag.Programm;
@@ -747,7 +523,7 @@ namespace Logik.Pw.Logik.ViewModel
             tmpV.Passwort = DetailAnzeigeEintrag.Passwort;
             tmpV.Datum = DateTime.Today;
 
-            switch (Auswahlstatus)
+            switch (_auswahlstatus)
             {
                 case BearbeitStatus.Anderung:
                     tmpV.tmprndIndex = DetailAnzeigeEintrag.tmprndIndex;
@@ -755,7 +531,7 @@ namespace Logik.Pw.Logik.ViewModel
                     _BenutzerListe.EintragCh(AktBenutzer.Name, tmpV, PWEingabe, tmpIndex);
                     MainListe.RemoveAt(tmpIndex);
                     MainListe.Insert(tmpIndex, tmpV);
-                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));                  
+                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
                     break;
                 case BearbeitStatus.Neuanlage:
                     if (!TestaufLeerenInhalt(tmpV.Programm))
@@ -790,7 +566,7 @@ namespace Logik.Pw.Logik.ViewModel
                         }
                         MainListe.Add(tmpV);
                     }
-                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));               
+                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
                     break;
             }
 
@@ -813,31 +589,6 @@ namespace Logik.Pw.Logik.ViewModel
             // MessengerInstance.Send(new SendNeuBenutzerMess(SendNeuBenutzerMess.Zustand.Neueingabe, _BenutzerListe.AlleBenutzerAlsListe()));
             MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.NeuAnlage, null, _BenutzerListe));
         }
-
-        //public void EmpfangeNeuerBenutzer(NeuBenutzerMess NeuAnlage)
-        //{
-        //    // auch für import --> abchecken ob wir den Benutzer hinzufügen müssen.. dann auch liste eintragen wenn vorhanden
-        //    PWEingabe.Clear();
-        //    if (_BenutzerListe.NameSuchen(NeuAnlage.NeuePersondaten.Name).PersiKauda == null)
-        //    {
-        //        NeuAnlage.NeuePersondaten.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
-        //        _BenutzerListe.Hinzufügen(NeuAnlage.NeuePersondaten);
-        //        if(NeuAnlage.NeuePersondaten.PersiKauda == null)
-        //        {
-        //            _BenutzerListe.ErstEintrag(NeuAnlage.NeuePersondaten.Name, NeuAnlage.PwEintrag);
-        //        }          
-        //        _BenutzerListe.KomplettVerschlüsseln(NeuAnlage.NeuePersondaten.Name, PfadFindung(NeuAnlage.NeuePersondaten.Name));
-        //    }
-        //    else
-        //    {
-        //        // syncvorgang wurde durchgeführt. update die Kaudaliste
-        //        _BenutzerListe.NameSuchen(NeuAnlage.NeuePersondaten.Name).PersiKauda = NeuAnlage.NeuePersondaten.PersiKauda;
-        //    }
-
-        // //   VerwaltungsListe.Add(NeuAnlage.NeuePersondaten.Name);
-        //    VerwaltungsAnzeigeNeuLaden();
-        //    Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
-        //}
 
         private Person LeseDoppeltVerschlüsselteDatei(string DateiPfad, KaudawelschGenerator DerKaudaGenerator, string Ordner)
         {
@@ -899,7 +650,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void Ansichtwechsel(DerzeitgeAnsicht neuerWert)
         {
-            VerwaltListItem = null;
+            VerwaltListItem = string.Empty;
 
             switch (neuerWert)
             {
@@ -920,52 +671,49 @@ namespace Logik.Pw.Logik.ViewModel
                     Logingedruckt();
                     break;
                 case DerzeitgeAnsicht.Verwaltung:
-                        VisiBenutzerCB = Visibility.Hidden;
-                        Passwörter = Visibility.Hidden;
-                        Verwaltung = Visibility.Visible;
-                        //VisiNeuOnly = Visibility.Hidden;
-                        //VisiLöschen = Visibility.Hidden;
-                        VisiDGPW = Visibility.Hidden;
-                        PWNeuAdresse = "";
-                        PWNeuPW = "";
-                        //nichtGespeichertNeu = false;
-                        PWNeuProgramm = "";
-                        //nichtGespeichertAnders = false;
+                    VisiBenutzerCB = Visibility.Hidden;
+                    Passwörter = Visibility.Hidden;
+                    Verwaltung = Visibility.Visible;
+                    //VisiNeuOnly = Visibility.Hidden;
+                    //VisiLöschen = Visibility.Hidden;
+                    VisiDGPW = Visibility.Hidden;
+                    PWNeuAdresse = "";
+                    PWNeuPW = "";
+                    //nichtGespeichertNeu = false;
+                    PWNeuProgramm = "";
+                    //nichtGespeichertAnders = false;
                     BeschreibungMenu1 = "Passwortverwaltung";
+                    ErrorMeldungString = "";
                     //MenuAnderung(MeinOberMenu, 1100, "Passwortverwaltung", true);
-                        ZwischenAblageAktivBool = false;
-                        try
-                        {
-                            System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, "");
-                        }
-                        catch
-                        {
-                            System.Windows.MessageBox.Show("Zwischenablage-Fehler. Unmöglich Daten in ZW zu speichern");
-                        }
+                    ZwischenAblageAktivBool = false;
+                    try
+                    {
+                        System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, "");
+                    }
+                    catch
+                    {
+                        System.Windows.MessageBox.Show("Zwischenablage-Fehler. Unmöglich Daten in ZW zu speichern");
+                    }
                     VerwaltungsAnzeigeNeuLaden();
                     break;
             }
         }
 
-        private BearbeitStatus Auswahlstatus
+        private void Auswahlstatus (BearbeitStatus NeuerWert)
         {
-            get { return _auswahlstatus; }
-            set
+            _auswahlstatus = NeuerWert;
+            switch (NeuerWert)
             {
-                _auswahlstatus = value;
-                switch (value)
-                {
-                    case BearbeitStatus.Neuanlage:
-                        IsNeOnly = true;
-                        VisiAndersOnly = Visibility.Hidden;
-                        DetailAnzeigeEintrag = new PwEintrag();
-                        break;
-                    case BearbeitStatus.Anderung:
-                        IsNeOnly = false;
-                        VisiAndersOnly = Visibility.Visible;
-                        break;
-                }
-            }
+                case BearbeitStatus.Neuanlage:
+                    IsNeOnly = true;
+                    VisiAndersOnly = Visibility.Hidden;
+                    DetailAnzeigeEintrag = new PwEintrag();
+                    break;
+                case BearbeitStatus.Anderung:
+                    IsNeOnly = false;
+                    VisiAndersOnly = Visibility.Visible;
+                    break;
+            }  
         }
 
         private void NeuesRndPWgedruckt()
@@ -990,19 +738,11 @@ namespace Logik.Pw.Logik.ViewModel
                 if (impBen != null)
                 {
                     SendImportMess ubergabe;
-                    if (_BenutzerListe.BenutzerVorhanden(impBen.Name))
-                    {
-                        ubergabe = new SendImportMess(ImpMoglichkeit.SyncNeuAnderer, impBen, _BenutzerListe, AktBenutzer, PWEingabe);
-                       // Person EvtSyncBenutzer = _BenutzerListe.NameSuchen(impBen.Name);
-                        // starte abfrage ob snc / neuer Name import da name schon vorhanden / mit anderen namen syncen
-                        // anschließendes syncen.
-                    }
-                    else
-                    {
                         if(VerwaltungsListe.Count() > 0)
                         {
-                            ubergabe = new SendImportMess(ImpMoglichkeit.DirektAnderer, impBen, _BenutzerListe);
-                        }
+                            ubergabe = new SendImportMess(ImpMoglichkeit.WahlNeuAnderer, impBen, _BenutzerListe);
+                        MessengerInstance.Send(ubergabe);
+                    }
                         else
                         {
 
@@ -1016,10 +756,7 @@ namespace Logik.Pw.Logik.ViewModel
                     
                             return;
                         }
-                      
-                        // starte imp da name noch nicht vorhanden.. // frage ob man doch mit anderem namen syncen will?                    
-                    }
-                    MessengerInstance.Send(ubergabe);
+                        // starte imp da name noch nicht vorhanden.. // frage ob man doch mit anderem namen syncen will?                                                   
                 }
                 else
                 {
@@ -1031,7 +768,6 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void PWLöschenGedruckt()
         {
-
             if (AktEintrag == null || AktEintrag.Programm == null)
             {
                 return;
@@ -1061,6 +797,13 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
+        private void BenutzerDelGedruckt()
+        {
+            if (System.Windows.MessageBox.Show("Benutzer "+ VerwaltListItem + " löschen?", "Löschen", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.BenutzerDel, _BenutzerListe.NameSuchen(VerwaltListItem), _BenutzerListe));
+            }
+        }
 
         public void EmpfangeNeuesCenterSync(EmpfCenterMess NeuesCenter)
         {
@@ -1096,9 +839,6 @@ namespace Logik.Pw.Logik.ViewModel
             }
             VerwaltungsAnzeigeNeuLaden();
         }
-
-
- 
 
         private string NeuenBenutzerOrdnerAnlegen()
         {
@@ -1222,7 +962,7 @@ namespace Logik.Pw.Logik.ViewModel
             return -1;
         }
 
-           private void ZeigeTooltipZischenablage(string Inhalt)
+        private void ZeigeTooltipZischenablage(string Inhalt)
         {
             ZwischenlageTooltip = new System.Windows.Controls.ToolTip { Content = Inhalt };
             ZwischenlageTooltip.Opened += async delegate (object objTT, RoutedEventArgs args)
