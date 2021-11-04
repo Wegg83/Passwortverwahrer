@@ -13,10 +13,9 @@ namespace Logik.Pw.Logik.Messengers
         public PersonCenter Center;
         public SecureString AktivesProfil;
 
-        public EmpfCenterMess(PersonCenter Center, SecureString AktivesProfil = null)
+        public EmpfCenterMess(PersonCenter Center)
         {
             this.Center = Center;
-            this.AktivesProfil = AktivesProfil;
         }
     }
 }

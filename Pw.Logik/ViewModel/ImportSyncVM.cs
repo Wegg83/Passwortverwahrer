@@ -28,6 +28,7 @@ namespace Logik.Pw.Logik.ViewModel
         private RelayCommand _okBtn;
         public SecureString Pw1Eingabe { get; set; }
         public SecureString Pw2Eingabe { get; set; }
+        public SecureString Pw3Eingabe { get; set; }
 
         public ObservableCollection<string> ComboNamen  { get; set; }
         public string MoglichBenItem { get; set; }
@@ -62,6 +63,7 @@ namespace Logik.Pw.Logik.ViewModel
         public Visibility VisiTextBox { get; set; }
         public Visibility VisiPasswort1 { get; set; }
         public Visibility VisiPasswort2 { get; set; }
+        public Visibility VisiPasswort3 { get; set; }
         public Visibility VisiComboBox { get; set; }
         //public Visibility Version5Visi { get; set; }
 
@@ -87,6 +89,7 @@ namespace Logik.Pw.Logik.ViewModel
         {
             Pw1Eingabe = new SecureString();
             Pw2Eingabe = new SecureString();
+            Pw3Eingabe = new SecureString();
 
             _empfDaten = daten;
             SkinWechsel();
@@ -99,8 +102,9 @@ namespace Logik.Pw.Logik.ViewModel
                     InputV2Uberschrift = "Passwort:";
                     InputV3Uberschrift = "Passwort Wdh:";
                     VisiTextBox = Visibility.Visible;
-                    VisiPasswort1 = Visibility.Visible;
+                    VisiPasswort1 = Visibility.Hidden;
                     VisiPasswort2 = Visibility.Visible;
+                    VisiPasswort3 = Visibility.Visible;
                     VisiButton2Stk = Visibility.Hidden;
                     VisiComboBox = Visibility.Hidden;
                     VisiOKBtn = Visibility.Visible;
@@ -134,7 +138,17 @@ namespace Logik.Pw.Logik.ViewModel
                     InputV3Uberschrift = "Import-Passwort:";
                     break;
                 case ImpMoglichkeit.PwAndern: // alt 6
-
+                    InputUberschrift = "Altes Passwort:";
+                    InputV2Uberschrift = "Neues Passwort:";
+                    InputV3Uberschrift = "Neues Pwasswort wdh:";
+                    VisiTextBox = Visibility.Hidden;
+                    VisiPasswort1 = Visibility.Visible;
+                    VisiPasswort2 = Visibility.Visible;
+                    VisiPasswort3 = Visibility.Visible;
+                    VisiButton2Stk = Visibility.Hidden;
+                    VisiComboBox = Visibility.Hidden;
+                    VisiOKBtn = Visibility.Visible;
+                    VisiButton1 = Visibility.Hidden;
                     break;
             }
         }
@@ -143,10 +157,54 @@ namespace Logik.Pw.Logik.ViewModel
         {
 
         }
-        private void NeuAnlageGedruckt()
+        private bool NeuAnlageGedruckt()
         {
-
+            if (!TestaufLeerenInhalt(BenutzerNameTB))
+            {
+                System.Windows.MessageBox.Show("Bitte einen Neuen Namen vergeben.");
+                return false;
+            }
+            if (_empfDaten.Center.BenutzerVorhanden(BenutzerNameTB))
+            {
+                //System.Windows.MessageBox.Show("Name schon vergeben");
+                ErrorMeldung = "vergeben";
+                return false;
+            }
+            if (!Abfrage.PasswortIstKorrekt(Pw2Eingabe, Pw3Eingabe))
+            {
+                System.Windows.MessageBox.Show("Passwörter nicht ident.");
+                return false;
+            }
+            Person _neuBen = new Person();
+            _neuBen.Name = BenutzerNameTB;
+            _neuBen.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
+            _empfDaten.Center.Hinzufügen(_neuBen);
+            _empfDaten.Center.ErstEintrag(_neuBen.Name, Pw2Eingabe);
+            _empfDaten.Center.KomplettVerschlüsseln(_neuBen.Name, PfadFindung(_neuBen.Name));
+            return true;
         }
+
+        private bool PWAndersGdruckt()
+        {
+            KaudawelschGenerator Checker = new KaudawelschGenerator(Pw1Eingabe);
+            if (Checker.PwChecker(_empfDaten.ImportPerson.PersiKauda))
+            {
+                if (!Abfrage.PasswortIstKorrekt(Pw2Eingabe, Pw3Eingabe))
+                {
+                    MessageBox.Show("Neues Passwort nicht ident."); // als Errormessage neben wdh?
+                    return false;
+                }
+                _empfDaten.Center.BenutzerCh(_empfDaten.ImportPerson.Name, Pw2Eingabe, Pw1Eingabe);
+                _empfDaten.Center.KomplettVerschlüsseln(_empfDaten.ImportPerson.Name, PfadFindung(_empfDaten.ImportPerson.Name));
+                return true;
+            }
+            else
+            {
+                MessageBox.Show("Altes Passwort nicht korrekt.");
+                return false;
+            }
+        }
+
         private void AndererNutzerSyncGedruckt()
         {
 
@@ -159,35 +217,16 @@ namespace Logik.Pw.Logik.ViewModel
             switch (_empfDaten.Anzeige)
             {
                 case ImpMoglichkeit.NeuAnlage:
-                    if (!TestaufLeerenInhalt(BenutzerNameTB))
-                    {
-                        System.Windows.MessageBox.Show("Bitte einen Neuen Namen vergeben.");
-                        return;
-                    }
-                    if (_empfDaten.Center.BenutzerVorhanden(BenutzerNameTB))
-                    {
-                        //System.Windows.MessageBox.Show("Name schon vergeben");
-                        ErrorMeldung = "vergeben";
-                        return;
-                    }
-                    if(!Abfrage.PasswortIstKorrekt(Pw1Eingabe, Pw2Eingabe))
-                    {
-                        System.Windows.MessageBox.Show("Passwörter nicht ident.");
-                        return;
-                    }
-                    Person _neuBen = new Person();
-                    _neuBen.Name = BenutzerNameTB;
-                    _neuBen.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
-                    _empfDaten.Center.Hinzufügen(_neuBen);
-                    _empfDaten.Center.ErstEintrag(_neuBen.Name, Pw1Eingabe);
-                    _empfDaten.Center.KomplettVerschlüsseln(_neuBen.Name, PfadFindung(_neuBen.Name));
-                    tmpUbergabeDaten = new EmpfCenterMess(_empfDaten.Center);
-                    tmpkorrekt = true;
+                    tmpkorrekt = NeuAnlageGedruckt();
+                    break;
+                case ImpMoglichkeit.PwAndern:
+                    tmpkorrekt = PWAndersGdruckt();
                     break;
             }
             if(tmpkorrekt)
             {
                 DelEingaben();
+                tmpUbergabeDaten = new EmpfCenterMess(_empfDaten.Center);
                 MessengerInstance.Send(tmpUbergabeDaten);
                 MessengerInstance.Send(new FensterCloseMess{ Fenstername = "Ui.Pw.Ui.ImpSyncFenster" });
             }

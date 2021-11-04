@@ -127,10 +127,10 @@ namespace Logik.Pw.Logik.Klassen
             GesuchteDaten.PersiKauda.Insert(Index, NeuerEintrag);
         }
 
-        public void BenutzerCh(string geNam, SecureString seinK, SecureString seinAK)
+        public void BenutzerCh(string geNam, SecureString neuK, SecureString altK)
         {
             Person GesuchteDaten = NameSuchen(geNam);
-            KaudawelschGenerator changecheck = new KaudawelschGenerator(seinAK);
+            KaudawelschGenerator changecheck = new KaudawelschGenerator(altK);
             ObservableCollection<PwEintrag> huiList = changecheck.LadePassworter(GesuchteDaten.PersiKauda);
             if (huiList.Count() == 0)
             {
@@ -140,7 +140,7 @@ namespace Logik.Pw.Logik.Klassen
             string puhstr;
             foreach (PwEintrag hv in huiList)
             {
-                puhstr = ErstelleZahlen(hv, seinK);
+                puhstr = ErstelleZahlen(hv, neuK);
                 puhList.Add(puhstr);
             }
             GesuchteDaten.PersiKauda = puhList;

@@ -33,5 +33,10 @@ namespace Ui.Pw.Ui
             if (this.DataContext != null)
             { ((dynamic)this.DataContext).Pw2Eingabe = ((PasswordBox)sender).SecurePassword; }
         }
+        private void PasswordBox3_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext != null)
+            { ((dynamic)this.DataContext).Pw3Eingabe = ((PasswordBox)sender).SecurePassword; }
+        }
     }
 }

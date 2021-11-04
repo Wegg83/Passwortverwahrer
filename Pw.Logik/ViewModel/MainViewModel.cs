@@ -35,7 +35,7 @@ namespace Logik.Pw.Logik.ViewModel
        // private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
         public bool ZwischenAblageAktivBool { get; set; }
         private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
-        private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn; // , _PWAndersBtn _PWHinzuBtn
+        private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn, _BenutzAndersBtn; // , _PWAndersBtn _PWHinzuBtn
         private RelayCommand _PwUbernahmeBtn, _PwRndBtn;
         private PersonCenter _BenutzerListe; // alt dieGesamteListe
         private Person aktBenutzer;
@@ -92,13 +92,13 @@ namespace Logik.Pw.Logik.ViewModel
                     HinzuNeuString = "Neu";
                     Auswahlstatus = BearbeitStatus.Anderung;
                 }
-
-
             }
         }
 
 
         public ObservableCollection<string> VerwaltungsListe { get; set; } // alt PWCBItem
+        private string _VerwaltListItem;
+        public string VerwaltListItem { get { return _VerwaltListItem; } set { VerwaltListItem = value; RaisePropertyChanged(); if (value != null) VisiBenutzGew = Visibility.Visible; else VisiBenutzGew = Visibility.Hidden;  } }
         private string _CbBenutzerWahl;
         public string CbBenutzerWahl { get { return _CbBenutzerWahl; } set { _CbBenutzerWahl = value; RaisePropertyChanged(); if (AktBenutzer != null) LogoutGedruckt(); Logingedruckt(); } } // alt PWAktBenutzer
         private string _PWSuche;
@@ -128,7 +128,7 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand DarkstyleXamlBtn => _DarkstyleXamlBtn;
         public RelayCommand WinstyleXamlBtn => _WinstyleXamlBtn;
         public RelayCommand BenutzHinzuBtn => _BenutzHinzuBtn;
-
+        public RelayCommand BenutzAndersBtn => _BenutzAndersBtn;
 
         public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
 
@@ -145,6 +145,7 @@ namespace Logik.Pw.Logik.ViewModel
         public Visibility VisiBenutzerCB { get; set; }
         public Visibility VerwaltungAnders { get; set; }
         public Visibility VisiAndersOnly { get; set; }
+        public Visibility VisiBenutzGew { get; set; }
         public bool IsNeOnly { get; set; }
 
         public string PWNeuProgramm { get; set; }
@@ -252,7 +253,7 @@ namespace Logik.Pw.Logik.ViewModel
             //syncBtn = new RelayCommand(SyncenGedruckt);
             //neuesRAndomPWBtn = new RelayCommand(NeuesRndPWgedruckt);
             //pWRandVerwaltBtn = new RelayCommand(ZufallsKonfiguratorGedruckt);
-            //pWBenutzAndersBtn = new RelayCommand(BenutzerPwAndersGedruckt);
+            _BenutzAndersBtn = new RelayCommand(BenutzerAndersGedruckt);
 
             if (Properties.Settings.Default.AktuellerSkin == 0) // grundsätzlich keine schöne Lösung
             {
@@ -335,8 +336,8 @@ namespace Logik.Pw.Logik.ViewModel
             }
             else
             {
-                CbBenutzerWahl = VerwaltungsListe[0];
                 Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
+                CbBenutzerWahl = VerwaltungsListe[0];            
             }
         }
 
@@ -635,7 +636,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void AbfrageNichtGespeichertesPW()
         {
-            if (!DetailAnzeigeEintrag.Aktuell)
+            if (DetailAnzeigeEintrag != null && !DetailAnzeigeEintrag.Aktuell)
             {
                 if (System.Windows.MessageBox.Show("Änderungen nicht gespeichert. Übernehmen?", "Fehler", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
@@ -794,10 +795,17 @@ namespace Logik.Pw.Logik.ViewModel
             }
 
             GefilterteListe = PWListeFiltern();
-            //nichtGespeichertAnders = false;
             DetailAnzeigeEintrag.Aktuell = true;
             AktEintrag = null;
             AktEintrag = GefilterteListe[0];
+        }
+
+        private void BenutzerAndersGedruckt()
+        {
+            if (VerwaltListItem != null)
+            {
+                MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.PwAndern, _BenutzerListe.NameSuchen(VerwaltListItem), _BenutzerListe));
+            }
         }
 
         private void sendeNeuerBenutzer()
@@ -891,6 +899,8 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void Ansichtwechsel(DerzeitgeAnsicht neuerWert)
         {
+            VerwaltListItem = null;
+
             switch (neuerWert)
             {
                 case DerzeitgeAnsicht.Benutzer:
