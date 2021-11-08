@@ -35,7 +35,7 @@ namespace Logik.Pw.Logik.ViewModel
         public bool ZwischenAblageAktivBool { get; set; }
         private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
         private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn, _BenutzAndersBtn, _BenutzDelBtn;
-        private RelayCommand _PwUbernahmeBtn, _PwRndBtn, _pWRandVerwaltBtn;
+        private RelayCommand _PwUbernahmeBtn, _PwRndBtn, _pWRandVerwaltBtn, _infoCenterBtn;
         private PersonCenter _BenutzerListe; 
         private Person aktBenutzer;
         private Person AktBenutzer
@@ -57,11 +57,11 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-        public ObservableCollection<PwEintrag> MainListe { get; set; } // alt PasswortColl
-        public ObservableCollection<PwEintrag> GefilterteListe { get; set; } // altKoListe
+        public ObservableCollection<PwEintrag> MainListe { get; set; }
+        public ObservableCollection<PwEintrag> GefilterteListe { get; set; }
         public PwEintrag DetailAnzeigeEintrag { get; set; }
         private PwEintrag _AktEintrag;
-        public PwEintrag AktEintrag     // alt -> PasswortSelItem
+        public PwEintrag AktEintrag
         {
             //get
             //{
@@ -95,7 +95,7 @@ namespace Logik.Pw.Logik.ViewModel
         }
 
 
-        public ObservableCollection<string> VerwaltungsListe { get; set; } // alt PWCBItem
+        public ObservableCollection<string> VerwaltungsListe { get; set; }
         private string _VerwaltListItem;
         public string VerwaltListItem { get { return _VerwaltListItem; } set { _VerwaltListItem = value; RaisePropertyChanged(); if (value != string.Empty) VisiBenutzGew = Visibility.Visible; else VisiBenutzGew = Visibility.Hidden; } }
         private string _CbBenutzerWahl;
@@ -116,10 +116,6 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand AnsichtWechselBtn => _AnsichtWechselBtn;
         public RelayCommand PwUbernahmeBtn => _PwUbernahmeBtn;
         public RelayCommand PwNeuAnzBtn => new RelayCommand(() => { Auswahlstatus(BearbeitStatus.Neuanlage); });
-        //public RelayCommand PWHinzuBtn => _PWHinzuBtn;
-        //public RelayCommand PWAndersBtn => _PWAndersBtn;
-        //public RelayCommand PWZwischenBtn => _PWZwischenBtn;
-        //public RelayCommand BenutzerZwischenBtn => _BenutzerZwischenBtn;
         public RelayCommand PWDelBtn => _PWDelBtn;
         public RelayCommand PwRndBtn => _PwRndBtn;
         public RelayCommand AktBenutzerInZABtn => _AktBenutzerInZABtn;
@@ -130,6 +126,7 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand BenutzAndersBtn => _BenutzAndersBtn;
         public RelayCommand BenutzDelBtn => _BenutzDelBtn;
         public RelayCommand PWRandVerwaltBtn => _pWRandVerwaltBtn;
+        public RelayCommand InfoCenterBtn => _infoCenterBtn;
 
         public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
 
@@ -246,7 +243,7 @@ namespace Logik.Pw.Logik.ViewModel
             _AktPwInZABtn = new RelayCommand(() => { ZwischenAgedruckt(true); });
             _PWDelBtn = new RelayCommand(PWLöschenGedruckt);
             _RootOrdnerBtn = new RelayCommand(RootOrdnerGedruckt);
-            //versionsInfos = new RelayCommand(InfoCenterAnzeigenGedruckt);
+            _infoCenterBtn = new RelayCommand(InfoCenterAnzeigenGedruckt);
             _ExportBtn = new RelayCommand(ExportGedruckt);
             //_PWZwischenBtn = new RelayCommand(AktPwZwischenAgedruckt);
             //_BenutzerZwischenBtn = new RelayCommand(AktBenZwischenAgedruckt);
@@ -636,7 +633,6 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-
         private void VerwaltungsAnzeigeNeuLaden()
         {
             VerwaltungsListe = _BenutzerListe.VerwaltungListe();
@@ -818,8 +814,6 @@ namespace Logik.Pw.Logik.ViewModel
                 VerwaltungsAnzeigeNeuLaden();
             }
         }
-
-
 
         private void RootOrdnerGedruckt()
         {
@@ -1062,7 +1056,12 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void ZufallsKonfiguratorGedruckt()
         {
-            MessengerInstance.Send(new SendRndCenterMess(WindowStartupLocation.Manual, (int)System.Windows.Application.Current.MainWindow.Left, (int)System.Windows.Application.Current.MainWindow.Top));
+            MessengerInstance.Send(new SendRndCenterMess());
+        }
+
+        public void InfoCenterAnzeigenGedruckt()
+        {
+            MessengerInstance.Send(new InfoCenterMess());
         }
 
         private void ThemeWinStyleGedruckt()

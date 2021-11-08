@@ -46,7 +46,7 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Hilfe" >
-                <MenuItem Command="{Binding VersionsInfos}" Header="Info" />
+                <MenuItem Command="{Binding InfoCenterBtn}" Header="Info" />
             </MenuItem>
         </Menu>
 

@@ -1,5 +1,4 @@
 using CommonServiceLocator;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 
 namespace Logik.Pw.Logik.ViewModel
@@ -26,6 +25,7 @@ namespace Logik.Pw.Logik.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ImportSyncVM>();
             SimpleIoc.Default.Register<RandomCenterVM>();
+            SimpleIoc.Default.Register<InfoCenterVM>();
         }
 
         public MainViewModel Main
@@ -39,6 +39,8 @@ namespace Logik.Pw.Logik.ViewModel
         public ImportSyncVM ImpSnyc => ServiceLocator.Current.GetInstance<ImportSyncVM>();
 
         public RandomCenterVM RndCent => ServiceLocator.Current.GetInstance<RandomCenterVM>();
+
+        public InfoCenterVM InfoCent => ServiceLocator.Current.GetInstance<InfoCenterVM>();
 
         public static void Cleanup()
         {

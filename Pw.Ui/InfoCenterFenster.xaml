@@ -1,0 +1,32 @@
+﻿<Window x:Class="Ui.Pw.Ui.InfoCenterFenster"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Ui.Pw.Ui"
+        mc:Ignorable="d"
+        Title="InfoCenterFenster" Height="300" Width="300"
+         DataContext="{Binding InfoCent, Source={StaticResource Locator}}"
+        ResizeMode="CanMinimize" >
+    <Grid Background="{Binding MeinHintergrund}">
+        <Label Content="{Binding InfoUberschrift}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="243" Height="56" Margin="23,10,26,204"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseGross}" />
+        <Label Content="{Binding Ersteller}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="127" Height="26" Margin="139,66,26,178"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Label Content="{Binding VersionsNummer}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="37" Height="26" Margin="84,66,171,178"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Label Content="{Binding KontaktInfo}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="162" Height="30" Margin="61,230,69,10"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Width="243" Height="106" Margin="23,119,26,45"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}">
+            <Label.Content>
+                <AccessText TextWrapping="Wrap" Text="{Binding InfoText1}" Height="96" Width="233" />
+            </Label.Content>
+        </Label>
+        <Label Content="Kontakt: " VerticalAlignment="Center" HorizontalAlignment="Center" Width="51" Height="30" Margin="10,230,231,10"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Label Content="Version:" VerticalAlignment="Center" HorizontalAlignment="Center" Width="56" Height="26" Margin="23,66,213,178"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+    </Grid>
+
+</Window>

@@ -76,10 +76,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="InfoCenterFenster.xaml.cs">
+      <DependentUpon>InfoCenterFenster.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RandomCenterFenster.xaml.cs">
       <DependentUpon>RandomCenterFenster.xaml</DependentUpon>
     </Compile>
     <Page Include="ImpSyncFenster.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InfoCenterFenster.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

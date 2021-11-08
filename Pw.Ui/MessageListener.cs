@@ -61,6 +61,19 @@ namespace Ui.Pw.Ui
                 Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 Window.ShowDialog();
             });
+
+            Messenger.Default.Register<InfoCenterMess>(this, msg =>
+            {
+                InfoCenterFenster Window = new InfoCenterFenster();
+                var vm = Window.DataContext as InfoCenterVM;
+                if (vm != null)
+                {
+                    vm.SkinWechsel();
+                }
+                Window.Owner = Parent;
+                Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                Window.ShowDialog();
+            });
         }
 
         private Window SetzeParent()
