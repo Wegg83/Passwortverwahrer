@@ -1,0 +1,254 @@
+﻿<Window x:Class="Ui.Pw.Ui.RandomCenterFenster"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Ui.Pw.Ui"
+        mc:Ignorable="d"
+        Title="RandomCenter" Height="270" Width="270"
+        ResizeMode="CanMinimize"
+        DataContext="{Binding RndCent, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="OptionMark.Static.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="OptionMark.Static.Border" Color="#FF707070"/>
+        <Style x:Key="OptionMarkFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="14,0,0,0" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="OptionMark.MouseOver.Background" Color="#FFF3F9FF"/>
+        <SolidColorBrush x:Key="OptionMark.MouseOver.Border" Color="#FF5593FF"/>
+        <SolidColorBrush x:Key="OptionMark.MouseOver.Glyph" Color="#FF212121"/>
+        <SolidColorBrush x:Key="OptionMark.Disabled.Background" Color="#FFE6E6E6"/>
+        <SolidColorBrush x:Key="OptionMark.Disabled.Border" Color="#FFBCBCBC"/>
+        <SolidColorBrush x:Key="OptionMark.Disabled.Glyph" Color="#FF707070"/>
+        <SolidColorBrush x:Key="OptionMark.Pressed.Background" Color="#FFD9ECFF"/>
+        <SolidColorBrush x:Key="OptionMark.Pressed.Border" Color="#FF3C77DD"/>
+        <SolidColorBrush x:Key="OptionMark.Pressed.Glyph" Color="#FF212121"/>
+        <SolidColorBrush x:Key="OptionMark.Static.Glyph" Color="#FF212121"/>
+        <Style x:Key="CheckBoxStyle1" TargetType="{x:Type CheckBox}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource OptionMark.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource OptionMark.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid x:Name="templateRoot" Background="Transparent" SnapsToDevicePixels="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="checkBoxBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="1,1,0,0" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Height="9.89" Width="9.975">
+                                <Grid x:Name="markGrid" Margin="-3.75,-3.75,-2.875,0">
+                                    <Path x:Name="optionMark" Data="M9.6430266,1.2795623 L4.5419471,9.5164818 4.3711661,9.5164818 0,5.4319845 1.2341552,3.6834982 4.1133996,6.3681378 8.055989,1.5960065E-05 9.6430266,1.2795623 z" Fill="{StaticResource OptionMark.Static.Glyph}" Margin="3.75,2,-2.25,0" Opacity="0" Stretch="None"/>
+                                    <Rectangle x:Name="indeterminateMark" Fill="{StaticResource OptionMark.Static.Glyph}" Margin="2,2,1,1" Opacity="0"/>
+                                </Grid>
+                            </Border>
+                            <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasContent" Value="true">
+                                <Setter Property="FocusVisualStyle" Value="{StaticResource OptionMarkFocusVisual}"/>
+                                <Setter Property="Padding" Value="4,-1,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.MouseOver.Border}"/>
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.MouseOver.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.MouseOver.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Disabled.Border}"/>
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.Disabled.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.Disabled.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource OptionMark.Pressed.Border}"/>
+                                <Setter Property="Fill" TargetName="optionMark" Value="{StaticResource OptionMark.Pressed.Glyph}"/>
+                                <Setter Property="Fill" TargetName="indeterminateMark" Value="{StaticResource OptionMark.Pressed.Glyph}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Opacity" TargetName="optionMark" Value="1"/>
+                                <Setter Property="Opacity" TargetName="indeterminateMark" Value="0"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="{x:Null}">
+                                <Setter Property="Opacity" TargetName="optionMark" Value="0"/>
+                                <Setter Property="Opacity" TargetName="indeterminateMark" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{Binding MeinHintergrund}">
+        <Label Content="Zufalls-Generator Einstellungen" VerticalAlignment="Top" HorizontalAlignment="Left" Width="230" Height="30" Margin="10,10,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseGross}" />
+        <Label Content="PasswortLänge" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Height="30" Margin="80,35,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Label Content="{Binding PWLange}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="30" Height="30" Margin="195,35,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <RepeatButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="10" Margin="220,37,0,0" Delay="400" Interval="100"
+            FontFamily="{Binding MeineSchriftArt}" Foreground="#FFCBCBCB" FontSize="{Binding MeineSchriftGrosseGross}" Command="{Binding LangeRaufBtn}" >
+            <StackPanel>
+                <Image Source="{Binding MeinIconRauf}" Height="7" Width="7" />
+            </StackPanel>
+            <RepeatButton.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </RepeatButton.Background>
+        </RepeatButton>
+        <RepeatButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="10" Margin="220,47,0,0" Delay="400" Interval="100"
+            FontFamily="{Binding MeineSchriftArt}" Foreground="#FFCBCBCB" FontSize="{Binding MeineSchriftGrosseGross}" Command="{Binding LangeRuntBtn}" >
+            <StackPanel>
+                <Image Source="{Binding MeinIconRunter}" Height="7" Width="7" />
+            </StackPanel>
+            <RepeatButton.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </RepeatButton.Background>
+        </RepeatButton>
+
+        <Label Content="Zahlen" VerticalAlignment="Top" HorizontalAlignment="Left" Width="90" Height="22" Margin="20,60,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseKlein}" />
+        <Label Content="?" VerticalAlignment="Top" HorizontalAlignment="Left" Width="15" Height="20" Margin="230,60,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseKlein}" ToolTip="Zahlen => '0-9'" />
+        <CheckBox Content="Aktiviert" VerticalAlignment="Top" HorizontalAlignment="Left" Width="80" Height="22" Margin="40,80,0,0" IsChecked="{Binding ZahlenCheck}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" Style="{DynamicResource CheckBoxStyle1}">
+        </CheckBox>
+
+        <Label Content="Minimum Zeichen" VerticalAlignment="Top" HorizontalAlignment="Left" Width="120" Height="30" Margin="100,80,0,0"  Visibility="{Binding PWZahlenVisi}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Label Content="{Binding MinZahlen}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="25" Height="30" Margin="195,80,0,0"  Visibility="{Binding PWZahlenVisi}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <RepeatButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="10" Margin="220,80,0,0" Visibility="{Binding PWZahlenVisi}" Delay="400" Interval="100"
+            FontFamily="{Binding MeineSchriftArt}" Foreground="#FFCBCBCB" FontSize="{Binding MeineSchriftGrosseGross}" IsEnabled="{Binding MinZahlenErlaubt}" Command="{Binding ZahlenRaufBtn}" >
+            <StackPanel>
+                <Image Source="{Binding MeinIconRauf}" Height="7" Width="7" />
+            </StackPanel>
+            <RepeatButton.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </RepeatButton.Background>
+        </RepeatButton>
+        <RepeatButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="10" Margin="220,90,0,0" Visibility="{Binding PWZahlenVisi}" Delay="400" Interval="100"
+            FontFamily="{Binding MeineSchriftArt}" Foreground="#FFCBCBCB" FontSize="{Binding MeineSchriftGrosseGross}" IsEnabled="{Binding MinZahlenErlaubt}" Command="{Binding ZahlenRuntBtn}" >
+            <StackPanel>
+                <Image Source="{Binding MeinIconRunter}" Height="7" Width="7" />
+            </StackPanel>
+            <RepeatButton.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </RepeatButton.Background>
+        </RepeatButton>
+
+        <Label Content="Groß-Buchstaben" VerticalAlignment="Top" HorizontalAlignment="Left" Width="90" Height="20" Margin="20,105,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseKlein}" />
+        <Label Content="?" VerticalAlignment="Top" HorizontalAlignment="Left" Width="15" Height="20" Margin="230,110,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseKlein}" ToolTip="Großbuchstaben => 'A-Z'" />
+        <CheckBox Content="Aktiviert" VerticalAlignment="Top" HorizontalAlignment="Left" Width="90" Height="20" Margin="40,127,0,0" IsChecked="{Binding GrossCheck}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" Style="{DynamicResource CheckBoxStyle1}" />
+        <Label Content="Minimum Zeichen" VerticalAlignment="Top" HorizontalAlignment="Left" Width="95" Height="30" Margin="100,128,0,0" Visibility="{Binding PWGrossVisi}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Label Content="{Binding MinGross}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="25" Height="30" Margin="195,128,0,0" Visibility="{Binding PWGrossVisi}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <RepeatButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="10" Margin="220,128,0,0" Visibility="{Binding PWGrossVisi}" Delay="400" Interval="100"
+            FontFamily="{Binding MeineSchriftArt}" Foreground="#FFCBCBCB" FontSize="{Binding MeineSchriftGrosseGross}" IsEnabled="{Binding MinGrossErlaubt}" Command="{Binding GrossRaufBtn}" >
+            <StackPanel>
+                <Image Source="{Binding MeinIconRauf}" Height="7" Width="7" />
+            </StackPanel>
+            <RepeatButton.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </RepeatButton.Background>
+        </RepeatButton>
+        <RepeatButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="10" Margin="220,138,0,0" Visibility="{Binding PWGrossVisi}" Delay="400" Interval="100"
+            FontFamily="{Binding MeineSchriftArt}" Foreground="#FFCBCBCB" FontSize="{Binding MeineSchriftGrosseGross}" IsEnabled="{Binding MinGrossErlaubt}" Command="{Binding GrossRuntBtn}" >
+            <StackPanel>
+                <Image Source="{Binding MeinIconRunter}" Height="7" Width="7" />
+            </StackPanel>
+            <RepeatButton.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </RepeatButton.Background>
+        </RepeatButton>
+
+        <Label Content="Sonderzeichen" VerticalAlignment="Top" HorizontalAlignment="Left" Width="90" Height="20" Margin="20,153,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseKlein}" />
+        <Label Content="?" VerticalAlignment="Top" HorizontalAlignment="Left" Width="15" Height="20" Margin="230,150,0,0"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseKlein}" ToolTip="{Binding ToolTipSonderzeichen}" />
+        <CheckBox Content="Aktiviert" VerticalAlignment="Top" HorizontalAlignment="Left" Width="60" Height="20" Margin="40,175,0,0" IsChecked="{Binding SonderCheck}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" Style="{DynamicResource CheckBoxStyle1}" />
+        <Label Content="Minimum Zeichen" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" Height="30" Margin="100,175,0,0" Visibility="{Binding PWSonderVisi}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <Label Content="{Binding MinSonder}" VerticalAlignment="Top" HorizontalAlignment="Left" Width="25" Height="30" Margin="195,175,0,0" Visibility="{Binding PWSonderVisi}"
+                FontFamily="{Binding MeineSchriftArt}" Foreground="{Binding MeineSchriftFarbe}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+        <RepeatButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="10" Margin="220,175,0,0" Visibility="{Binding PWSonderVisi}" Delay="400" Interval="100"
+            FontFamily="{Binding MeineSchriftArt}" Foreground="#FFCBCBCB" FontSize="{Binding MeineSchriftGrosseGross}" IsEnabled="{Binding MinSonderErlaubt}" Command="{Binding SonderRaufBtn}" >
+            <StackPanel>
+                <Image Source="{Binding MeinIconRauf}" Height="7" Width="7" />
+            </StackPanel>
+            <RepeatButton.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </RepeatButton.Background>
+        </RepeatButton>
+        <RepeatButton HorizontalAlignment="Left" VerticalAlignment="Top" Width="10" Height="10" Margin="220,185,0,0" Visibility="{Binding PWSonderVisi}" Delay="400" Interval="100"
+            FontFamily="{Binding MeineSchriftArt}" Foreground="#FFCBCBCB" FontSize="{Binding MeineSchriftGrosseGross}" IsEnabled="{Binding MinSonderErlaubt}" Command="{Binding SonderRuntBtn}" >
+            <StackPanel>
+                <Image Source="{Binding MeinIconRunter}" Height="7" Width="7" />
+            </StackPanel>
+            <RepeatButton.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </RepeatButton.Background>
+        </RepeatButton>
+
+        <Border BorderBrush="{Binding MeineKontrastFarbe2}" BorderThickness="2" HorizontalAlignment="Left" Height="1" Margin="20,60,0,0" VerticalAlignment="Top" Width="220"/>
+        <Border BorderBrush="{Binding MeineKontrastFarbe2}" BorderThickness="2" HorizontalAlignment="Left" Height="1" Margin="20,105,0,0" VerticalAlignment="Top" Width="220"/>
+        <Border BorderBrush="{Binding MeineKontrastFarbe2}" BorderThickness="2" HorizontalAlignment="Left" Height="1" Margin="20,153,0,0" VerticalAlignment="Top" Width="220"/>
+
+        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="20" Margin="22,200,0,0" Content="{Binding ZuruckBtnString}" Command="{Binding ZuruckBtn}" FontFamily="{Binding MeineSchriftArt}" Foreground="White" >
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
+                    <GradientStop Color="{Binding MeineKontrastFarbe2}" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+    </Grid>
+</Window>

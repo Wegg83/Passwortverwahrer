@@ -9,5 +9,10 @@ namespace Logik.Pw.Logik.Messengers
     public class FensterCloseMess
     {
         public string Fenstername { get; set; }
+
+        public FensterCloseMess(string FensterName)
+        {
+            this.Fenstername = FensterName;
+        }
     }
 }

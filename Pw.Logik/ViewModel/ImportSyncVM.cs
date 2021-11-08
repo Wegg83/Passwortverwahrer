@@ -365,7 +365,7 @@ namespace Logik.Pw.Logik.ViewModel
                 DelEingaben();
                 tmpUbergabeDaten = new EmpfCenterMess(_empfDaten.Center);
                 MessengerInstance.Send(tmpUbergabeDaten);
-                MessengerInstance.Send(new FensterCloseMess{ Fenstername = "Ui.Pw.Ui.ImpSyncFenster" });
+                MessengerInstance.Send(new FensterCloseMess("Ui.Pw.Ui.ImpSyncFenster"));
             }
         }
 

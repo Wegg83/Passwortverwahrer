@@ -13,9 +13,11 @@ namespace Ui.Pw.Ui
     class MessageListener
     {
         public bool ListenerBool => true;
+        private Window Parent;
 
         public MessageListener()
         {
+            Parent = SetzeParent();
             InitMessenger();
         }
 
@@ -29,6 +31,8 @@ namespace Ui.Pw.Ui
                 {
                     vm.Initialisiere(msg);
                 }
+                Window.Owner = Parent;
+                Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 Window.ShowDialog();
             });
 
@@ -45,9 +49,31 @@ namespace Ui.Pw.Ui
                 }
             });
 
+            Messenger.Default.Register<SendRndCenterMess>(this, msg => 
+            {
+                RandomCenterFenster Window = new RandomCenterFenster();
+                var vm = Window.DataContext as RandomCenterVM;
+                if(vm != null)
+                {
+                    vm.Inizialise();
+                }
+                Window.Owner = Parent;
+                Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                Window.ShowDialog();
+            });
+        }
 
-
-
+        private Window SetzeParent()
+        {
+            foreach (Window tmp in Application.Current.Windows)
+            {
+                string tst = tmp.ToString();
+                if (tmp.ToString() == "Ui.Pw.Ui.MainWindow")
+                {
+                    return tmp;
+                }
+            }
+            return null;
         }
     }
 }

@@ -25,6 +25,7 @@ namespace Logik.Pw.Logik.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ImportSyncVM>();
+            SimpleIoc.Default.Register<RandomCenterVM>();
         }
 
         public MainViewModel Main
@@ -37,6 +38,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         public ImportSyncVM ImpSnyc => ServiceLocator.Current.GetInstance<ImportSyncVM>();
 
+        public RandomCenterVM RndCent => ServiceLocator.Current.GetInstance<RandomCenterVM>();
 
         public static void Cleanup()
         {

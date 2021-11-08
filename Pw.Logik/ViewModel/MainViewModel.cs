@@ -32,12 +32,11 @@ namespace Logik.Pw.Logik.ViewModel
         public static SkinWahl AktuellerSkin;
         public const string PasswortEndung = @"\bin.dat";
 
-        // private bool nichtGespeichertAnders, nichtGespeichertNeu; // achtung keine integration mit NUR get;set;
         public bool ZwischenAblageAktivBool { get; set; }
         private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
-        private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn, _BenutzAndersBtn, _BenutzDelBtn; // , _PWAndersBtn _PWHinzuBtn
-        private RelayCommand _PwUbernahmeBtn, _PwRndBtn;
-        private PersonCenter _BenutzerListe; // alt dieGesamteListe
+        private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn, _BenutzAndersBtn, _BenutzDelBtn;
+        private RelayCommand _PwUbernahmeBtn, _PwRndBtn, _pWRandVerwaltBtn;
+        private PersonCenter _BenutzerListe; 
         private Person aktBenutzer;
         private Person AktBenutzer
         {
@@ -130,13 +129,13 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand BenutzHinzuBtn => _BenutzHinzuBtn;
         public RelayCommand BenutzAndersBtn => _BenutzAndersBtn;
         public RelayCommand BenutzDelBtn => _BenutzDelBtn;
+        public RelayCommand PWRandVerwaltBtn => _pWRandVerwaltBtn;
 
         public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
 
         //public ObservableCollection<DockPanelKlasse> MeinOberMenu;
         public Visibility Passwörter { get; set; }
         public Visibility Verwaltung { get; set; }
-        //public Visibility VisiHinzu { get; set; }
         public Visibility VisiDGPW { get; set; }
         //public Visibility VisiNeuOnly { get; set; }
         //public Visibility VisiÄndern { get; set; }
@@ -144,7 +143,6 @@ namespace Logik.Pw.Logik.ViewModel
         //public Visibility VisiRndBtn2 { get; set; }
         //public Visibility VisiLöschen { get; set; }
         public Visibility VisiBenutzerCB { get; set; }
-        //public Visibility VerwaltungAnders { get; set; }
         public Visibility VisiAndersOnly { get; set; }
         public Visibility VisiBenutzGew { get; set; }
         public bool IsNeOnly { get; set; }
@@ -254,7 +252,7 @@ namespace Logik.Pw.Logik.ViewModel
             //_BenutzerZwischenBtn = new RelayCommand(AktBenZwischenAgedruckt);
             //syncBtn = new RelayCommand(SyncenGedruckt);
             //neuesRAndomPWBtn = new RelayCommand(NeuesRndPWgedruckt);
-            //pWRandVerwaltBtn = new RelayCommand(ZufallsKonfiguratorGedruckt);
+            _pWRandVerwaltBtn = new RelayCommand(ZufallsKonfiguratorGedruckt);
             _BenutzAndersBtn = new RelayCommand(BenutzerAndersGedruckt);
             _BenutzDelBtn = new RelayCommand(BenutzerDelGedruckt);
 
@@ -1062,6 +1060,10 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
+        private void ZufallsKonfiguratorGedruckt()
+        {
+            MessengerInstance.Send(new SendRndCenterMess(WindowStartupLocation.Manual, (int)System.Windows.Application.Current.MainWindow.Left, (int)System.Windows.Application.Current.MainWindow.Top));
+        }
 
         private void ThemeWinStyleGedruckt()
         {
