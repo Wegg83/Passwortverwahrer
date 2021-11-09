@@ -194,26 +194,6 @@ namespace Logik.Pw.Logik.ViewModel
             });
 
 
-            try
-            {
-                if (Pw.Logik.Properties.Settings.Default.HauptFensterBreite <= 0 || Pw.Logik.Properties.Settings.Default.HauptFensterBreite >= 9000)
-                {
-                    Pw.Logik.Properties.Settings.Default.HauptFensterBreite = 525;
-                }
-                if (Pw.Logik.Properties.Settings.Default.HauptFensterHohe <= 0 || Pw.Logik.Properties.Settings.Default.HauptFensterHohe >= 9000)
-                {
-                    Pw.Logik.Properties.Settings.Default.HauptFensterHohe = 450;
-                }
-            }
-            catch
-            {
-                Pw.Logik.Properties.Settings.Default.HauptFensterBreite = 525;
-                Pw.Logik.Properties.Settings.Default.HauptFensterHohe = 450;
-            }
-            Pw.Logik.Properties.Settings.Default.Save();
-
-
-
             MainListe = new ObservableCollection<PwEintrag>();
             GefilterteListe = new ObservableCollection<PwEintrag>();
             BenutzerAktivBool = false;

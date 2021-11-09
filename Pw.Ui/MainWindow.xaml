@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Pw.Ui"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
-        Title="PasswortVerwahrer" Height="{Binding HauptFensterHohe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="{Binding HauptFensterBreite, Mode=TwoWay}" MinWidth="580" MinHeight="450"
+        Title="PasswortVerwahrer" MinWidth="1100" MinHeight="480" Width="1100" Height="480"
         Icon="Bilder/PWIcon.ico" WindowState="{Binding FensterMaxMinStatus}"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
@@ -20,8 +20,8 @@
     </i:Interaction.Triggers>
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{Binding MeinHintergrund}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="500"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition  />
@@ -50,7 +50,7 @@
             </MenuItem>
         </Menu>
 
-        <GroupBox Header="BenutzerLogin" Grid.Column="1" Grid.Row="0" Margin="10" Visibility="{Binding VisiBenutzerCB}" Height="80" Width="400" Foreground="{Binding MeineSchriftFarbe1}" >
+        <GroupBox Header="BenutzerLogin" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="0" Margin="15,30,15,15" Visibility="{Binding VisiBenutzerCB}" Height="65" Width="400" Foreground="{Binding MeineSchriftFarbe1}" >
             <Grid Grid.LostFocus="PasswordBox_DelPW">
                 <ComboBox HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="100" 
                    SelectedItem="{Binding CbBenutzerWahl, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding VerwaltungsListe}" FontFamily="{Binding MeineSchriftArtFett}" VerticalContentAlignment="Center">
@@ -84,7 +84,7 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="Ubersicht" Grid.Column="0" Grid.Row="0" Margin="55" Grid.RowSpan="3" Visibility="{Binding VisiDGPW}" Foreground="{Binding MeineSchriftFarbe1}"  >
+        <GroupBox Header="Ubersicht" Grid.Column="0" Grid.Row="0" Margin="30" Grid.RowSpan="4" Visibility="{Binding VisiDGPW}" Foreground="{Binding MeineSchriftFarbe1}"  >
             <DataGrid ItemsSource="{Binding GefilterteListe}"  
                       IsSynchronizedWithCurrentItem="True"
                       EnableRowVirtualization="True"
@@ -120,7 +120,7 @@
                     <DataGridTextColumn Header="Benutzer" Binding="{Binding Benutzer, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                                         EditingElementStyle="{StaticResource ErrorText}" />
                     <DataGridTextColumn Header="Passwort" Binding="{Binding Passwort, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                                        EditingElementStyle="{StaticResource ErrorText}" IsReadOnly="True" />
+                                        EditingElementStyle="{StaticResource ErrorText}" Width="*" IsReadOnly="True" />
                 </DataGrid.Columns>
 
             </DataGrid>
@@ -143,7 +143,7 @@
                         </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,142,60,193" Content="Neu" Command="{Binding BenutzHinzuBtn}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,-30,60,0" Content="Neu" Command="{Binding BenutzHinzuBtn}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                             <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
@@ -151,7 +151,7 @@
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
-                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,168,60,167" Content="Ändern" Command="{Binding BenutzAndersBtn}" Visibility="{Binding VisiBenutzGew}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,20,60,0" Content="Ändern" Command="{Binding BenutzAndersBtn}" Visibility="{Binding VisiBenutzGew}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}" Grid.Column="1" >
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                             <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
@@ -159,7 +159,7 @@
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
-                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,160,60,100" Content="Löschen" Command="{Binding BenutzDelBtn}" Visibility="{Binding VisiBenutzGew}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}">
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="50" Margin="0,70,60,0" Content="Löschen" Command="{Binding BenutzDelBtn}" Visibility="{Binding VisiBenutzGew}" FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseNorm}">
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                             <GradientStop Color="{Binding MeineKontrastFarbe1}" Offset="0"/>
@@ -182,7 +182,7 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="Details" Grid.Column="2" Grid.Row="1" Margin="25" Grid.RowSpan="2" Visibility="{Binding VisiDGPW}" Height="170" Width="450" Foreground="{Binding MeineSchriftFarbe1}" >
+        <GroupBox Header="Details" Grid.Column="2" Grid.Row="1" Margin="25" Grid.RowSpan="2" HorizontalAlignment="Right" Visibility="{Binding VisiDGPW}" Height="170" Width="450" Foreground="{Binding MeineSchriftFarbe1}" >
             <Grid>
                 <Label HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,15,140,0" Content="Suche" Visibility="{Binding VisiDGPW}" Width="80" Height="28" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseGross}" Foreground="{Binding MeineSchriftFarbe1}" />
                 <TextBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,20,0,0" Text="{Binding PWSuche, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding VisiDGPW}" Width="80" Height="20" FontFamily="{Binding MeineSchriftArtFett}" FontSize="{Binding MeineSchriftGrosseNorm}" />
