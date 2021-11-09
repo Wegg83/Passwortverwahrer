@@ -41,6 +41,9 @@
                     />
             </PasswordBox.InputBindings>
         </PasswordBox>
+        <Label Content="{Binding ErrorMeldungPw}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="28" Margin="150,0,0,0"
+                FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe1}" FontSize="{Binding MeineSchriftGrosseNorm}" />
+
         <PasswordBox PasswordChanged="PasswordBox3_PasswordChanged" Visibility="{Binding VisiPasswort3}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="100" Height="22" Margin="0,90,100,0"
                       VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TabIndex="3">
             <PasswordBox.InputBindings>
@@ -49,7 +52,7 @@
                     />
             </PasswordBox.InputBindings>
         </PasswordBox>
-        
+
         <Button VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding VisiOKBtn}" Width="35" Height="20" Margin="150,100,0,0" Content="OK" Command="{Binding OkBtn}" TabIndex="6"
                 FontFamily="{Binding MeineSchriftArtFett}" Foreground="{Binding MeineSchriftFarbe2}" FontSize="{Binding MeineSchriftGrosseKlein}">
             <Button.Background>
@@ -59,7 +62,7 @@
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
-
+        
         <GroupBox Header="Auswahl" Visibility="{Binding VisiButton2Stk}" Height="50" Width="240" >
             <Grid>
                 <Button VerticalAlignment="Top" HorizontalAlignment="Left" Width="70" Height="25" Margin="15,0,0,0" Content="Neuer Benutzer" Command="{Binding AuswahlNeuBtn}"

@@ -25,6 +25,7 @@ namespace Logik.Pw.Logik.ViewModel
 
     public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
+        #region definitionen 
         enum DerzeitgeAnsicht { Verwaltung, Benutzer }
         enum BearbeitStatus { Neuanlage, Anderung }
         public enum SkinWahl { winsylte, Darkstyle }
@@ -64,20 +65,6 @@ namespace Logik.Pw.Logik.ViewModel
         private PwEintrag _AktEintrag;
         public PwEintrag AktEintrag
         {
-            //get
-            //{
-            //    var _tmpErg = UiViewListe?.CurrentItem as PwEintrag;
-            //    if (_tmpErg != null)
-            //    {
-            //        // logik zum einzel anzeigen
-            //    }
-            //    return _tmpErg;
-            //}
-            //set
-            //{
-            //    UiViewListe.MoveCurrentTo(value);
-            //    RaisePropertyChanged();
-            //}
             get { return _AktEintrag; }
             set
             {
@@ -100,7 +87,7 @@ namespace Logik.Pw.Logik.ViewModel
         private string _VerwaltListItem;
         public string VerwaltListItem { get { return _VerwaltListItem; } set { _VerwaltListItem = value; RaisePropertyChanged(); if (value != string.Empty) VisiBenutzGew = Visibility.Visible; else VisiBenutzGew = Visibility.Hidden; } }
         private string _CbBenutzerWahl;
-        public string CbBenutzerWahl { get { return _CbBenutzerWahl; } set { _CbBenutzerWahl = value; RaisePropertyChanged(); if (AktBenutzer != null) LogoutGedruckt(); Logingedruckt(); } } // alt PWAktBenutzer
+        public string CbBenutzerWahl { get { return _CbBenutzerWahl; } set { _CbBenutzerWahl = value; RaisePropertyChanged(); if (AktBenutzer != null) LogoutGedruckt(); Logingedruckt(); } }
         private string _PWSuche;
         public string PWSuche { get { return _PWSuche; } set { _PWSuche = value; RaisePropertyChanged(); GefilterteListe = PWListeFiltern(); if (GefilterteListe.Count == 0) Auswahlstatus(BearbeitStatus.Neuanlage); } }
         public string BeschreibungMenu1 { get; set; }
@@ -128,30 +115,19 @@ namespace Logik.Pw.Logik.ViewModel
         public RelayCommand BenutzDelBtn => _BenutzDelBtn;
         public RelayCommand PWRandVerwaltBtn => _pWRandVerwaltBtn;
         public RelayCommand InfoCenterBtn => _infoCenterBtn;
-
         public System.Windows.Controls.ToolTip ZwischenlageTooltip { get; set; }
-
-        //public ObservableCollection<DockPanelKlasse> MeinOberMenu;
         public Visibility Passwörter { get; set; }
         public Visibility Verwaltung { get; set; }
         public Visibility VisiDGPW { get; set; }
-        //public Visibility VisiNeuOnly { get; set; }
-        //public Visibility VisiÄndern { get; set; }
-        //public Visibility VisiRndBtn1 { get; set; }
-        //public Visibility VisiRndBtn2 { get; set; }
-        //public Visibility VisiLöschen { get; set; }
         public Visibility VisiBenutzerCB { get; set; }
         public Visibility VisiAndersOnly { get; set; }
         public Visibility VisiBenutzGew { get; set; }
         public bool IsNeOnly { get; set; }
-
         public string PWNeuProgramm { get; set; }
         public string PWNeuAdresse { get; set; }
         public string PWNeuPW { get; set; }
-
         public bool BenutzerAktivBool { get; set; }
         public string BenutzerRootOrdnerString { get; set; }
-
         public string MeinHintergrund { get; set; }
         public string MeineSchriftFarbe1 { get; set; }
         public string MeineSchriftFarbe2 { get; set; }
@@ -171,13 +147,9 @@ namespace Logik.Pw.Logik.ViewModel
         public string BeschreibungMenuDateiExport { get; set; }
         public string BeschreibungMenuDateiImport { get; set; }
         public string ErrorMeldungString { get; set; }
-
         private int _tmpIndexNummerMin;
-
-
         public string HinzuNeuString { get; set; }
-        //  private ListCollectionView _UiViewListe;
-        public ListCollectionView UiViewListe { get; set; }
+        #endregion
 
         public MainViewModel()
         {
@@ -193,7 +165,6 @@ namespace Logik.Pw.Logik.ViewModel
                 EmpfangeNeuesCenterSync(empfang);
             });
 
-
             MainListe = new ObservableCollection<PwEintrag>();
             GefilterteListe = new ObservableCollection<PwEintrag>();
             BenutzerAktivBool = false;
@@ -203,19 +174,14 @@ namespace Logik.Pw.Logik.ViewModel
             HinzuNeuString = "Neu";
             _tmpIndexNummerMin = 100001;
             DetailAnzeigeEintrag = new PwEintrag();
-            //Auswahlstatus = BearbeitStatus.Anderung;
 
             VerwaltungsListe = _BenutzerListe.VerwaltungListe();
-
-            //   AktEintrag = new PwEintrag(); test
-            // CbBenutzerWahl = ""; test
             PWEingabe = new SecureString();
             PWEingabe.Clear();
             _LoginBtn = new RelayCommand(Logingedruckt);
             _VerwaltungBtn = new RelayCommand(Verwaltunggedruckt);
             _PrgEndeBtn = new RelayCommand(Programmschließengedruckt);
             _BenutzHinzuBtn = new RelayCommand(sendeNeuerBenutzer);
-            //   _PWHinzuBtn = new RelayCommand(PWHinzuGedruckt);
             _PwUbernahmeBtn = new RelayCommand(PWÄndernGedruckt);
             _LogOutBtn = new RelayCommand(LogoutGedruckt);
             _ImportBtn = new RelayCommand(ImportGedruckt);
@@ -226,15 +192,11 @@ namespace Logik.Pw.Logik.ViewModel
             _RootOrdnerBtn = new RelayCommand(RootOrdnerGedruckt);
             _infoCenterBtn = new RelayCommand(InfoCenterAnzeigenGedruckt);
             _ExportBtn = new RelayCommand(ExportGedruckt);
-            //_PWZwischenBtn = new RelayCommand(AktPwZwischenAgedruckt);
-            //_BenutzerZwischenBtn = new RelayCommand(AktBenZwischenAgedruckt);
-            //syncBtn = new RelayCommand(SyncenGedruckt);
-            //neuesRAndomPWBtn = new RelayCommand(NeuesRndPWgedruckt);
             _pWRandVerwaltBtn = new RelayCommand(ZufallsKonfiguratorGedruckt);
             _BenutzAndersBtn = new RelayCommand(BenutzerAndersGedruckt);
             _BenutzDelBtn = new RelayCommand(BenutzerDelGedruckt);
 
-            if (Properties.Settings.Default.AktuellerSkin == 0) // grundsätzlich keine schöne Lösung
+            if (Properties.Settings.Default.AktuellerSkin == 0)
             {
                 AktuellerSkin = SkinWahl.winsylte;
             }
@@ -245,12 +207,10 @@ namespace Logik.Pw.Logik.ViewModel
             SkinAnderung();
         }
 
-
         private void initzialize()
         {
             initzializeMenu();
             initzializeBenutzer();
-            initzializeIListColl();
         }
 
         private void initzializeBenutzer()
@@ -272,9 +232,6 @@ namespace Logik.Pw.Logik.ViewModel
             Person GelesenerBenutzer = new Person();
             PwEintrag GeleseneHauptView = new PwEintrag();
             KaudawelschGenerator ListEntschlüssler = new KaudawelschGenerator(new SecureString());
-
-            //nichtGespeichertNeu = false;
-            //nichtGespeichertAnders = false;
 
             try
             {
@@ -320,41 +277,6 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-        private void initzializeIListColl()
-        {
-            #region ListCollectionView Initailisierung
-
-            UiViewListe = CollectionViewSource.GetDefaultView(GefilterteListe) as ListCollectionView;
-            foreach (var item in GefilterteListe) // die vom System rein geladenen Daten müssen das OnPropertyChangeEvent "registrieren"
-            {
-                item.PropertyChanged += PersonInfosPropertyAnders;
-            }
-            UiViewListe.CurrentChanged += (s, e) =>
-            {
-                RaisePropertyChanged(() => AktEintrag);
-            };
-            GefilterteListe.CollectionChanged += (s, e) =>
-            {
-                if (e.NewItems != null)
-                {
-                    foreach (INotifyPropertyChanged added in e.NewItems)
-                    {
-                        added.PropertyChanged += PersonInfosPropertyAnders;
-                    }
-                }
-                if (e.OldItems != null)
-                {
-                    foreach (INotifyPropertyChanged wiederweg in e.OldItems)
-                    {
-                        wiederweg.PropertyChanged -= PersonInfosPropertyAnders;
-                    }
-                }
-            };
-            #endregion
-
-            AktEintrag = UiViewListe?.CurrentItem as PwEintrag;
-        }
-
         private void initzializeMenu()
         {
             BeschreibungRndVerwalt = "Zufall-Generator";
@@ -366,19 +288,6 @@ namespace Logik.Pw.Logik.ViewModel
             _DarkstyleXamlBtn = new RelayCommand(() => { ThemeDarkStyleGedruckt(); MessengerInstance.Send(new SendSkinMess());
         });
             #endregion
-        }
-
-        private void PersonInfosPropertyAnders(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(AktEintrag.HasErrors)) // würde die ganze zeit sonst beim initialisieren anschlagen und den RAM voll laufen
-            {
-                return;
-            }
-            if (UiViewListe.IsEditingItem || UiViewListe.IsAddingNew) // nicht wechseln solange jemand darin rum schreibt
-            {
-                return;
-            }
-            UiViewListe.Refresh();
         }
 
         private void Logingedruckt()
@@ -417,7 +326,6 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-
         public void ExportGedruckt()
         {
             Microsoft.Win32.SaveFileDialog WoSpeichern = new Microsoft.Win32.SaveFileDialog();
@@ -435,12 +343,9 @@ namespace Logik.Pw.Logik.ViewModel
         private void Verwaltunggedruckt()
         {
             AbfrageNichtGespeichertesPW();
-            // VerwaltungColl = new ObservableCollection<BenutzerView>(); alt
-
             if (Verwaltung == Visibility.Visible)
             {
                 Ansichtwechsel(DerzeitgeAnsicht.Benutzer);
-                /*VerwaltungAnders = Visibility.Hidden;*/ // achutng wil ich weg und 2 Btns machen!
             }
             else
             {
@@ -484,8 +389,6 @@ namespace Logik.Pw.Logik.ViewModel
                 }
                 else
                 {
-                    //nichtGespeichertNeu = false;
-                    //nichtGespeichertAnders = false;
                     DetailAnzeigeEintrag.Aktuell = true;
                 }
             }
@@ -493,7 +396,6 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void PWÄndernGedruckt()
         {
-
             PwEintrag tmpV = new PwEintrag();
             tmpV.Programm = DetailAnzeigeEintrag.Programm;
             tmpV.Benutzer = DetailAnzeigeEintrag.Benutzer;
@@ -563,7 +465,6 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void sendeNeuerBenutzer()
         {
-            // MessengerInstance.Send(new SendNeuBenutzerMess(SendNeuBenutzerMess.Zustand.Neueingabe, _BenutzerListe.AlleBenutzerAlsListe()));
             MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.NeuAnlage, null, _BenutzerListe));
         }
 
@@ -620,8 +521,6 @@ namespace Logik.Pw.Logik.ViewModel
             VerwaltungsListe = _BenutzerListe.VerwaltungListe();
             PWNeuAdresse = "";
             PWNeuPW = "";
-            //nichtGespeichertAnders = false;
-            //nichtGespeichertNeu = false;
         }
 
         private void Ansichtwechsel(DerzeitgeAnsicht neuerWert)
@@ -634,15 +533,10 @@ namespace Logik.Pw.Logik.ViewModel
                     Passwörter = Visibility.Visible;
                     Verwaltung = Visibility.Hidden;
                     VisiDGPW = Visibility.Hidden;
-                    //VisiNeuOnly = Visibility.Hidden;
-                    //VisiLöschen = Visibility.Hidden;
                     VisiBenutzerCB = Visibility.Visible;
                     PWNeuAdresse = "";
                     PWNeuPW = "";
-                    //nichtGespeichertNeu = false;
                     PWNeuProgramm = "";
-                    //nichtGespeichertAnders = false;
-                    //MenuAnderung(MeinOberMenu, 1100, "Benutzerverwaltung", true);
                     BeschreibungMenu1 = "Benutzerverwaltung";
                     Logingedruckt();
                     break;
@@ -650,17 +544,12 @@ namespace Logik.Pw.Logik.ViewModel
                     VisiBenutzerCB = Visibility.Hidden;
                     Passwörter = Visibility.Hidden;
                     Verwaltung = Visibility.Visible;
-                    //VisiNeuOnly = Visibility.Hidden;
-                    //VisiLöschen = Visibility.Hidden;
                     VisiDGPW = Visibility.Hidden;
                     PWNeuAdresse = "";
                     PWNeuPW = "";
-                    //nichtGespeichertNeu = false;
                     PWNeuProgramm = "";
-                    //nichtGespeichertAnders = false;
                     BeschreibungMenu1 = "Passwortverwaltung";
                     ErrorMeldungString = "";
-                    //MenuAnderung(MeinOberMenu, 1100, "Passwortverwaltung", true);
                     ZwischenAblageAktivBool = false;
                     try
                     {
@@ -714,25 +603,19 @@ namespace Logik.Pw.Logik.ViewModel
                 if (impBen != null)
                 {
                     SendImportMess ubergabe;
-                        if(VerwaltungsListe.Count() > 0)
-                        {
-                            ubergabe = new SendImportMess(ImpMoglichkeit.WahlNeuAnderer, impBen, _BenutzerListe);
+                    if (VerwaltungsListe.Count() > 0)
+                    {
+                        ubergabe = new SendImportMess(ImpMoglichkeit.WahlNeuAnderer, impBen, _BenutzerListe);
                         MessengerInstance.Send(ubergabe);
                     }
-                        else
-                        {
-
-                            // ubergabe = new SendImportMess(SendImportMess.ImpMoglichkeit.Import, impBen, _BenutzerListe);
-                            impBen.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
-                            _BenutzerListe.Hinzufügen(impBen);
-                            _BenutzerListe.KomplettVerschlüsseln(impBen.Name, PfadFindung(impBen.Name));
-                            VerwaltungsAnzeigeNeuLaden();
-                            //string tmpZielPfad = PfadFindung(_empfDaten.ImportPerson.Name, 2);
-                            //File.Copy(DateiPfad, tmpZielPfad, true);
-                    
-                            return;
-                        }
-                        // starte imp da name noch nicht vorhanden.. // frage ob man doch mit anderem namen syncen will?                                                   
+                    else
+                    {
+                        impBen.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
+                        _BenutzerListe.Hinzufügen(impBen);
+                        _BenutzerListe.KomplettVerschlüsseln(impBen.Name, PfadFindung(impBen.Name));
+                        VerwaltungsAnzeigeNeuLaden();
+                        return;
+                    }                                              
                 }
                 else
                 {
@@ -756,8 +639,6 @@ namespace Logik.Pw.Logik.ViewModel
                     _BenutzerListe.EintragDel(AktBenutzer.Name, tmpIndexStelle, PWEingabe);
                     MainListe.RemoveAt(tmpIndexStelle);
                     _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
-                    //nichtGespeichertAnders = false;
-                    //nichtGespeichertNeu = false;
                     GefilterteListe = PWListeFiltern();
                     if (GefilterteListe.Count > 0)
                     {
@@ -767,9 +648,7 @@ namespace Logik.Pw.Logik.ViewModel
                     {
                         AktEintrag = null;
                     }
-
                 }
-
             }
         }
 
@@ -783,16 +662,13 @@ namespace Logik.Pw.Logik.ViewModel
 
         public void EmpfangeNeuesCenterSync(EmpfCenterMess NeuesCenter)
         {
-            // eigentlich sollte nun die Observable erweitert werden und auch die _Benutzerliste.. neu initialiserien?
             _BenutzerListe = NeuesCenter.Center;         
             if (NeuesCenter.AktivesProfil != null)
             {
-                // mit Passwort einloggen, im profil bleiben und liste anzeigen
-                // combo muss bleiben?
+                // passiert nur beim Syncronisieren --> noch nicht impementiert.. Benutzer bleibt aktiv. Obersevable neu laden?
             }
             else
             {
-              //  initzializeBenutzer(); nicht notwendig?
                 VerwaltungsAnzeigeNeuLaden();
             }
         }
@@ -808,7 +684,6 @@ namespace Logik.Pw.Logik.ViewModel
             {
                 Properties.Settings.Default.PfadZielOrdner = HoleNeuenOrdner.FileName + @"\";
                 Properties.Settings.Default.Save();
-                // initzialize();
                 initzializeBenutzer();
             }
             VerwaltungsAnzeigeNeuLaden();
@@ -1007,7 +882,6 @@ namespace Logik.Pw.Logik.ViewModel
                     MeinRndIcon = SkinFarben.NormRndIcon;
                     break;
             }
-          //  OptionenUberschrift = BerechneOptionenAnzeigestring(HauptFensterBreite); // rechnet sich aus wo der strich hin gehört?
         }
 
         private void ZwischenAgedruckt(bool Passwort)
@@ -1053,7 +927,6 @@ namespace Logik.Pw.Logik.ViewModel
             AktuellerSkin = SkinWahl.winsylte;
             Properties.Settings.Default.Save();
             SkinAnderung();
-            // achtung bei anderenen Fenster muss auch der richtige skin kommen
         }
 
         private void ThemeDarkStyleGedruckt()
@@ -1062,7 +935,6 @@ namespace Logik.Pw.Logik.ViewModel
             AktuellerSkin = SkinWahl.Darkstyle;
             Properties.Settings.Default.Save();
             SkinAnderung();
-            // achtung bei anderenen Fenster muss auch der richtige skin kommen
         }
 
         #region RandomGenerator

@@ -35,14 +35,5 @@
     <Setting Name="AktuellerSkin" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="HauptFensterBreite" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">525</Value>
-    </Setting>
-    <Setting Name="HauptFensterHohe" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">450</Value>
-    </Setting>
-    <Setting Name="SternSymbol" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

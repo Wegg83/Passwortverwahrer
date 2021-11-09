@@ -154,41 +154,5 @@ namespace Logik.Pw.Logik.Properties {
                 this["AktuellerSkin"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("525")]
-        public int HauptFensterBreite {
-            get {
-                return ((int)(this["HauptFensterBreite"]));
-            }
-            set {
-                this["HauptFensterBreite"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("450")]
-        public int HauptFensterHohe {
-            get {
-                return ((int)(this["HauptFensterHohe"]));
-            }
-            set {
-                this["HauptFensterHohe"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int SternSymbol {
-            get {
-                return ((int)(this["SternSymbol"]));
-            }
-            set {
-                this["SternSymbol"] = value;
-            }
-        }
     }
 }

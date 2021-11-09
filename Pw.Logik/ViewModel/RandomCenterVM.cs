@@ -104,7 +104,6 @@ namespace Logik.Pw.Logik.ViewModel
                 SetzeNeueGrossErlaubnis(Properties.Settings.Default.PWGrossBool);
                 SetzeNeueSonderErlaubnis(Properties.Settings.Default.PWSonderBool);
                 SkinWechsel();
-                //FensterOffset = "0,0,0,0";
             }
             else
             {

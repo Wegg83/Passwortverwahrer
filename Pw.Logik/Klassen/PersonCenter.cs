@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Logik.Pw.Logik.Klassen
 {
-    // Benutzerview ist nur ein string?
 
     public class PersonCenter
     {

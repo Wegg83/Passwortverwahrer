@@ -34,6 +34,7 @@ namespace Logik.Pw.Logik.ViewModel
         public ObservableCollection<string> ComboNamen  { get; set; }
         public string MoglichBenItem { get; set; }
         public string ErrorMeldung { get; set; }
+        public string ErrorMeldungPw { get; set; }
 
         public string InputUberschrift { get; set; }
         public string InputV2Uberschrift { get; set; }
@@ -65,7 +66,6 @@ namespace Logik.Pw.Logik.ViewModel
         public Visibility VisiPasswort2 { get; set; }
         public Visibility VisiPasswort3 { get; set; }
         public Visibility VisiComboBox { get; set; }
-        //public Visibility Version5Visi { get; set; }
 
         public string MeinHintergrund { get; set; }
         public string MeineSchriftFarbe1 { get; set; }
@@ -96,6 +96,9 @@ namespace Logik.Pw.Logik.ViewModel
             Pw2Eingabe = new SecureString();
             Pw3Eingabe = new SecureString();
 
+            ErrorMeldung = "";
+            ErrorMeldungPw = "";
+
             _empfDaten = daten;
             SkinWechsel();
             AnzeigeWechsel(_empfDaten.Anzeige);
@@ -106,7 +109,7 @@ namespace Logik.Pw.Logik.ViewModel
         {
             switch (auswahl)
             {
-                case ImpMoglichkeit.NeuAnlage: // alt 4
+                case ImpMoglichkeit.NeuAnlage:
                     ErrorMeldung = "";
                     InputUberschrift = "BenutzerName:";
                     InputV2Uberschrift = "Passwort:";
@@ -119,7 +122,7 @@ namespace Logik.Pw.Logik.ViewModel
                     VisiComboBox = Visibility.Hidden;
                     VisiOKBtn = Visibility.Visible;
                     break;
-                case ImpMoglichkeit.BenutzerDel: // alt 0
+                case ImpMoglichkeit.BenutzerDel:
                     InputUberschrift = "Passwort:";
                     VisiTextBox = Visibility.Hidden;
                     VisiPasswort1 = Visibility.Visible;
@@ -129,7 +132,7 @@ namespace Logik.Pw.Logik.ViewModel
                     VisiComboBox = Visibility.Hidden;
                     VisiOKBtn = Visibility.Visible;
                     break;
-                case ImpMoglichkeit.WahlNeuAnderer: //alt 2
+                case ImpMoglichkeit.WahlNeuAnderer: 
                     InputUberschrift = "Benutzer-Name vergeben.";
                     VisiTextBox = Visibility.Hidden;
                     VisiPasswort1 = Visibility.Hidden;
@@ -139,7 +142,7 @@ namespace Logik.Pw.Logik.ViewModel
                     VisiComboBox = Visibility.Hidden;
                     VisiOKBtn = Visibility.Hidden;
                     break;
-                case ImpMoglichkeit.AndererBenutzer: // alt 5
+                case ImpMoglichkeit.AndererBenutzer: 
                     ComboNamen = _empfDaten.Center.VerwaltungListe();
                     MoglichBenItem = ComboNamen[0];
                     InputUberschrift = "";
@@ -153,7 +156,7 @@ namespace Logik.Pw.Logik.ViewModel
                     VisiComboBox = Visibility.Visible;
                     VisiOKBtn = Visibility.Visible;
                     break;
-                case ImpMoglichkeit.PwAndern: // alt 6
+                case ImpMoglichkeit.PwAndern:
                     InputUberschrift = "Altes Passwort:";
                     InputV2Uberschrift = "Neues Passwort:";
                     InputV3Uberschrift = "Neues Pwasswort wdh:";
@@ -194,18 +197,17 @@ namespace Logik.Pw.Logik.ViewModel
         {
             if (!TestaufLeerenInhalt(BenutzerNameTB))
             {
-                System.Windows.MessageBox.Show("Bitte einen Neuen Namen vergeben.");
+                ErrorMeldung = "Mindestens 3 Zeichen";
                 return false;
             }
             if (_empfDaten.Center.BenutzerVorhanden(BenutzerNameTB))
             {
-                //System.Windows.MessageBox.Show("Name schon vergeben");
                 ErrorMeldung = "vergeben";
                 return false;
             }
             if (!Abfrage.PasswortIstKorrekt(Pw2Eingabe, Pw3Eingabe))
             {
-                System.Windows.MessageBox.Show("Passwörter nicht ident.");
+               ErrorMeldungPw = "Nicht ident.";
                 return false;
             }
             Person _neuBen = new Person();
@@ -221,12 +223,11 @@ namespace Logik.Pw.Logik.ViewModel
         {
             if (!TestaufLeerenInhalt(BenutzerNameTB))
             {
-                System.Windows.MessageBox.Show("Bitte einen Neuen Namen vergeben.");
+                ErrorMeldung = "Mindestens 3 Zeichen";
                 return false;
             }
             if (_empfDaten.Center.BenutzerVorhanden(BenutzerNameTB))
             {
-                //System.Windows.MessageBox.Show("Name schon vergeben");
                 ErrorMeldung = "vergeben";
                 return false;
             }
@@ -247,7 +248,7 @@ namespace Logik.Pw.Logik.ViewModel
             {
                 if (!Abfrage.PasswortIstKorrekt(Pw2Eingabe, Pw3Eingabe))
                 {
-                    MessageBox.Show("Neues Passwort nicht ident."); // als Errormessage neben wdh?
+                    ErrorMeldungPw = "Neues Passwort nicht ident."; // als Errormessage neben wdh?
                     return false;
                 }
                 _empfDaten.Center.BenutzerCh(_empfDaten.ImportPerson.Name, Pw2Eingabe, Pw1Eingabe);
@@ -256,7 +257,7 @@ namespace Logik.Pw.Logik.ViewModel
             }
             else
             {
-                MessageBox.Show("Altes Passwort nicht korrekt.");
+                ErrorMeldungPw = "Falsche Eingabe";
                 return false;
             }
         }
@@ -270,14 +271,12 @@ namespace Logik.Pw.Logik.ViewModel
                 Directory.Delete(Properties.Settings.Default.PfadZielOrdner + @"\" + _empfDaten.ImportPerson.AktOrdnerName, true);
                 return true;
             }
-            MessageBox.Show("Falsche Eingabe");
+            ErrorMeldungPw = "Falsche Eingabe";
             return false;
         }
 
         private bool SyncMitNutzer(Person ImportDat, SecureString ImpPw, Person SyncDat, SecureString SyncPw)
         {
-            // pw check von beiden
-            // syncen
             KaudawelschGenerator CheckerImp = new KaudawelschGenerator(ImpPw);
             KaudawelschGenerator CheckerSync = new KaudawelschGenerator(SyncPw);
             if (CheckerImp.PwChecker(ImportDat.PersiKauda) && CheckerSync.PwChecker(SyncDat.PersiKauda))
@@ -484,7 +483,7 @@ namespace Logik.Pw.Logik.ViewModel
                     _propertyInfos =
                         GetType()
                         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Where(prop => prop.IsDefined(typeof(RequiredAttribute), true) || prop.IsDefined(typeof(MinLengthAttribute), true)) // DAtaAnnotation
+                        .Where(prop => prop.IsDefined(typeof(RequiredAttribute), true) || prop.IsDefined(typeof(MinLengthAttribute), true)) // DataAnnotation
                         .ToList();
                 }
                 return _propertyInfos;
@@ -508,7 +507,7 @@ namespace Logik.Pw.Logik.ViewModel
                 }
                 if (minLenAttr != null)
                 {
-                    if ((currentValue?.ToString() ?? string.Empty).Length < minLenAttr.Length)  // ?? wenn das links von ?? nicht null ist dann dann links sonst rechts.
+                    if ((currentValue?.ToString() ?? string.Empty).Length < minLenAttr.Length)
                     {
                         if (Errors.ContainsKey(prop.Name)) continue;
                         Errors.Add(prop.Name, minLenAttr.ErrorMessage);

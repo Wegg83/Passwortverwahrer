@@ -62,7 +62,7 @@ namespace Logik.Pw.Logik.Items
                     _propertyInfos =
                         GetType()
                         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Where(prop => prop.IsDefined(typeof(RequiredAttribute), true) || prop.IsDefined(typeof(MinLengthAttribute), true)) // DAtaAnnotation
+                        .Where(prop => prop.IsDefined(typeof(RequiredAttribute), true) || prop.IsDefined(typeof(MinLengthAttribute), true)) // DataAnnotation
                         .ToList();
                 }
                 return _propertyInfos;
@@ -86,7 +86,7 @@ namespace Logik.Pw.Logik.Items
                 }
                 if (minLenAttr != null)
                 {
-                    if ((currentValue?.ToString() ?? string.Empty).Length < minLenAttr.Length)  // ?? wenn das links von ?? nicht null ist dann dann links sonst rechts.
+                    if ((currentValue?.ToString() ?? string.Empty).Length < minLenAttr.Length)
                     {
                         if (Errors.ContainsKey(prop.Name)) continue;
                         Errors.Add(prop.Name, minLenAttr.ErrorMessage);
