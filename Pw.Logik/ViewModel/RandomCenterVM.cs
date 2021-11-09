@@ -117,11 +117,6 @@ namespace Logik.Pw.Logik.ViewModel
             }
         }
 
-        public void Inizialise()
-        {
-
-        }
-
         private void PWLangRaufGedruckt()
         {
             if (InArbeit)
@@ -353,7 +348,7 @@ namespace Logik.Pw.Logik.ViewModel
             return tmpStand;
         }
 
-        private void SkinWechsel()
+        public void SkinWechsel()
         {
             switch (Properties.Settings.Default.AktuellerSkin)
             {

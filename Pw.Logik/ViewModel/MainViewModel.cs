@@ -18,11 +18,12 @@ using Logik.Pw.Logik.Messengers;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using static Logik.Pw.Logik.ViewModel.ImportSyncVM;
+using System.Runtime.CompilerServices;
 
 namespace Logik.Pw.Logik.ViewModel
 {
 
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         enum DerzeitgeAnsicht { Verwaltung, Benutzer }
         enum BearbeitStatus { Neuanlage, Anderung }
@@ -36,7 +37,7 @@ namespace Logik.Pw.Logik.ViewModel
         private RelayCommand _LoginBtn, _VerwaltungBtn, _RootOrdnerBtn, _ExportBtn, _ImportBtn, _WinstyleXamlBtn, _DarkstyleXamlBtn, _InfoBtn, _PrgEndeBtn, _LogOutBtn, _RndVerwaltBtn, _AnsichtWechselBtn;
         private RelayCommand _PWDelBtn, _AktBenutzerInZABtn, _AktPwInZABtn, _BenutzHinzuBtn, _BenutzAndersBtn, _BenutzDelBtn;
         private RelayCommand _PwUbernahmeBtn, _PwRndBtn, _pWRandVerwaltBtn, _infoCenterBtn;
-        private PersonCenter _BenutzerListe; 
+        private PersonCenter _BenutzerListe;
         private Person aktBenutzer;
         private Person AktBenutzer
         {
@@ -150,6 +151,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         public bool BenutzerAktivBool { get; set; }
         public string BenutzerRootOrdnerString { get; set; }
+
         public string MeinHintergrund { get; set; }
         public string MeineSchriftFarbe1 { get; set; }
         public string MeineSchriftFarbe2 { get; set; }
@@ -172,6 +174,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         private int _tmpIndexNummerMin;
 
+
         public string HinzuNeuString { get; set; }
         //  private ListCollectionView _UiViewListe;
         public ListCollectionView UiViewListe { get; set; }
@@ -184,8 +187,6 @@ namespace Logik.Pw.Logik.ViewModel
                 Verwaltung = Visibility.Visible;
                 return;
             }
-
-
 
             Messenger.Default.Register<EmpfCenterMess>(this, empfang =>
             {
@@ -381,8 +382,9 @@ namespace Logik.Pw.Logik.ViewModel
             BeschreibungMenuDateiImport = "Benutzer importieren";
 
             #region Menu direkt im Xaml
-            _WinstyleXamlBtn = new RelayCommand(ThemeWinStyleGedruckt);
-            _DarkstyleXamlBtn = new RelayCommand(ThemeDarkStyleGedruckt);
+            _WinstyleXamlBtn = new RelayCommand(() => { ThemeWinStyleGedruckt(); MessengerInstance.Send(new SendSkinMess()); });
+            _DarkstyleXamlBtn = new RelayCommand(() => { ThemeDarkStyleGedruckt(); MessengerInstance.Send(new SendSkinMess());
+        });
             #endregion
         }
 
@@ -972,7 +974,7 @@ namespace Logik.Pw.Logik.ViewModel
             Environment.Exit(0);
         }
 
-        private void SkinAnderung()
+        public void SkinAnderung()
         {
             switch (Properties.Settings.Default.AktuellerSkin)
             {
@@ -1009,20 +1011,20 @@ namespace Logik.Pw.Logik.ViewModel
                     MeinRndIcon = SkinFarben.NormRndIcon;
                     break;
                 default:
-                    MeinHintergrund = SkinFarben.DMHinterGrund;
-                    MeineSchriftFarbe1 = SkinFarben.DMSchriftFarbe1;
-                    MeineSchriftFarbe2 = SkinFarben.DMSchriftFarbe2;
-                    MeineKontrastFarbe1 = SkinFarben.DMKontrastFarbe1;
-                    MeineKontrastFarbe2 = SkinFarben.DMKontrastFarbe2;
-                    MeineSchriftArtNorm = SkinFarben.DMSchriftArtNorm;
-                    MeineSchriftArtFett = SkinFarben.DMSchriftArtFett;
-                    MeineSchriftGrosseNorm = SkinFarben.DMSchriftGrosseNorm;
-                    MeineSchriftGrosseKlein = SkinFarben.DMSchriftGrosseKlein;
-                    MeineSchriftGrosseGross = SkinFarben.DMschriftGrosseGross;
-                    MeinIconRauf = SkinFarben.DMPfeilUp;
-                    MeinIconRunter = SkinFarben.DMPfeilDown;
-                    MeinSyncIcon = SkinFarben.DMSyncIcon;
-                    MeinRndIcon = SkinFarben.DMRndIcon;
+                    MeinHintergrund = SkinFarben.NormHinterGrund;
+                    MeineSchriftFarbe1 = SkinFarben.NormSchriftFarbe1;
+                    MeineSchriftFarbe2 = SkinFarben.NormSchriftFarbe2;
+                    MeineKontrastFarbe1 = SkinFarben.NormaleKontrastFarbe1;
+                    MeineKontrastFarbe2 = SkinFarben.NormaleKontrastFarbe2;
+                    MeineSchriftArtNorm = SkinFarben.NormalSchriftArtNorm;
+                    MeineSchriftArtFett = SkinFarben.NormalSchriftArtFett;
+                    MeineSchriftGrosseNorm = SkinFarben.NormalSchriftGrosseNorm;
+                    MeineSchriftGrosseKlein = SkinFarben.NormalSchriftGrosseKlein;
+                    MeineSchriftGrosseGross = SkinFarben.NormalSchriftGrosseGross;
+                    MeinIconRauf = SkinFarben.NormPfeilUp;
+                    MeinIconRunter = SkinFarben.NormPfeilDown;
+                    MeinSyncIcon = SkinFarben.NormSyncIcon;
+                    MeinRndIcon = SkinFarben.NormRndIcon;
                     break;
             }
           //  OptionenUberschrift = BerechneOptionenAnzeigestring(HauptFensterBreite); // rechnet sich aus wo der strich hin gehört?

@@ -37,8 +37,7 @@ namespace Ui.Pw.Ui
             });
 
             Messenger.Default.Register<FensterCloseMess>(this, msg =>
-            {
-                
+            {              
                 foreach (Window window in Application.Current.Windows)
                 {
                     string tst = window.ToString();
@@ -51,28 +50,70 @@ namespace Ui.Pw.Ui
 
             Messenger.Default.Register<SendRndCenterMess>(this, msg => 
             {
-                RandomCenterFenster Window = new RandomCenterFenster();
-                var vm = Window.DataContext as RandomCenterVM;
-                if(vm != null)
+                bool Rndoffen = false;
+                foreach (Window window in Application.Current.Windows)
                 {
-                    vm.Inizialise();
+                    if (window.ToString() == "Ui.Pw.Ui.RandomCenterFenster")
+                    {
+                        Rndoffen = true;
+                        window.Activate();
+                    }
                 }
-                Window.Owner = Parent;
-                Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                Window.ShowDialog();
+                if (!Rndoffen)
+                {
+                    RandomCenterFenster Window = new RandomCenterFenster();
+                    var vm = Window.DataContext as RandomCenterVM;
+                    if (vm != null)
+                    {
+                        vm.SkinWechsel();
+                    }
+                    Window.Owner = Parent;
+                    Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    Window.Show();
+                }
             });
 
             Messenger.Default.Register<InfoCenterMess>(this, msg =>
             {
-                InfoCenterFenster Window = new InfoCenterFenster();
-                var vm = Window.DataContext as InfoCenterVM;
-                if (vm != null)
+                bool Infooffen = false;
+                foreach (Window window in Application.Current.Windows)
                 {
-                    vm.SkinWechsel();
+                    if (window.ToString() == "Ui.Pw.Ui.InfoCenterFenster")
+                    {
+                        Infooffen = true;
+                       // window.Activate();
+                        window.WindowState = WindowState.Normal;               
+                    }
                 }
-                Window.Owner = Parent;
-                Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                Window.ShowDialog();
+                if (!Infooffen)
+                {
+                    InfoCenterFenster Window = new InfoCenterFenster();
+                    Window.Owner = Parent;
+                    Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    var vmInfo = Window.DataContext as InfoCenterVM;
+                    vmInfo.SkinWechsel();
+                    Window.Show();
+                }
+               
+            });
+
+            Messenger.Default.Register<SendSkinMess>(this, msg =>
+            {
+                foreach (Window window in Application.Current.Windows)
+                {
+                    string tst = window.ToString();
+                    if (window.ToString() == "Ui.Pw.Ui.RandomCenterFenster")
+                    {
+                        var vmRnd = window.DataContext as RandomCenterVM;
+                        vmRnd.SkinWechsel();
+                        continue;
+                    }
+                    if (window.ToString() == "Ui.Pw.Ui.InfoCenterFenster")
+                    {
+                        var vmInfo = window.DataContext as InfoCenterVM;
+                        vmInfo.SkinWechsel();
+                    }       
+                }
             });
         }
 

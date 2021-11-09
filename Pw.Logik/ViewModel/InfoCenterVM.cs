@@ -25,10 +25,6 @@ namespace Logik.Pw.Logik.ViewModel
         public InfoCenterVM()
         {
             SkinWechsel();
-
-            //string company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(
-            //                    Assembly.GetEntryAssembly(), typeof(AssemblyCompanyAttribute), false))
-            //                        .Company;
             Ersteller = GetAssemblyAttribute<AssemblyCopyrightAttribute>(a => a.Copyright);
             VersionsNummer = GetAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version);
             InfoUberschrift = GetAssemblyAttribute<AssemblyProductAttribute>(a => a.Product);
