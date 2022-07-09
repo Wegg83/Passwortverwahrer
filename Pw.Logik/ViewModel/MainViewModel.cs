@@ -89,7 +89,14 @@ namespace Logik.Pw.Logik.ViewModel
         private string _CbBenutzerWahl;
         public string CbBenutzerWahl { get { return _CbBenutzerWahl; } set { _CbBenutzerWahl = value; RaisePropertyChanged(); if (AktBenutzer != null) LogoutGedruckt(); Logingedruckt(); } }
         private string _PWSuche;
-        public string PWSuche { get { return _PWSuche; } set { _PWSuche = value; RaisePropertyChanged(); GefilterteListe = PWListeFiltern(); if (GefilterteListe.Count == 0) Auswahlstatus(BearbeitStatus.Neuanlage); } }
+        public string PWSuche {
+            get { return _PWSuche; }
+            set {
+                _PWSuche = value; RaisePropertyChanged();
+                GefilterteListe = PWListeFiltern();
+                if (GefilterteListe.Count == 0)
+                    Auswahlstatus(BearbeitStatus.Neuanlage);
+            } }
         public string BeschreibungMenu1 { get; set; }
         public SecureString PWEingabe { get; set; }
         public RelayCommand LoginBtn => _LoginBtn;
@@ -155,8 +162,8 @@ namespace Logik.Pw.Logik.ViewModel
         {
             if (IsInDesignMode)
             {
-                VisiDGPW = Visibility.Hidden;
-                Verwaltung = Visibility.Visible;
+                VisiDGPW = Visibility.Visible;
+                Verwaltung = Visibility.Hidden;
                 return;
             }
 
@@ -474,40 +481,42 @@ namespace Logik.Pw.Logik.ViewModel
             try
             {
                 string AktZeile = "";
-                StreamReader Leser1 = new StreamReader(DateiPfad);
-                BenutzAusDat.PersiKauda = new List<string>();
-                bool Name = false;
-                while (Leser1.Peek() >= 0)
+                using (StreamReader Leser1 = new StreamReader(DateiPfad))
                 {
-                    AktZeile = Leser1.ReadLine();
-                    byte[] KaudawelschZeile2 = new byte[48];
-
-                    int AnzahlBytes2 = AktZeile.Split(';').Length - 1;
-                    if (AnzahlBytes2 > 0)
+                    BenutzAusDat.PersiKauda = new List<string>();
+                    bool Name = false;
+                    while (Leser1.Peek() >= 0)
                     {
-                        KaudawelschZeile2 = new byte[AnzahlBytes2];
-                        for (int i = 0; i < AnzahlBytes2; i++)
+                        AktZeile = Leser1.ReadLine();
+                        byte[] KaudawelschZeile2 = new byte[48];
+
+                        int AnzahlBytes2 = AktZeile.Split(';').Length - 1;
+                        if (AnzahlBytes2 > 0)
                         {
-                            KaudawelschZeile2[i] = Convert.ToByte(AktZeile.Split(';')[i]);
+                            KaudawelschZeile2 = new byte[AnzahlBytes2];
+                            for (int i = 0; i < AnzahlBytes2; i++)
+                            {
+                                KaudawelschZeile2[i] = Convert.ToByte(AktZeile.Split(';')[i]);
+                            }
+                        }
+                        else
+                        {
+                            return BenutzAusDat;
+                        }
+                        AktZeile = DerKaudaGenerator.Entschlüsselung(KaudawelschZeile2);
+                        if (!Name)
+                        {
+                            BenutzAusDat.Name = DerKaudaGenerator.StrichpunktEntChecker(AktZeile, 0, 1);
+                            BenutzAusDat.AktOrdnerName = new DirectoryInfo(Ordner).Name;
+                            Name = true;
+                        }
+                        else
+                        {
+                            BenutzAusDat.PersiKauda.Add(AktZeile);
                         }
                     }
-                    else
-                    {
-                        return BenutzAusDat;
-                    }
-                    AktZeile = DerKaudaGenerator.Entschlüsselung(KaudawelschZeile2);
-                    if (!Name)
-                    {
-                        BenutzAusDat.Name = DerKaudaGenerator.StrichpunktEntChecker(AktZeile, 0, 1);
-                        BenutzAusDat.AktOrdnerName = new DirectoryInfo(Ordner).Name;
-                        Name = true;
-                    }
-                    else
-                    {
-                        BenutzAusDat.PersiKauda.Add(AktZeile);
-                    }
-                }
-                return BenutzAusDat;
+                    return BenutzAusDat;
+                }             
             }
             catch
             {

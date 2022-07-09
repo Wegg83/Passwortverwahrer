@@ -15,6 +15,7 @@ namespace Logik.Pw.Logik.Klassen
     {
         private PwEintrag ErstlingDaten;
         private static Random random = new Random();
+        private object _lockobj = new object();
 
         public class BenutzerKnoten
         {
@@ -334,34 +335,39 @@ namespace Logik.Pw.Logik.Klassen
 
         public void KomplettVerschlüsseln(string BenutzerName, string SpeicherPfad)
         {
-            Person Benutzer = NameSuchen(BenutzerName);
-            List<string> TempKaudaListe = new List<string>();
-            KaudawelschGenerator NeuCheck = new KaudawelschGenerator(new SecureString());
-            string Benutzerzeile = StrichpunktBenutzerChecker(Benutzer.Name);
-            byte[] BenutzerZeileByte = NeuCheck.Verschlüsselung(Benutzerzeile);
-            Benutzerzeile = string.Empty;
-            for (int o = 0; o < BenutzerZeileByte.Length; o++)
+            lock (_lockobj)
             {
-                Benutzerzeile += BenutzerZeileByte[o] + ";";
-            }
-            TempKaudaListe.Add(Benutzerzeile);
-            Benutzerzeile = string.Empty;
-            foreach (string ListEintrag in Benutzer.PersiKauda)
-            {
-                BenutzerZeileByte = NeuCheck.Verschlüsselung(ListEintrag);
+                Person Benutzer = NameSuchen(BenutzerName);
+                List<string> TempKaudaListe = new List<string>();
+                KaudawelschGenerator NeuCheck = new KaudawelschGenerator(new SecureString());
+                string Benutzerzeile = StrichpunktBenutzerChecker(Benutzer.Name);
+                byte[] BenutzerZeileByte = NeuCheck.Verschlüsselung(Benutzerzeile);
+                Benutzerzeile = string.Empty;
                 for (int o = 0; o < BenutzerZeileByte.Length; o++)
                 {
                     Benutzerzeile += BenutzerZeileByte[o] + ";";
                 }
                 TempKaudaListe.Add(Benutzerzeile);
                 Benutzerzeile = string.Empty;
+                foreach (string ListEintrag in Benutzer.PersiKauda)
+                {
+                    BenutzerZeileByte = NeuCheck.Verschlüsselung(ListEintrag);
+                    for (int o = 0; o < BenutzerZeileByte.Length; o++)
+                    {
+                        Benutzerzeile += BenutzerZeileByte[o] + ";";
+                    }
+                    TempKaudaListe.Add(Benutzerzeile);
+                    Benutzerzeile = string.Empty;
+                }
+                using (StreamWriter Neuschreiben = new StreamWriter(SpeicherPfad))
+                {
+                    foreach (string schreib in TempKaudaListe)
+                    {
+                        Neuschreiben.WriteLine(schreib);
+                    }
+                    Neuschreiben.Close();
+                }
             }
-            StreamWriter Neuschreiben = new StreamWriter(SpeicherPfad);
-            foreach (string schreib in TempKaudaListe)
-            {
-                Neuschreiben.WriteLine(schreib);
-            }
-            Neuschreiben.Close();
         }
     }
 }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Pw.Ui"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
-        Title="PasswortVerwahrer" MinWidth="1100" MinHeight="480" Width="1100" Height="480"
+        Title="PasswortVerwahrer" MinWidth="1100" MinHeight="480" Width="1200" Height="480"
         Icon="Bilder/PWIcon.ico" WindowState="{Binding FensterMaxMinStatus}"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
@@ -116,9 +116,9 @@
                 </DataGrid.RowValidationErrorTemplate>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Programm" Binding="{Binding Programm, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
-                                        EditingElementStyle="{StaticResource ErrorText}" />
+                                        EditingElementStyle="{StaticResource ErrorText}" Width="160" />
                     <DataGridTextColumn Header="Benutzer" Binding="{Binding Benutzer, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                                        EditingElementStyle="{StaticResource ErrorText}" />
+                                        EditingElementStyle="{StaticResource ErrorText}" Width="250" />
                     <DataGridTextColumn Header="Passwort" Binding="{Binding Passwort, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
                                         EditingElementStyle="{StaticResource ErrorText}" Width="*" IsReadOnly="True" />
                 </DataGrid.Columns>
