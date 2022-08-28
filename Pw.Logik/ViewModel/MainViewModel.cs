@@ -414,10 +414,13 @@ namespace Logik.Pw.Logik.ViewModel
                 case BearbeitStatus.Anderung:
                     tmpV.tmprndIndex = DetailAnzeigeEintrag.tmprndIndex;
                     int tmpIndex = IndexSuchen(tmpV.Programm, tmpV.tmprndIndex);
+                    if(tmpIndex == -1)
+                        return;
                     _BenutzerListe.EintragCh(AktBenutzer.Name, tmpV, PWEingabe, tmpIndex);
                     MainListe.RemoveAt(tmpIndex);
                     MainListe.Insert(tmpIndex, tmpV);
                     _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
+                    DetailAnzeigeEintrag.Aktuell = true;
                     break;
                 case BearbeitStatus.Neuanlage:
                     if (!TestaufLeerenInhalt(tmpV.Programm))
@@ -809,14 +812,9 @@ namespace Logik.Pw.Logik.ViewModel
         private int IndexSuchen(string GesuchtesPrg, string GesuchtertmpI)
         {
             int ausgabe = 0;
-            foreach (PwEintrag find in MainListe)
-            {
-                if (find.Programm == GesuchtesPrg && find.tmprndIndex == GesuchtertmpI)
-                {
-                    return ausgabe;
-                }
-                ausgabe++;
-            }
+            var indexfinder = MainListe.FirstOrDefault(indexf => indexf.Programm == GesuchtesPrg && indexf.tmprndIndex == GesuchtertmpI);
+            if(indexfinder != null)
+                return MainListe.IndexOf(indexfinder);
             return -1;
         }
 
