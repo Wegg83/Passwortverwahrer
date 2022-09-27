@@ -83,6 +83,7 @@
     <Compile Include="Klassen\Abfrage.cs" />
     <Compile Include="Klassen\DockPanelKlasse.cs" />
     <Compile Include="Klassen\KaudawelschGenerator.cs" />
+    <Compile Include="Klassen\Logger.cs" />
     <Compile Include="Klassen\Person.cs" />
     <Compile Include="Klassen\PersonCenter.cs" />
     <Compile Include="Klassen\SkinFarben.cs" />

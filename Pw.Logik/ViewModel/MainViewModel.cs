@@ -40,6 +40,7 @@ namespace Logik.Pw.Logik.ViewModel
         private RelayCommand _PwUbernahmeBtn, _PwRndBtn, _pWRandVerwaltBtn, _infoCenterBtn;
         private PersonCenter _BenutzerListe;
         private Person aktBenutzer;
+        private Logger _logger;
         private Person AktBenutzer
         {
             get { return aktBenutzer; }
@@ -58,7 +59,7 @@ namespace Logik.Pw.Logik.ViewModel
                 }
             }
         }
-
+        public Logger Logger => _logger;
         public ObservableCollection<PwEintrag> MainListe { get; set; }
         public ObservableCollection<PwEintrag> GefilterteListe { get; set; }
         public PwEintrag DetailAnzeigeEintrag { get; set; }
@@ -216,6 +217,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void initzialize()
         {
+            _logger = new Logger(Logger.LogLevel.Debug); // Error wäre besser. muss man irgendwie asl supervisorumstellen oder so
             initzializeMenu();
             initzializeBenutzer();
         }
