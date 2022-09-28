@@ -20,7 +20,7 @@ public class Logger
 
     public void SchreibeEintrag(string message, LogLevel level)
     {
-        if (message == null || message.Length == 0)
+        if (message == null || message.Length == 0 || !File.Exists(_logPfad))
             return;
         if (level <= AktlogLevel)
         {
@@ -71,9 +71,16 @@ public class Logger
                 Environment.Exit(0);
             }
         }
+        try
+        {
+            var machzu = File.Create(_logPfad);
+            machzu.Close();
+        }
+        catch
+        {
+            SchreibeEintrag("Konnte Log nicht erstellen", LogLevel.Error);
+        }
 
-        var machzu = File.Create(_logPfad);
-        machzu.Close();
         SchreibeEintrag("NeuesLogFile erstellt", LogLevel.Info);
         return;
     }

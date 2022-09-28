@@ -41,6 +41,7 @@ namespace Logik.Pw.Logik.ViewModel
         private PersonCenter _BenutzerListe;
         private Person aktBenutzer;
         private Logger _logger;
+        private Logger.LogLevel _gewLogLevel = Logger.LogLevel.Info;
         private Person AktBenutzer
         {
             get { return aktBenutzer; }
@@ -217,7 +218,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void initzialize()
         {
-            _logger = new Logger(Logger.LogLevel.Info);
+            _logger = new Logger(_gewLogLevel);
             initzializeMenu();
             initzializeBenutzer();
         }
@@ -705,6 +706,7 @@ namespace Logik.Pw.Logik.ViewModel
                 Properties.Settings.Default.Save();
                 initzializeBenutzer();
             }
+            _logger = new Logger(_gewLogLevel);
             VerwaltungsAnzeigeNeuLaden();
         }
 
