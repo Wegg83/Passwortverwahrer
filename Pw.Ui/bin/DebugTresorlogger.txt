@@ -1,0 +1,5 @@
+28.09.2022 10:40:04: Info -> NeuesLogFile erstellt
+28.09.2022 10:40:04: Debug -> BenutzerListe erstellt
+28.09.2022 10:40:04: Debug -> BenutzerListe erstellt
+28.09.2022 10:40:15: Debug -> BenutzerListe erstellt
+28.09.2022 10:40:15: Debug -> BenutzerListe erstellt

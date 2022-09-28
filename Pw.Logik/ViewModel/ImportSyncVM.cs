@@ -25,6 +25,7 @@ namespace Logik.Pw.Logik.ViewModel
         public enum ImpMoglichkeit { WahlNeuAnderer, NeuAnlage, PwAndern, BenutzerDel, AndererBenutzer, NeuMitInhalt }
 
         private SendImportMess _empfDaten;
+        private Logger _logger;
 
         private RelayCommand _okBtn, _auswahlNeuBtn, _auswahlAuswahlBtn;
         public SecureString Pw1Eingabe { get; set; }
@@ -98,7 +99,7 @@ namespace Logik.Pw.Logik.ViewModel
 
             ErrorMeldung = "";
             ErrorMeldungPw = "";
-
+            _logger = daten.LogSystem;
             _empfDaten = daten;
             SkinWechsel();
             AnzeigeWechsel(_empfDaten.Anzeige);
@@ -215,7 +216,7 @@ namespace Logik.Pw.Logik.ViewModel
             _neuBen.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
             _empfDaten.Center.Hinzufügen(_neuBen);
             _empfDaten.Center.ErstEintrag(_neuBen.Name, Pw2Eingabe);
-            _empfDaten.Center.KomplettVerschlüsseln(_neuBen.Name, PfadFindung(_neuBen.Name));
+            _empfDaten.Center.KomplettVerschlüsseln(_neuBen.Name, PfadFindung(_neuBen.Name), Pw2Eingabe);
             return true;
         }
 
@@ -237,13 +238,13 @@ namespace Logik.Pw.Logik.ViewModel
             tmpimportNeu.Name = BenutzerNameTB;
             tmpimportNeu.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
             _empfDaten.Center.Hinzufügen(tmpimportNeu);
-            _empfDaten.Center.KomplettVerschlüsseln(BenutzerNameTB, PfadFindung(BenutzerNameTB));
+            _empfDaten.Center.KomplettVerschlüsseln(BenutzerNameTB, PfadFindung(BenutzerNameTB), Pw2Eingabe);
             return true;
         }
 
         private bool PWAndersGdruckt()
         {
-            KaudawelschGenerator Checker = new KaudawelschGenerator(Pw1Eingabe);
+            KaudawelschGenerator Checker = new KaudawelschGenerator(Pw1Eingabe, _logger);
             if (Checker.PwChecker(_empfDaten.ImportPerson.PersiKauda))
             {
                 if (!Abfrage.PasswortIstKorrekt(Pw2Eingabe, Pw3Eingabe))
@@ -252,7 +253,7 @@ namespace Logik.Pw.Logik.ViewModel
                     return false;
                 }
                 _empfDaten.Center.BenutzerCh(_empfDaten.ImportPerson.Name, Pw2Eingabe, Pw1Eingabe);
-                _empfDaten.Center.KomplettVerschlüsseln(_empfDaten.ImportPerson.Name, PfadFindung(_empfDaten.ImportPerson.Name));
+                _empfDaten.Center.KomplettVerschlüsseln(_empfDaten.ImportPerson.Name, PfadFindung(_empfDaten.ImportPerson.Name), Pw2Eingabe);
                 return true;
             }
             else
@@ -264,7 +265,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         private bool BenutzerDelGedruckt()
         {
-            KaudawelschGenerator Checker = new KaudawelschGenerator(Pw1Eingabe);
+            KaudawelschGenerator Checker = new KaudawelschGenerator(Pw1Eingabe, _logger);
             if (Checker.PwChecker(_empfDaten.ImportPerson.PersiKauda))
             {
                 _empfDaten.Center.BenutzerDel(_empfDaten.ImportPerson.Name);
@@ -277,8 +278,8 @@ namespace Logik.Pw.Logik.ViewModel
 
         private bool SyncMitNutzer(Person ImportDat, SecureString ImpPw, Person SyncDat, SecureString SyncPw)
         {
-            KaudawelschGenerator CheckerImp = new KaudawelschGenerator(ImpPw);
-            KaudawelschGenerator CheckerSync = new KaudawelschGenerator(SyncPw);
+            KaudawelschGenerator CheckerImp = new KaudawelschGenerator(ImpPw, _logger);
+            KaudawelschGenerator CheckerSync = new KaudawelschGenerator(SyncPw, _logger);
             if (CheckerImp.PwChecker(ImportDat.PersiKauda) && CheckerSync.PwChecker(SyncDat.PersiKauda))
             {
                 Synce(ImportDat, ImpPw, SyncDat, SyncPw).Wait();
@@ -289,9 +290,9 @@ namespace Logik.Pw.Logik.ViewModel
 
         private async Task Synce(Person ImportDat, SecureString ImpPw, Person SyncDat, SecureString SyncPw)
         {
-            KaudawelschGenerator KaudaChecker = new KaudawelschGenerator(ImpPw);
+            KaudawelschGenerator KaudaChecker = new KaudawelschGenerator(ImpPw, _logger);
             ObservableCollection<PwEintrag> ImportiertePws = KaudaChecker.LadePassworter(ImportDat.PersiKauda);
-            KaudaChecker = new KaudawelschGenerator(SyncPw);
+            KaudaChecker = new KaudawelschGenerator(SyncPw, _logger);
             ObservableCollection<PwEintrag> SyncPws = KaudaChecker.LadePassworter(SyncDat.PersiKauda);
             foreach (PwEintrag SyncMe in ImportiertePws)
             {
@@ -302,7 +303,7 @@ namespace Logik.Pw.Logik.ViewModel
             {
                 _empfDaten.Center.NormEintragVersHinzu(Eintrag, SyncPw, SyncDat.Name, false);
             }
-            _empfDaten.Center.KomplettVerschlüsseln(SyncDat.Name, PfadFindung(SyncDat.Name));
+            _empfDaten.Center.KomplettVerschlüsseln(SyncDat.Name, PfadFindung(SyncDat.Name), SyncPw);
         }
 
         private async Task<ObservableCollection<PwEintrag>> SynchronisiereDaten(PwEintrag SyncDaten, ObservableCollection<PwEintrag> BenutzerListe)

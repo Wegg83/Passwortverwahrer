@@ -17,9 +17,11 @@ namespace Logik.Pw.Logik.Messengers
         public PersonCenter Center;
         public Person AktEingeloggt;
         public SecureString AktPw;
+        public Logger LogSystem;
 
-        public SendImportMess(ImpMoglichkeit Anzeige, Person ImportPerson, PersonCenter Center, Person AktEingeloggt = null, SecureString AktPw = null)
+        public SendImportMess(ImpMoglichkeit Anzeige, Person ImportPerson, PersonCenter Center, Logger LogSystem, Person AktEingeloggt = null, SecureString AktPw = null)
         {
+            this.LogSystem = LogSystem;
             this.Anzeige = Anzeige;
             this.ImportPerson = ImportPerson;
             this.Center = Center;

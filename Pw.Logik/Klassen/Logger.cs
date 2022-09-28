@@ -4,18 +4,18 @@ using System.IO;
 public class Logger
 {
     public LogLevel AktlogLevel;
-    public enum LogLevel { Debug = 9, Info = 0, Warning = 1, Error = 2 };
+    public enum LogLevel { Debug = 9, Info = 2, Warning = 1, Error = 0 };
     private const string _dateiName = "Tresorlogger.txt", _dateiNameKopie = "TresorLogger_old.txt";
     private string _logPfad, _logPfadKopie;
-    private object _locker = new object();
-    long _maxSize = 1020;
+    private static readonly object _locker = new object();
+    long _maxSize = 5000000;
 	public Logger(LogLevel neuerlevel = LogLevel.Error)
 	{
         AktlogLevel = neuerlevel;
-        _logPfad = $@"{Logik.Pw.Logik.Properties.Settings.Default.PfadZielOrdner}\{_dateiName}";
-        _logPfadKopie = $@"{Logik.Pw.Logik.Properties.Settings.Default.PfadZielOrdner}\{_dateiNameKopie}";
+        _logPfad = $@"{Logik.Pw.Logik.Properties.Settings.Default.PfadZielOrdner}{_dateiName}";
+        _logPfadKopie = $@"{Logik.Pw.Logik.Properties.Settings.Default.PfadZielOrdner}{_dateiNameKopie}";
         if (!File.Exists(_logPfad))
-            File.Create(_logPfad);
+            KreiereLogFile(_logPfad);
 	}
 
     public void SchreibeEintrag(string message, LogLevel level)
@@ -48,13 +48,33 @@ public class Logger
     {
         lock (_locker)
         {
-            FileStream mystream = new FileStream(_logPfad, FileMode.Append);
-
-            using(StreamWriter writer = new StreamWriter(mystream))
+            using(StreamWriter writer = new StreamWriter(new FileStream(_logPfad, FileMode.Append)))
             {
                 writer.WriteLine($"{DateTime.Now}: {level} -> {message}");
+                writer.Close();
             }
         }
     }
 
+    private void KreiereLogFile(string Pfad)
+    {
+        string ordner = Path.GetDirectoryName(Pfad);
+        if (!Directory.Exists(ordner))
+        {
+            if (Directory.Exists(Environment.CurrentDirectory))
+            {
+                _logPfad = $@"{Environment.CurrentDirectory}{_dateiName}";
+                _logPfadKopie = $@"{Environment.CurrentDirectory}{_dateiNameKopie}";
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
+        }
+
+        var machzu = File.Create(_logPfad);
+        machzu.Close();
+        SchreibeEintrag("NeuesLogFile erstellt", LogLevel.Info);
+        return;
+    }
 }

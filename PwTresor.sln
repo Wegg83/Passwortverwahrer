@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pw.Ui", "Pw.Ui\Pw.Ui.csproj
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".shared", ".shared", "{5B7EB0F0-761D-47A9-8F90-FAC6EE4889B2}"
 	ProjectSection(SolutionItems) = preProject
-		.shared\Pw.Info.cs = .shared\Pw.Info.cs
+		.shared\AssemblyInfo.cs = .shared\AssemblyInfo.cs
 	EndProjectSection
 EndProject
 Global

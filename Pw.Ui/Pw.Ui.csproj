@@ -79,6 +79,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\.shared\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="InfoCenterFenster.xaml.cs">
       <DependentUpon>InfoCenterFenster.xaml</DependentUpon>
     </Compile>
@@ -115,9 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MessageListener.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

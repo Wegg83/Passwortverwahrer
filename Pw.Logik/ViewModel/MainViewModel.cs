@@ -217,7 +217,7 @@ namespace Logik.Pw.Logik.ViewModel
 
         private void initzialize()
         {
-            _logger = new Logger(Logger.LogLevel.Debug); // Error wäre besser. muss man irgendwie asl supervisorumstellen oder so
+            _logger = new Logger(Logger.LogLevel.Info);
             initzializeMenu();
             initzializeBenutzer();
         }
@@ -236,11 +236,11 @@ namespace Logik.Pw.Logik.ViewModel
                 System.Windows.MessageBox.Show("Zwischenablage-Fehler. Unmöglich Daten in ZW zu speichern");
             }
 
-            _BenutzerListe = new PersonCenter();
+            _BenutzerListe = new PersonCenter(_logger);
             VerwaltungsListe = new ObservableCollection<string>();
             Person GelesenerBenutzer = new Person();
             PwEintrag GeleseneHauptView = new PwEintrag();
-            KaudawelschGenerator ListEntschlüssler = new KaudawelschGenerator(new SecureString());
+            KaudawelschGenerator ListEntschlüssler = new KaudawelschGenerator(new SecureString(), _logger);
 
             try
             {
@@ -308,7 +308,7 @@ namespace Logik.Pw.Logik.ViewModel
 
             Person LoginDaten = _BenutzerListe.NameSuchen(CbBenutzerWahl);
             if (LoginDaten.AktOrdnerName == null) return;
-            KaudawelschGenerator LoginChecker = new KaudawelschGenerator(PWEingabe);
+            KaudawelschGenerator LoginChecker = new KaudawelschGenerator(PWEingabe, _logger);
 
             if (LoginChecker.PwChecker(LoginDaten.PersiKauda))
             {
@@ -344,9 +344,14 @@ namespace Logik.Pw.Logik.ViewModel
             Nullable<bool> result = WoSpeichern.ShowDialog();
             if (result == true)
             {
-                _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, WoSpeichern.FileName);
+                _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, WoSpeichern.FileName, PWEingabe);
+                System.Windows.MessageBox.Show("Export erfolgreich.");
+                _logger.SchreibeEintrag($"Benutzer {AktBenutzer.Name} Export erfolgreich.", Logger.LogLevel.Info);
             }
-            System.Windows.MessageBox.Show("Export erfolgreich.");
+            else
+            {
+                _logger.SchreibeEintrag($"Benutzer {AktBenutzer.Name} Export abgebrochen.", Logger.LogLevel.Info);
+            }          
         }
 
         private void Verwaltunggedruckt()
@@ -418,11 +423,11 @@ namespace Logik.Pw.Logik.ViewModel
                     int tmpIndex = IndexSuchen(tmpV.Programm, tmpV.tmprndIndex);
                     if(tmpIndex == -1)
                         return;
+                    DetailAnzeigeEintrag.Aktuell = true;
                     _BenutzerListe.EintragCh(AktBenutzer.Name, tmpV, PWEingabe, tmpIndex);
                     MainListe.RemoveAt(tmpIndex);
                     MainListe.Insert(tmpIndex, tmpV);
-                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
-                    DetailAnzeigeEintrag.Aktuell = true;
+                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name), PWEingabe);
                     break;
                 case BearbeitStatus.Neuanlage:
                     if (!TestaufLeerenInhalt(tmpV.Programm))
@@ -457,7 +462,7 @@ namespace Logik.Pw.Logik.ViewModel
                         }
                         MainListe.Add(tmpV);
                     }
-                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
+                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name), PWEingabe);
                     break;
             }
 
@@ -471,13 +476,13 @@ namespace Logik.Pw.Logik.ViewModel
         {
             if (VerwaltListItem != null)
             {
-                MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.PwAndern, _BenutzerListe.NameSuchen(VerwaltListItem), _BenutzerListe));
+                MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.PwAndern, _BenutzerListe.NameSuchen(VerwaltListItem), _BenutzerListe, _logger));
             }
         }
 
         private void sendeNeuerBenutzer()
         {
-            MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.NeuAnlage, null, _BenutzerListe));
+            MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.NeuAnlage, null, _BenutzerListe, _logger));
         }
 
         private Person LeseDoppeltVerschlüsselteDatei(string DateiPfad, KaudawelschGenerator DerKaudaGenerator, string Ordner)
@@ -612,21 +617,21 @@ namespace Logik.Pw.Logik.ViewModel
             {
                 Properties.Settings.Default.PfadSyncOrdner = Path.GetDirectoryName(SyncDatei.FileName);
                 Properties.Settings.Default.Save();
-                KaudawelschGenerator impchecker = new KaudawelschGenerator(new SecureString());
+                KaudawelschGenerator impchecker = new KaudawelschGenerator(new SecureString(), _logger);
                 Person impBen = LeseDoppeltVerschlüsselteDatei(SyncDatei.FileName, impchecker, Path.GetDirectoryName(SyncDatei.FileName));
                 if (impBen != null)
                 {
                     SendImportMess ubergabe;
                     if (VerwaltungsListe.Count() > 0)
                     {
-                        ubergabe = new SendImportMess(ImpMoglichkeit.WahlNeuAnderer, impBen, _BenutzerListe);
+                        ubergabe = new SendImportMess(ImpMoglichkeit.WahlNeuAnderer, impBen, _BenutzerListe, _logger);
                         MessengerInstance.Send(ubergabe);
                     }
                     else
                     {
                         impBen.AktOrdnerName = NeuenBenutzerOrdnerAnlegen();
                         _BenutzerListe.Hinzufügen(impBen);
-                        _BenutzerListe.KomplettVerschlüsseln(impBen.Name, PfadFindung(impBen.Name));
+                        _BenutzerListe.ImportiereDirekt(impBen.Name, PfadFindung(impBen.Name), SyncDatei.FileName);
                         VerwaltungsAnzeigeNeuLaden();
                         return;
                     }                                              
@@ -652,7 +657,7 @@ namespace Logik.Pw.Logik.ViewModel
                     int tmpIndexStelle = IndexSuchen(AktEintrag.Programm, AktEintrag.tmprndIndex);
                     _BenutzerListe.EintragDel(AktBenutzer.Name, tmpIndexStelle, PWEingabe);
                     MainListe.RemoveAt(tmpIndexStelle);
-                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name));
+                    _BenutzerListe.KomplettVerschlüsseln(AktBenutzer.Name, PfadFindung(AktBenutzer.Name), PWEingabe);
                     GefilterteListe = PWListeFiltern();
                     if (GefilterteListe.Count > 0)
                     {
@@ -670,7 +675,7 @@ namespace Logik.Pw.Logik.ViewModel
         {
             if (System.Windows.MessageBox.Show("Benutzer "+ VerwaltListItem + " löschen?", "Löschen", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.BenutzerDel, _BenutzerListe.NameSuchen(VerwaltListItem), _BenutzerListe));
+                MessengerInstance.Send(new SendImportMess(ImpMoglichkeit.BenutzerDel, _BenutzerListe.NameSuchen(VerwaltListItem), _BenutzerListe, _logger));
             }
         }
 
